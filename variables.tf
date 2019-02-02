@@ -26,17 +26,17 @@ variable "resources_tag" {
 
 variable "ec2_schedule" {
   description = "Enable scheduling on ec2 resources"
-  default = true
+  default = "true"
 }
 
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
-  default = true
+  default = "true"
 }
 
 variable "autoscaling_schedule" {
   description = "Enable scheduling on autoscaling group resources"
-  default = true
+  default = "true"
 }
 
 variable "autoscaling_start_params" {
