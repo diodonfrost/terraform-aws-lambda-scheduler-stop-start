@@ -10,7 +10,8 @@ tag_key = os.getenv('TAG_KEY', 'tostop')
 tag_value = os.getenv('TAG_VALUE', 'true')
 ec2_schedule = os.getenv('EC2_SCHEDULE', 'true')
 rds_schedule = os.getenv('RDS_SCHEDULE', 'true')
-autoscaling_schedule = os.getenv('AUTOSCALING_SCHEDULE', 'true')
+autoscaling_schedule = os.getenv('AUTOSCALING_SCHEDULE', 'false')
+autoscaling_params = os.getenv('AUTOSCALING_PARAMS', 'false')
 
 # Setup simple logging for INFO
 logger = logging.getLogger()
@@ -139,3 +140,11 @@ def lambda_handler(event, context):
                     autoscaling_name = group['AutoScalingGroupName']
                     autoscaling.update_auto_scaling_group(AutoScalingGroupName=autoscaling_name, \
                     MinSize=0, DesiredCapacity=0)
+
+          # size up autoscalin group
+          scalinggroup = autoscaling.describe_auto_scaling_groups()
+
+          # Params autoscalinggroup minsize and desired capacity
+          for autoscaling_name,autoscaling_minsize in autoscaling_params.items():
+            autoscaling.update_auto_scaling_group(AutoScalingGroupName=autoscaling_name, \
+            MinSize=autoscaling_minsize, DesiredCapacity=autoscaling_minsize)
