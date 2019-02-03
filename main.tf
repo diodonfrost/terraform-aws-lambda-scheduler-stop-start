@@ -126,7 +126,6 @@ resource "aws_iam_role_policy_attachment" "rds" {
 #
 ################################################
 
-
 # Convert *.py to .zip because AWS Lambda need .zip
 data "archive_file" "convert_py_to_zip" {
   type        = "zip"
@@ -151,6 +150,35 @@ resource "aws_lambda_function" "stop_start" {
       EC2_SCHEDULE         = "${var.ec2_schedule}"
       RDS_SCHEDULE         = "${var.rds_schedule}"
       AUTOSCALING_SCHEDULE = "${var.autoscaling_schedule}"
+      AUTOSCALING_PARAMS   = "${var.autoscaling_params}"
     }
   }
+}
+
+################################################
+#
+#            CLOUDWATCH EVENT
+#
+################################################
+
+# Create event cloud watch for trigger lambda shutdown function every Friday at 22h00
+resource "aws_cloudwatch_event_rule" "lambda_event" {
+  name                = "trigger-lambda-scheduler"
+  description         = "Trigger Lambda scheduler"
+  schedule_expression = "${var.cloudwatch_event_schedule_expression}"
+}
+
+# Set lambda shudown function as target
+resource "aws_cloudwatch_event_target" "lambda_event_target" {
+  arn  = "${aws_lambda_function.stop_start.arn}"
+  rule = "${aws_cloudwatch_event_rule.lambda_event.name}"
+}
+
+# Allow cloudwatch to invoke lambda function
+resource "aws_lambda_permission" "allow_cloudwatch_scheduler" {
+    statement_id  = "AllowExecutionFromCloudWatch"
+    action        = "lambda:InvokeFunction"
+    principal     = "events.amazonaws.com"
+    function_name = "${aws_lambda_function.stop_start.function_name}"
+    source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
 }

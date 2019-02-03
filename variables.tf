@@ -7,7 +7,7 @@
 # cf doc : https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
 variable "cloudwatch_event_schedule_expression" {
   description = "Define the aws cloudwatch event rule schedule expression"
-  default = ["cron(0 22 ? * MON-FRI *)"]
+  default = "cron(0 22 ? * MON-FRI *)"
 }
 
 variable "schedule_action" {
@@ -39,11 +39,11 @@ variable "autoscaling_schedule" {
   default = "true"
 }
 
-variable "autoscaling_start_params" {
+variable "autoscaling_params" {
   description = "Define min_size instance to apply on autoscalingroup"
-  default = {
-    my_autoscalinggroup_name1 = "2"
-    my_autoscalinggroup_name2 = "3"
-    my_autoscalinggroup_name3 = "2"
-  }
+  default = <<EOF
+"{\"my_autoscalinggroup_name1\": \"1\",
+  \"my_autoscalinggroup_name2\": \"3\",
+  \"my_autoscalinggroup_name3\": \"2\"}"
+EOF
 }
