@@ -165,7 +165,7 @@ resource "aws_lambda_function" "stop_start" {
 resource "aws_cloudwatch_event_rule" "lambda_event" {
   name                = "trigger-lambda-scheduler"
   description         = "Trigger Lambda scheduler"
-  schedule_expression = "${var.cloudwatch_event_schedule_expression}"
+  schedule_expression = "${var.cloudwatch_schedule_expression}"
 }
 
 # Set lambda shudown function as target

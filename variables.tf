@@ -5,7 +5,7 @@
 # Shutdow à noel à 22h : ["cron(0 22 ? * FRI *)","cron(00 22 24 12 ? *)"]
 # Shutdown tous les soirs à 22h du lundi au vendredi
 # cf doc : https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
-variable "cloudwatch_event_schedule_expression" {
+variable "cloudwatch_schedule_expression" {
   description = "Define the aws cloudwatch event rule schedule expression"
   default = "cron(0 22 ? * MON-FRI *)"
 }
@@ -26,21 +26,21 @@ variable "resources_tag" {
 
 variable "ec2_schedule" {
   description = "Enable scheduling on ec2 resources"
-  default = "true"
+  default = "false"
 }
 
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
-  default = "true"
+  default = "false"
 }
 
 variable "autoscaling_schedule" {
   description = "Enable scheduling on autoscaling group resources"
-  default = "true"
+  default = "false"
 }
 
 variable "autoscaling_params" {
-  description = "Define min_size instance to apply on autoscalingroup"
+  description = "Define min_size instance to apply when autoscalingroup starting up"
   default = <<EOF
 "{\"my_autoscalinggroup_name1\": \"1\",
   \"my_autoscalinggroup_name2\": \"3\",
