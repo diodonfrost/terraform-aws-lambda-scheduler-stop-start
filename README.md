@@ -6,7 +6,6 @@ Terraform module which create lambda scheduler for stop and start resources on A
 
 * Aws lambda runtine Python 3.6
 * ec2 instance scheduling
-* autoscaling group scheduling
 * rds scheduling
 
 ## Usage
@@ -17,7 +16,6 @@ module "lambda_scheduler_stop_start" {
   schedule_action                = "stop"
   ec2_schedule                   = "true"
   rds_schedule                   = "true"
-  autoscaling_schedule           = "false"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
@@ -27,8 +25,8 @@ module "lambda_scheduler_stop_start" {
 
 ## Examples
 
-* [Basic EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-schedule) - Create lamnda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monda at 07:00 GMT
-* [Rds aurora - mariadb scheduler] - Create rds aurora and mariadb database with lambda scheduler for stop it
+* [Basic EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-schedule) - Create lamnda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
+* [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-schedule) - Create lamnda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
@@ -42,8 +40,6 @@ module "lambda_scheduler_stop_start" {
 | resources_tag | Set the tag use for identify resources to stop or start | map | { tostop = "true" } | yes |
 | ec2_schedule | Enable scheduling on ec2 resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
-| autoscaling_schedule | Enable scheduling on autoscaling group resources | string | `"false"` | no |
-| autoscaling_params | Define min_size instance to apply when autoscalingroup starting up | string | n/a | no |
 
 ## Outputs
 

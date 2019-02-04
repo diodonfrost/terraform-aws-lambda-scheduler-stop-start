@@ -34,7 +34,6 @@ module "ec2-stop-friday" {
   schedule_action                = "stop"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
-  autoscaling_schedule           = "false"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
@@ -48,7 +47,6 @@ module "ec2-start-monday" {
   schedule_action                = "start"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
-  autoscaling_schedule           = "false"
   resources_tag                  = {
     key   = "tostop"
     value = "true"

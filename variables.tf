@@ -37,17 +37,3 @@ variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
   default = "false"
 }
-
-variable "autoscaling_schedule" {
-  description = "Enable scheduling on autoscaling group resources"
-  default = "false"
-}
-
-variable "autoscaling_params" {
-  description = "Define min_size instance to apply when autoscalingroup starting up"
-  default = <<EOF
-"{\"my_autoscalinggroup_name1\": \"1\",
-  \"my_autoscalinggroup_name2\": \"3\",
-  \"my_autoscalinggroup_name3\": \"2\"}"
-EOF
-}

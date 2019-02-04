@@ -149,8 +149,6 @@ resource "aws_lambda_function" "stop_start" {
       TAG_VALUE            = "${var.resources_tag["value"]}"
       EC2_SCHEDULE         = "${var.ec2_schedule}"
       RDS_SCHEDULE         = "${var.rds_schedule}"
-      AUTOSCALING_SCHEDULE = "${var.autoscaling_schedule}"
-      AUTOSCALING_PARAMS   = "${var.autoscaling_params}"
     }
   }
 }

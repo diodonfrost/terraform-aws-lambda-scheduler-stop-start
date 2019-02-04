@@ -10,8 +10,6 @@ tag_key = os.getenv('TAG_KEY', 'tostop')
 tag_value = os.getenv('TAG_VALUE', 'true')
 ec2_schedule = os.getenv('EC2_SCHEDULE', 'true')
 rds_schedule = os.getenv('RDS_SCHEDULE', 'true')
-autoscaling_schedule = os.getenv('AUTOSCALING_SCHEDULE', 'false')
-autoscaling_params = os.getenv('AUTOSCALING_PARAMS', 'false')
 
 # Setup simple logging for INFO
 logger = logging.getLogger()
@@ -116,35 +114,3 @@ def lambda_handler(event, context):
 
                     elif schedule_action == 'start' and instance_rds['DBInstanceStatus'] == 'stopped':
                         rds.start_db_instance(DBInstanceIdentifier=instance_id)
-
-
-    ########################
-    #
-    # Autoscaling shutdown
-    #
-    ########################
-    if autoscaling_schedule == 'true':
-        scalinggroup = autoscaling.describe_auto_scaling_groups()
-
-        # Retrieve ec2 autoscalinggroup tags
-        for group in scalinggroup['AutoScalingGroups']:
-            response = autoscaling.describe_tags()
-            taglist = response['Tags']
-
-            # Filter ec2 autoscalinggroup with their tag and state
-            for tag in taglist:
-                if tag['Key'] == tag_key and tag['Value'] == tag_value \
-                and group['DesiredCapacity'] != '0':
-
-                    # Set autoscalinggroup minsize and desired capacity to 0
-                    autoscaling_name = group['AutoScalingGroupName']
-                    autoscaling.update_auto_scaling_group(AutoScalingGroupName=autoscaling_name, \
-                    MinSize=0, DesiredCapacity=0)
-
-        # size up autoscalin group
-        scalinggroup = autoscaling.describe_auto_scaling_groups()
-
-        # Params autoscalinggroup minsize and desired capacity
-        for autoscaling_name,autoscaling_minsize in autoscaling_params.items():
-            autoscaling.update_auto_scaling_group(AutoScalingGroupName=autoscaling_name, \
-            MinSize=autoscaling_minsize, DesiredCapacity=autoscaling_minsize)
