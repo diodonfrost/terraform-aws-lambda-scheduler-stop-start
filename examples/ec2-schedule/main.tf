@@ -27,14 +27,30 @@ resource "aws_instance" "web" {
   }
 }
 
-module "lambda_scheduler_stop_start" {
-  cloudwatch_schedule_expression = "cron(0 22 ? * MON-FRI *)"
+module "ec2-stop-friday" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  name                           = "stop-ec2"
+  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
   resources_tag                  = {
-    tostop = "true"
+    key   = "tostop"
+    value = "true"
+  }
+}
+
+module "ec2-start-monday" {
+  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  name                           = "start-ec2"
+  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
+  schedule_action                = "start"
+  ec2_schedule                   = "true"
+  rds_schedule                   = "false"
+  autoscaling_schedule           = "false"
+  resources_tag                  = {
+    key   = "tostop"
+    value = "true"
   }
 }
