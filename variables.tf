@@ -10,6 +10,10 @@ variable "cloudwatch_schedule_expression" {
   default = "cron(0 22 ? * MON-FRI *)"
 }
 
+variable "name" {
+  description = "Define name to use for lambda function, cloudwatch event and iam role"
+}
+
 variable "schedule_action" {
   description = "Define schedule action to apply on resources, accepted value are 'stop or 'start"
   default = "stop"

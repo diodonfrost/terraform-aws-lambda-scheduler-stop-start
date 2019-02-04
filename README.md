@@ -12,21 +12,23 @@ Terraform module which create lambda scheduler for stop and start resources on A
 ## Usage
 ```hcl
 module "lambda_scheduler_stop_start" {
-  cloudwatch_schedule_expression = "cron(0 22 ? * MON-FRI *)"
+  cloudwatch_schedule_expression = "cron(0 00 ? * FRI *)"
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
   schedule_action                = "stop"
   ec2_schedule                   = "true"
   rds_schedule                   = "true"
   autoscaling_schedule           = "false"
   resources_tag                  = {
-    tostop = "true"
+    key   = "tostop"
+    value = "true"
   }
 }
 ```
 
 ## Examples
 
-* [Basic EC2 scheduler]
+* [Basic EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-schedule) - Create lamnda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monda at 07:00 GMT
+* [Rds aurora - mariadb scheduler] - Create rds aurora and mariadb database with lambda scheduler for stop it
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
@@ -34,6 +36,7 @@ module "lambda_scheduler_stop_start" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|----------|
+| name | Define name to use for lambda function, cloudwatch event and iam role | string | n/a | yes |
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
 | resources_tag | Set the tag use for identify resources to stop or start | map | { tostop = "true" } | yes |
