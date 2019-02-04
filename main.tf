@@ -130,7 +130,7 @@ resource "aws_iam_role_policy_attachment" "rds" {
 data "archive_file" "convert_py_to_zip" {
   type        = "zip"
   source_file = "${path.module}/package/aws-stop-start-resources.py"
-  output_path = "${path.module}/package/${var.name}-stop-start-resources.zip"
+  output_path = "${path.module}/package/aws-stop-start-resources.zip"
 }
 
 # Create Lambda function for stop or start aws resources
@@ -138,7 +138,7 @@ resource "aws_lambda_function" "stop_start" {
   filename         = "${data.archive_file.convert_py_to_zip.output_path}"
   function_name    = "${var.name}-stop-start-resources"
   role             = "${aws_iam_role.scheduler_lambda.arn}"
-  handler          = "${var.name}-stop-start-resources.lambda_handler"
+  handler          = "aws-stop-start-resources.lambda_handler"
   source_code_hash = "${data.archive_file.convert_py_to_zip.output_base64sha256}"
   runtime          = "python3.7"
   timeout          = "600"
