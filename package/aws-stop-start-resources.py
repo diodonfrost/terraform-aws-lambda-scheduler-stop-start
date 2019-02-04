@@ -10,6 +10,7 @@ tag_key = os.getenv('TAG_KEY', 'tostop')
 tag_value = os.getenv('TAG_VALUE', 'true')
 ec2_schedule = os.getenv('EC2_SCHEDULE', 'true')
 rds_schedule = os.getenv('RDS_SCHEDULE', 'true')
+autoscaling_schedule = os.getenv('AUTOSCALING_SCHEDULE', 'true')
 
 # Setup simple logging for INFO
 logger = logging.getLogger()
@@ -25,12 +26,41 @@ instance_list = []
 
 def lambda_handler(event, context):
 
+    ############################
+    #
+    # Autoscaling scheduler
+    #
+    ############################
+    if autoscaling_schedule == 'true':
+        scalinggroup = autoscaling.describe_auto_scaling_groups()
 
-    ########################
+        # Retrieve ec2 autoscalinggroup tags
+        for group in scalinggroup['AutoScalingGroups']:
+            response = autoscaling.describe_tags()
+            taglist = response['Tags']
+
+            # Filter ec2 autoscalinggroup with their tag and state
+            for tag in taglist:
+                if tag['Key'] == tag_key and tag['Value'] == tag_value:
+
+      	        # Retrieve autoscaling group name
+      	        autoscaling_name = group['AutoScalingGroupName']
+
+      		    # Retrieve state of autoscaling group
+      		    autoscaling_state = autoscaling.describe_scaling_process_types()
+
+      	        if schedule_action == 'stop' and 'Launch' in autoscaling_state[Processes]:
+      		        autoscaling.suspend_processes(AutoScalingGroupName=autoscaling_name)
+
+      		    elif schedule_action == 'stop' and 'Launch' not in autoscaling_state[Processes]:
+      		        autoscaling.resume_processes(AutoScalingGroupName=autoscaling_name)
+
+
+    ############################
     #
-    # EC2 instance shutdown
+    # EC2 instances scheduler
     #
-    ########################
+    ############################
     if ec2_schedule == 'true':
         reservations = ec2.describe_instances()
 
@@ -66,11 +96,11 @@ def lambda_handler(event, context):
             ec2.start_instances(InstanceIds=instance_list)
 
 
-    ########################
+    ############################
     #
-    # RDS shutdown
+    # RDS scheduler
     #
-    ########################
+    ############################
     if rds_schedule == 'true':
 
         # RDS clusters

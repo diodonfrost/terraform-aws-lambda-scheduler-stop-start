@@ -37,3 +37,8 @@ variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
   default = "false"
 }
+
+variable "autoscaling_schedule" {
+  description = "Enable scheduling on autoscaling resources"
+  default = "false"
+}
