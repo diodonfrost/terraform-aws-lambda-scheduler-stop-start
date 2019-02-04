@@ -36,17 +36,23 @@ module "lambda_scheduler_stop_start" {
 |------|-------------|------|---------|----------|
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
-| resources_tag | Set the tag use for identify resources to stop or start | map | n/a | yes |
+| resources_tag | Set the tag use for identify resources to stop or start | map | { tostop = "true" } | yes |
 | ec2_schedule | Enable scheduling on ec2 resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
 | autoscaling_schedule | Enable scheduling on autoscaling group resources | string | `"false"` | no |
-| autoscaling_params | Define min_size instance to apply when autoscalingroup starting up | map | n/a | no |
+| autoscaling_params | Define min_size instance to apply when autoscalingroup starting up | string | n/a | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | scheduler_lambda_arn | The Amazon Resource Name (ARN) identifying your Lambda Function |
+| lambda_iam_role_name | The name of the IAM role used by Lambda function |
+| scheduler_lambda_arn | The ARN of the Lambda function |
+| scheduler_function_name | The name of the Lambda function |
+| scheduler_lambda_invoke_arn | The ARN to be used for invoking Lambda function from API Gateway |
+| scheduler_lambda_function_last_modified | The date Lambda function was last modified |
+| scheduler_lambda_function_version | Latest published version of your Lambda function |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
