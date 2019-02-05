@@ -46,3 +46,31 @@ resource "aws_autoscaling_group" "bar" {
     propagate_at_launch = true
   }
 }
+
+module "autoscaling-stop-friday" {
+  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  name                           = "stop-autoscaling"
+  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
+  schedule_action                = "stop"
+  ec2_schedule                   = "false"
+  rds_schedule                   = "false"
+  autoscaling_schedule           = "true"
+  resources_tag                  = {
+    key   = "tostop"
+    value = "true"
+  }
+}
+
+module "ec2-start-monday" {
+  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  name                           = "start-ec2"
+  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
+  schedule_action                = "start"
+  ec2_schedule                   = "false"
+  rds_schedule                   = "false"
+  autoscaling_schedule           = "true"
+  resources_tag                  = {
+    key   = "tostop"
+    value = "true"
+  }
+}
