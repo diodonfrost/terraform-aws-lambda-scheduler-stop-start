@@ -37,8 +37,11 @@ resource "aws_iam_policy" "schedule_autoscaling" {
   "Statement": [
     {
         "Action": [
+            "autoscaling:DescribeScalingProcessTypes",
             "autoscaling:DescribeAutoScalingGroups",
             "autoscaling:DescribeTags",
+            "autoscaling:SuspendProcesses",
+            "autoscaling:ResumeProcesses",
             "autoscaling:UpdateAutoScalingGroup"
         ],
         "Resource": "*",
