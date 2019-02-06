@@ -1,3 +1,5 @@
+# Terraform autoscaling group with lambda scheduler
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -63,7 +65,7 @@ module "autoscaling-stop-friday" {
 
 module "ec2-start-monday" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
-  name                           = "start-ec2"
+  name                           = "start-autoscaling"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   ec2_schedule                   = "false"
