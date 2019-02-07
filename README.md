@@ -5,16 +5,17 @@ Terraform module which create lambda scheduler for stop and start resources on A
 ## Features
 
 *   Aws lambda runtine Python 3.6
-*   ec2 instance scheduling
-*   rds aurora scheduling
-*   rds instance scheduling
-*   autoscaling scheduling
+*   ec2 instances scheduling
+*   rds clusters scheduling
+*   rds instances scheduling
+*   autoscalings scheduling
 
 ## Usage
 ```hcl
-module "lambda_scheduler_stop_start" {
-  cloudwatch_schedule_expression = "cron(0 00 ? * FRI *)"
+module "stop_ec2_instance" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  name                           = "ec2_stop"
+  cloudwatch_schedule_expression = "cron(0 00 ? * FRI *)"
   schedule_action                = "stop"
   ec2_schedule                   = "true"
   rds_schedule                   = "true"
