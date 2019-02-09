@@ -62,6 +62,34 @@ module "stop_ec2_instance" {
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
+## Tests
+
+This module has been packaged with [awspec](https://github.com/k1LoW/awspec) tests through test kitchen. To run them:
+
+Install kitchen-terraform and awspec:
+
+```shell
+# Install dependencies
+gem install bundler
+bundle install
+```
+
+Launch kitchen tests:
+
+```shell
+# List all tests with kitchen
+kitchen list
+
+# Build, and tests terraform module
+kitchen test lambda-scheduler-aws
+
+# for development, create environment
+kitchen converge lambda-scheduler-aws
+
+# Apply awspec tests
+kitchen verify lambda-scheduler-aws
+```
+
 ## Authors
 
 Modules managed by [diodonfrost](https://github.com/diodonfrost)
