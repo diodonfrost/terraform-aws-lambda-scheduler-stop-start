@@ -23,7 +23,6 @@ output "scheduler_lambda_invoke_arn" {
   value       = "${aws_lambda_function.stop_start.invoke_arn}"
 }
 
-
 output "scheduler_lambda_function_last_modified" {
   description = "The date Lambda function was last modified"
   value       = "${aws_lambda_function.stop_start.last_modified}"
