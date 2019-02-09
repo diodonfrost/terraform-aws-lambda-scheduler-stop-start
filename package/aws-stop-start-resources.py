@@ -34,6 +34,7 @@ def autoscaling_handler():
        resume all scaling processes by using the tag defined.
     """
     scalinggroup = AUTOSCALING.describe_auto_scaling_groups()
+    autoscaling_instances = AUTOSCALING.describe_auto_scaling_instances()
 
     # Retrieve ec2 autoscalinggroup tags
     for group in scalinggroup['AutoScalingGroups']:
@@ -54,6 +55,11 @@ def autoscaling_handler():
                 autoscaling_state['Processes'] if item["ProcessName"] == "Launch"), False):
                     # Suspend autoscaling group for shutdown instance
                     AUTOSCALING.suspend_processes(AutoScalingGroupName=autoscaling_name)
+
+                    # Terminate all instances in autoscaling group
+                    for instance in autoscaling_instances['AutoScalingInstances']:
+                        AUTOSCALING.terminate_instance_in_auto_scaling_group(\
+                        InstanceId=instance['InstanceId'], ShouldDecrementDesiredCapacity=False)
 
                 elif schedule_action == 'start' and next((item for item in \
                 autoscaling_state['Processes'] if item["ProcessName"] != "Launch"), False):
