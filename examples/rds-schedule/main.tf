@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "eu-west-3"
+}
+
 # Create rds aurora cluster
 resource "aws_rds_cluster" "aurora" {
   cluster_identifier  = "aurora-cluster-example"
