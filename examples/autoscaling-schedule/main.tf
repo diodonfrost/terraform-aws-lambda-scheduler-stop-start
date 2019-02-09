@@ -67,7 +67,7 @@ module "autoscaling-stop-friday" {
   }
 }
 
-module "ec2-start-monday" {
+module "autoscaling-start-monday" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
   name                           = "start-autoscaling"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
