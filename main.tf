@@ -165,7 +165,7 @@ resource "aws_lambda_function" "stop_start" {
 #
 ################################################
 
-# Create event cloud watch for trigger lambda shutdown function every Friday at 22h00
+# Create event cloud watch for trigger lambda scheduler
 resource "aws_cloudwatch_event_rule" "lambda_event" {
   name                = "trigger-lambda-scheduler-${var.name}"
   description         = "Trigger lambda scheduler"
@@ -178,7 +178,7 @@ resource "aws_cloudwatch_event_target" "lambda_event_target" {
   rule = "${aws_cloudwatch_event_rule.lambda_event.name}"
 }
 
-# Allow cloudwatch to invoke lambda function
+# Allow cloudwatch to invoke lambda scheduler
 resource "aws_lambda_permission" "allow_cloudwatch_scheduler" {
     statement_id  = "AllowExecutionFromCloudWatch"
     action        = "lambda:InvokeFunction"
