@@ -55,16 +55,19 @@ def autoscaling_handler():
                 autoscaling_state['Processes'] if item["ProcessName"] == "Launch"), False):
                     # Suspend autoscaling group for shutdown instance
                     AUTOSCALING.suspend_processes(AutoScalingGroupName=autoscaling_name)
+                    LOGGER.info("Suspend autoscaling group %s", autoscaling_name)
 
                     # Terminate all instances in autoscaling group
                     for instance in autoscaling_instances['AutoScalingInstances']:
                         AUTOSCALING.terminate_instance_in_auto_scaling_group(\
                         InstanceId=instance['InstanceId'], ShouldDecrementDesiredCapacity=False)
+                        LOGGER.info("Terminate autoscaling instance %s", instance['InstanceId'])
 
                 elif schedule_action == 'start' and next((item for item in \
                 autoscaling_state['Processes'] if item["ProcessName"] != "Launch"), False):
                     # Resume autoscaling group for startup instances
                     AUTOSCALING.resume_processes(AutoScalingGroupName=autoscaling_name)
+                    LOGGER.info("Resume autoscaling group %s", autoscaling_name)
 
 
 ############################
@@ -109,9 +112,12 @@ def ec2_handler():
     if instance_list and schedule_action == 'stop':
         # Stop instances in list
         EC2.stop_instances(InstanceIds=instance_list)
+        LOGGER.info("Stop instance %s", instance_list)
+
     elif instance_list and schedule_action == 'start':
         # Start instances in list
         EC2.start_instances(InstanceIds=instance_list)
+        LOGGER.info("Start instance %s", instance_list)
 
 
 ############################
@@ -142,9 +148,11 @@ def rds_handler():
 
                 if schedule_action == 'stop' and cluster_rds['Status'] == 'available':
                     RDS.stop_db_cluster(DBClusterIdentifier=cluster_id)
+                    LOGGER.info("Stop rds cluster %s", cluster_id)
 
                 elif schedule_action == 'start' and cluster_rds['Status'] == 'stopped':
                     RDS.start_db_cluster(DBClusterIdentifier=cluster_id)
+                    LOGGER.info("Start rds cluster %s", cluster_id)
 
     # RDS instances
     instances_rds = RDS.describe_db_instances()
@@ -164,10 +172,12 @@ def rds_handler():
                 if schedule_action == 'stop' and \
                 instance_rds['DBInstanceStatus'] == 'available':
                     RDS.stop_db_instance(DBInstanceIdentifier=instance_id)
+                    LOGGER.info("Stop rds instance %s", instance_id)
 
                 elif schedule_action == 'start' and \
                 instance_rds['DBInstanceStatus'] == 'stopped':
                     RDS.start_db_instance(DBInstanceIdentifier=instance_id)
+                    LOGGER.info("Start rds instance %s", instance_id)
 
 def lambda_handler(event, context):
     """ Main function entrypoint for lambda """
