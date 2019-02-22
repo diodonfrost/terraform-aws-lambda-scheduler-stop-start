@@ -83,41 +83,35 @@ def ec2_handler():
     """
     # Initialize instance list
     instance_list = []
-    reservations = EC2.describe_instances()
+    reservations = EC2.describe_instances(Filters=[{'Name': 'tag:'+tag_key, 'Values': [tag_value]}])
 
     # Retrieve ec2 instances tags
     for reservation in reservations['Reservations']:
         for instance in reservation['Instances']:
-            response = EC2.describe_tags()
-            taglist = response['Tags']
 
-            # Filter ec2 instances with their tag and state
-            for tag in taglist:
-                if tag['Key'] == tag_key and tag['Value'] == tag_value:
+            if schedule_action == 'stop' and \
+            instance['State']['Name'] == 'running':
 
-                    if schedule_action == 'stop' and \
-                    instance['State']['Name'] == 'running':
+                # Retrieve ec2 instance id and add in list
+                instance_id = instance['InstanceId']
+                instance_list.insert(0, instance_id)
 
-                        # Retrieve ec2 instance id and add in list
-                        instance_id = instance['InstanceId']
-                        instance_list.insert(0, instance_id)
+            elif schedule_action == 'start' and \
+            instance['State']['Name'] == 'stopped':
 
-                    elif schedule_action == 'start' and \
-                    instance['State']['Name'] == 'stopped':
-
-                        # Retrieve ec2 instance id and add in list
-                        instance_id = instance['InstanceId']
-                        instance_list.insert(0, instance_id)
+                # Retrieve ec2 instance id and add in list
+                instance_id = instance['InstanceId']
+                instance_list.insert(0, instance_id)
 
     if instance_list and schedule_action == 'stop':
         # Stop instances in list
         EC2.stop_instances(InstanceIds=instance_list)
-        LOGGER.info("Stop instance %s", instance_list)
+        LOGGER.info("Stop instances %s", instance_list)
 
     elif instance_list and schedule_action == 'start':
         # Start instances in list
         EC2.start_instances(InstanceIds=instance_list)
-        LOGGER.info("Start instance %s", instance_list)
+        LOGGER.info("Start instances %s", instance_list)
 
 
 ############################
