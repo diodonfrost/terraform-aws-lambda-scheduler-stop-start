@@ -1,5 +1,5 @@
 .terraform
 *.tfstate*
-package/*.zip
+*.zip
 .kitchen
 Gemfile.lock
