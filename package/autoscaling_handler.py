@@ -7,6 +7,7 @@ import boto3
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
+
 def autoscaling_handler(schedule_action, tag_key, tag_value):
     """
        Aws autoscaling scheduler function, suspend or
@@ -28,27 +29,23 @@ def autoscaling_handler(schedule_action, tag_key, tag_value):
         # Filter ec2 autoscalinggroup with their tag and state
         for tag in taglist:
             if tag['Key'] == tag_key and tag['Value'] == tag_value:
-
                 # Retrieve autoscaling group name
                 autoscaling_name = group['AutoScalingGroupName']
 
-                # Retrieve state of autoscaling group
-                autoscaling_state = autoscaling.describe_scaling_process_types()
-
-                if schedule_action == 'stop' and next((item for item in \
-                autoscaling_state['Processes'] if item["ProcessName"] == "Launch"), False):
-                    # Suspend autoscaling group for shutdown instance
+                # Suspend autoscaling group
+                if schedule_action == 'stop':
                     autoscaling.suspend_processes(AutoScalingGroupName=autoscaling_name)
                     LOGGER.info("Suspend autoscaling group %s", autoscaling_name)
 
                     # Terminate all instances in autoscaling group
                     for instance in autoscaling_instances['AutoScalingInstances']:
-                        autoscaling.terminate_instance_in_auto_scaling_group(\
-                        InstanceId=instance['InstanceId'], ShouldDecrementDesiredCapacity=False)
+                        autoscaling.terminate_instance_in_auto_scaling_group(
+                            InstanceId=instance['InstanceId'],
+                            ShouldDecrementDesiredCapacity=False)
                         LOGGER.info("Terminate autoscaling instance %s", instance['InstanceId'])
 
-                elif schedule_action == 'start' and next((item for item in \
-                autoscaling_state['Processes'] if item["ProcessName"] != "Launch"), False):
+                # Resume autoscaling group
+                elif schedule_action == 'start':
                     # Resume autoscaling group for startup instances
                     autoscaling.resume_processes(AutoScalingGroupName=autoscaling_name)
                     LOGGER.info("Resume autoscaling group %s", autoscaling_name)
