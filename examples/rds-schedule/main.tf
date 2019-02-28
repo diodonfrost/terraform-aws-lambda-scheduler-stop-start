@@ -3,10 +3,10 @@ provider "aws" {
 }
 
 # Create rds aurora cluster
-resource "aws_rds_cluster" "aurora" {
-  cluster_identifier  = "aurora-cluster-example"
+resource "aws_rds_cluster" "aurora_with_tag" {
+  cluster_identifier  = "aurora-cluster-with-tag"
   availability_zones  = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]
-  database_name       = "aurora"
+  database_name       = "aurorawithtag"
   master_username     = "foo"
   master_password     = "barbut8chars"
   skip_final_snapshot = "true"
@@ -15,22 +15,21 @@ resource "aws_rds_cluster" "aurora" {
   }
 }
 
-resource "aws_rds_cluster_instance" "aurora" {
-  count              = 2
-  identifier         = "aurora-cluster-example-${count.index}"
-  cluster_identifier = "${aws_rds_cluster.aurora.id}"
+resource "aws_rds_cluster_instance" "aurora_with_tag" {
+  identifier         = "aurora-cluster-with-tag"
+  cluster_identifier = "${aws_rds_cluster.aurora_with_tag.id}"
   instance_class     = "db.t2.small"
 }
 
-# Create rds mariadb instance
-resource "aws_db_instance" "mariadb" {
-  identifier          = "mariadb-instance-example"
+# Create rds mariadb instance with tag
+resource "aws_db_instance" "mariadb_with_tag" {
+  identifier          = "mariadb-instance-with-tag"
+  name                = "mariadbwithtag"
   allocated_storage   = 10
   storage_type        = "gp2"
   engine              = "mariadb"
   engine_version      = "10.3"
-  instance_class      = "db.t2.small"
-  name                = "mariadb"
+  instance_class      = "db.t2.micro"
   username            = "foo"
   password            = "foobarbaz"
   skip_final_snapshot = "true"
@@ -38,6 +37,23 @@ resource "aws_db_instance" "mariadb" {
     tostop = "true"
   }
 }
+
+# Create rds mysql instance with tag
+resource "aws_db_instance" "mysql_without_tag" {
+  identifier          = "mysql-instance-without-tag"
+  name                = "mysqlwithouttag"
+  allocated_storage   = 10
+  storage_type        = "gp2"
+  engine              = "mysql"
+  engine_version      = "5.6"
+  instance_class      = "db.t2.micro"
+  username            = "foo"
+  password            = "foobarbaz"
+  skip_final_snapshot = "true"
+}
+
+
+### Terraform modules ###
 
 module "rds-stop-friday" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
