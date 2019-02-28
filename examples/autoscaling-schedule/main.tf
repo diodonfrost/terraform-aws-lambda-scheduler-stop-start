@@ -35,13 +35,14 @@ resource "aws_launch_configuration" "as_conf" {
   instance_type = "t2.micro"
 }
 
-resource "aws_autoscaling_group" "bar" {
-  name                      = "foobar3-terraform-test"
+# Create autoscaling group with tag
+resource "aws_autoscaling_group" "bar_with_tag" {
+  name                      = "bar-with-tag"
   max_size                  = 5
   min_size                  = 2
   health_check_grace_period = 300
   health_check_type         = "EC2"
-  desired_capacity          = 4
+  desired_capacity          = 2
   force_delete              = true
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
   vpc_zone_identifier       = ["${aws_subnet.main.id}"]
@@ -52,6 +53,40 @@ resource "aws_autoscaling_group" "bar" {
     propagate_at_launch = true
   }
 }
+
+# Create autoscaling group with tag
+resource "aws_autoscaling_group" "foo_with_tag" {
+  name                      = "foo-with-tag"
+  max_size                  = 5
+  min_size                  = 2
+  health_check_grace_period = 300
+  health_check_type         = "EC2"
+  desired_capacity          = 2
+  force_delete              = true
+  launch_configuration      = "${aws_launch_configuration.as_conf.name}"
+  vpc_zone_identifier       = ["${aws_subnet.main.id}"]
+
+  tag {
+    key                 = "tostop"
+    value               = "true"
+    propagate_at_launch = false
+  }
+}
+
+# Create autoscaling group without tag
+resource "aws_autoscaling_group" "foo_without_tag" {
+  name                      = "foo-without-tag"
+  max_size                  = 5
+  min_size                  = 2
+  health_check_grace_period = 300
+  health_check_type         = "EC2"
+  desired_capacity          = 2
+  force_delete              = true
+  launch_configuration      = "${aws_launch_configuration.as_conf.name}"
+  vpc_zone_identifier       = ["${aws_subnet.main.id}"]
+}
+
+### Terraform modules ###
 
 module "autoscaling-stop-friday" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
