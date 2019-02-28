@@ -18,14 +18,23 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "instance_with_tag" {
+  count         = "3"
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
-
-  tags = {
+  tags          = {
     tostop = "true"
   }
 }
+
+resource "aws_instance" "instance_without_tag" {
+  count         = "2"
+  ami           = "${data.aws_ami.ubuntu.id}"
+  instance_type = "t2.micro"
+}
+
+
+### Terraform modules ###
 
 module "ec2-stop-friday" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
