@@ -26,26 +26,29 @@ def autoscaling_handler(schedule_action, tag_key, tag_value):
         response = autoscaling.describe_tags()
         taglist = response['Tags']
 
-        # Filter ec2 autoscalinggroup with their tag and state
+        # Check if the right tag is present
+        instance_tag = False
         for tag in taglist:
             if tag['Key'] == tag_key and tag['Value'] == tag_value:
-                # Retrieve autoscaling group name
-                autoscaling_name = group['AutoScalingGroupName']
+                instance_tag = True
 
-                # Suspend autoscaling group
-                if schedule_action == 'stop':
-                    autoscaling.suspend_processes(AutoScalingGroupName=autoscaling_name)
-                    LOGGER.info("Suspend autoscaling group %s", autoscaling_name)
+        # Retrieve autoscaling group name
+        autoscaling_name = group['AutoScalingGroupName']
 
-                    # Terminate all instances in autoscaling group
-                    for instance in autoscaling_instances['AutoScalingInstances']:
-                        autoscaling.terminate_instance_in_auto_scaling_group(
-                            InstanceId=instance['InstanceId'],
-                            ShouldDecrementDesiredCapacity=False)
-                        LOGGER.info("Terminate autoscaling instance %s", instance['InstanceId'])
+        # Suspend autoscaling group if the right tag is present
+        if schedule_action == 'stop' and instance_tag:
+            autoscaling.suspend_processes(AutoScalingGroupName=autoscaling_name)
+            LOGGER.info("Suspend autoscaling group %s", autoscaling_name)
 
-                # Resume autoscaling group
-                elif schedule_action == 'start':
-                    # Resume autoscaling group for startup instances
-                    autoscaling.resume_processes(AutoScalingGroupName=autoscaling_name)
-                    LOGGER.info("Resume autoscaling group %s", autoscaling_name)
+            # Terminate all instances in autoscaling group
+            for instance in autoscaling_instances['AutoScalingInstances']:
+                autoscaling.terminate_instance_in_auto_scaling_group(
+                    InstanceId=instance['InstanceId'],
+                    ShouldDecrementDesiredCapacity=False)
+                LOGGER.info("Terminate autoscaling instance %s", instance['InstanceId'])
+
+        # Resume autoscaling group if the right tag is present
+        elif schedule_action == 'start' and instance_tag:
+            # Resume autoscaling group for startup instances
+            autoscaling.resume_processes(AutoScalingGroupName=autoscaling_name)
+            LOGGER.info("Resume autoscaling group %s", autoscaling_name)
