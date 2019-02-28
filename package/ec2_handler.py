@@ -23,7 +23,11 @@ def ec2_handler(schedule_action, tag_key, tag_value):
 
     # List instances with specific tag
     reservations = ec2.describe_instances(
-        Filters=[{'Name': 'tag:'+tag_key, 'Values': [tag_value]}])
+        Filters=[{'Name': 'tag:'+tag_key, 'Values': [tag_value]},
+                 {'Name': 'instance-state-name', 'Values': ['pending',
+                                                            'running',
+                                                            'stopping',
+                                                            'stopped']}])
 
     # Retrieve ec2 instances tags
     for reservation in reservations['Reservations']:
@@ -33,16 +37,16 @@ def ec2_handler(schedule_action, tag_key, tag_value):
             instance_id = instance['InstanceId']
             instance_list.insert(0, instance_id)
 
+    # Stop ec2 instances in list
     if schedule_action == 'stop':
-        # Stop instances in list
         try:
             ec2.stop_instances(InstanceIds=instance_list)
             LOGGER.info("Stop instances %s", instance_list)
         except ClientError:
             print('No instance found')
 
+    # Start ec2 instances in list
     elif schedule_action == 'start':
-        # Start instances in list
         try:
             ec2.start_instances(InstanceIds=instance_list)
             LOGGER.info("Start instances %s", instance_list)
