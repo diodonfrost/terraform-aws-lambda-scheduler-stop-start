@@ -4,28 +4,28 @@ provider "aws" {
   region = "eu-west-3"
 }
 
-module "ec2-stop-friday" {
+module "aws-stop-friday" {
   source                         = "../.."
-  name                           = "stop-ec2"
+  name                           = "stop-aws"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
   ec2_schedule                   = "true"
-  rds_schedule                   = "false"
-  autoscaling_schedule           = "false"
+  rds_schedule                   = "true"
+  autoscaling_schedule           = "true"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
   }
 }
 
-module "ec2-start-monday" {
+module "aws-start-monday" {
   source                         = "../.."
-  name                           = "start-ec2"
+  name                           = "start-aws"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   ec2_schedule                   = "true"
-  rds_schedule                   = "false"
-  autoscaling_schedule           = "false"
+  rds_schedule                   = "true"
+  autoscaling_schedule           = "true"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
