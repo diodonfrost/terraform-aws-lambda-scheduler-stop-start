@@ -17,38 +17,38 @@ def ec2_handler(schedule_action, tag_key, tag_value):
 
     # Define the connection
     ec2 = boto3.client('ec2')
-
-    # Initialize instance list
-    instance_list = []
-
-    # List instances with specific tag
-    reservations = ec2.describe_instances(
+    paginator = ec2.get_paginator('describe_instances')
+    page_iterator = paginator.paginate(
         Filters=[{'Name': 'tag:'+tag_key, 'Values': [tag_value]},
                  {'Name': 'instance-state-name', 'Values': ['pending',
                                                             'running',
                                                             'stopping',
                                                             'stopped']}])
 
-    # Retrieve ec2 instances tags
-    for reservation in reservations['Reservations']:
-        for instance in reservation['Instances']:
+    # Initialize instance list
+    instance_list = []
 
-            # Retrieve ec2 instance id and add in list
-            instance_id = instance['InstanceId']
-            instance_list.insert(0, instance_id)
+    # Retrieve ec2 instances
+    for page in page_iterator:
+        for reservation in page['Reservations']:
+            for instance in reservation['Instances']:
 
-    # Stop ec2 instances in list
-    if schedule_action == 'stop':
-        try:
-            ec2.stop_instances(InstanceIds=instance_list)
-            LOGGER.info("Stop instances %s", instance_list)
-        except ClientError:
-            print('No instance found')
+                # Retrieve ec2 instance id and add in list
+                instance_id = instance['InstanceId']
+                instance_list.insert(0, instance_id)
 
-    # Start ec2 instances in list
-    elif schedule_action == 'start':
-        try:
-            ec2.start_instances(InstanceIds=instance_list)
-            LOGGER.info("Start instances %s", instance_list)
-        except ClientError:
-            print('No instance found')
+        # Stop ec2 instances in list
+        if schedule_action == 'stop':
+            try:
+                ec2.stop_instances(InstanceIds=instance_list)
+                LOGGER.info("Stop instances %s", instance_list)
+            except ClientError:
+                print('No instance found')
+
+        # Start ec2 instances in list
+        elif schedule_action == 'start':
+            try:
+                ec2.start_instances(InstanceIds=instance_list)
+                LOGGER.info("Start instances %s", instance_list)
+            except ClientError:
+                print('No instance found')
