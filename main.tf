@@ -44,7 +44,8 @@ resource "aws_iam_policy" "schedule_autoscaling" {
             "autoscaling:ResumeProcesses",
             "autoscaling:UpdateAutoScalingGroup",
             "autoscaling:DescribeAutoScalingInstances",
-            "autoscaling:TerminateInstanceInAutoScalingGroup"
+            "autoscaling:TerminateInstanceInAutoScalingGroup",
+            "ec2:TerminateInstances"
         ],
         "Resource": "*",
         "Effect": "Allow"
