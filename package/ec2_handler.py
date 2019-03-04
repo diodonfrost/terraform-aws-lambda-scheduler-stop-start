@@ -17,6 +17,35 @@ def ec2_handler(schedule_action, tag_key, tag_value):
 
     # Define the connection
     ec2 = boto3.client('ec2')
+
+    # Retrieve instance list
+    ec2_instance_list = ec2_list_instances(tag_key, tag_value)
+
+    # Stop ec2 instances in list
+    if schedule_action == 'stop':
+        try:
+            ec2.stop_instances(InstanceIds=ec2_instance_list)
+            LOGGER.info("Stop instances %s", ec2_instance_list)
+        except ClientError:
+            print('No instance found')
+
+    # Start ec2 instances in list
+    elif schedule_action == 'start':
+        try:
+            ec2.start_instances(InstanceIds=ec2_instance_list)
+            LOGGER.info("Start instances %s", ec2_instance_list)
+        except ClientError:
+            print('No instance found')
+
+
+def ec2_list_instances(tag_key, tag_value):
+    """
+       Aws ec2 instance list function, list name of all ec2 instances
+       all ec2 instances with specific tag and return it in list.
+    """
+
+    # Define the connection
+    ec2 = boto3.client('ec2')
     paginator = ec2.get_paginator('describe_instances')
     page_iterator = paginator.paginate(
         Filters=[{'Name': 'tag:'+tag_key, 'Values': [tag_value]},
@@ -37,18 +66,4 @@ def ec2_handler(schedule_action, tag_key, tag_value):
                 instance_id = instance['InstanceId']
                 instance_list.insert(0, instance_id)
 
-        # Stop ec2 instances in list
-        if schedule_action == 'stop':
-            try:
-                ec2.stop_instances(InstanceIds=instance_list)
-                LOGGER.info("Stop instances %s", instance_list)
-            except ClientError:
-                print('No instance found')
-
-        # Start ec2 instances in list
-        elif schedule_action == 'start':
-            try:
-                ec2.start_instances(InstanceIds=instance_list)
-                LOGGER.info("Start instances %s", instance_list)
-            except ClientError:
-                print('No instance found')
+    return instance_list
