@@ -18,8 +18,8 @@ module "stop_ec2_instance" {
   cloudwatch_schedule_expression = "cron(0 00 ? * FRI *)"
   schedule_action                = "stop"
   ec2_schedule                   = "true"
-  rds_schedule                   = "true"
-  autoscaling_schedule           = "true"
+  rds_schedule                   = "false"
+  autoscaling_schedule           = "false"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
