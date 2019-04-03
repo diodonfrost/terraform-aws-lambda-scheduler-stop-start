@@ -15,7 +15,7 @@ output "scheduler_lambda_arn" {
 
 output "scheduler_function_name" {
   description = "The name of the Lambda function"
-  value       ="${aws_lambda_function.stop_start.function_name}"
+  value       = "${aws_lambda_function.stop_start.function_name}"
 }
 
 output "scheduler_lambda_invoke_arn" {

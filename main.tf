@@ -125,7 +125,6 @@ resource "aws_iam_role_policy_attachment" "rds" {
   policy_arn = "${aws_iam_policy.schedule_rds.arn}"
 }
 
-
 ################################################
 #
 #            LAMBDA FUNCTION
@@ -148,6 +147,7 @@ resource "aws_lambda_function" "stop_start" {
   source_code_hash = "${data.archive_file.convert_py_to_zip.output_base64sha256}"
   runtime          = "python3.7"
   timeout          = "600"
+
   environment {
     variables = {
       SCHEDULE_ACTION      = "${var.schedule_action}"
@@ -181,9 +181,9 @@ resource "aws_cloudwatch_event_target" "lambda_event_target" {
 
 # Allow cloudwatch to invoke lambda scheduler
 resource "aws_lambda_permission" "allow_cloudwatch_scheduler" {
-    statement_id  = "AllowExecutionFromCloudWatch"
-    action        = "lambda:InvokeFunction"
-    principal     = "events.amazonaws.com"
-    function_name = "${aws_lambda_function.stop_start.function_name}"
-    source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  principal     = "events.amazonaws.com"
+  function_name = "${aws_lambda_function.stop_start.function_name}"
+  source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
 }

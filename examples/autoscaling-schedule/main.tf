@@ -79,7 +79,8 @@ module "autoscaling-stop-friday" {
   ec2_schedule                   = "false"
   rds_schedule                   = "false"
   autoscaling_schedule           = "true"
-  resources_tag                  = {
+
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }
@@ -93,7 +94,8 @@ module "autoscaling-start-monday" {
   ec2_schedule                   = "false"
   rds_schedule                   = "false"
   autoscaling_schedule           = "true"
-  resources_tag                  = {
+
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }

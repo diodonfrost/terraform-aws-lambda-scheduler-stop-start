@@ -10,7 +10,8 @@ resource "aws_rds_cluster" "aurora_with_tag" {
   master_username     = "foo"
   master_password     = "barbut8chars"
   skip_final_snapshot = "true"
-  tags                = {
+
+  tags = {
     tostop = "true"
   }
 }
@@ -33,7 +34,8 @@ resource "aws_db_instance" "mariadb_with_tag" {
   username            = "foo"
   password            = "foobarbaz"
   skip_final_snapshot = "true"
-  tags                = {
+
+  tags = {
     tostop = "true"
   }
 }
@@ -52,7 +54,6 @@ resource "aws_db_instance" "mysql_without_tag" {
   skip_final_snapshot = "true"
 }
 
-
 ### Terraform modules ###
 
 module "rds-stop-friday" {
@@ -63,7 +64,8 @@ module "rds-stop-friday" {
   ec2_schedule                   = "false"
   rds_schedule                   = "true"
   autoscaling_schedule           = "false"
-  resources_tag                  = {
+
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }
@@ -77,7 +79,8 @@ module "rds-start-monday" {
   ec2_schedule                   = "false"
   rds_schedule                   = "true"
   autoscaling_schedule           = "false"
-  resources_tag                  = {
+
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }

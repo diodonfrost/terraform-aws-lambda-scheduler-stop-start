@@ -22,7 +22,8 @@ resource "aws_instance" "instance_with_tag" {
   count         = "3"
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
-  tags          = {
+
+  tags = {
     tostop = "true"
   }
 }
@@ -32,7 +33,6 @@ resource "aws_instance" "instance_without_tag" {
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
 }
-
 
 ### Terraform modules ###
 
@@ -44,7 +44,8 @@ module "ec2-stop-friday" {
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
-  resources_tag                  = {
+
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }
@@ -58,7 +59,8 @@ module "ec2-start-monday" {
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
-  resources_tag                  = {
+
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }
