@@ -1,0 +1,46 @@
+---
+services:
+  - docker
+
+env:
+  global:
+    - AWS_REGION='eu-west-1'
+    - TF_VAR_region=${AWS_REGION}
+    - TF_WARN_OUTPUT_ERRORS=1
+
+before_script:
+  # Retrieve the lastest version of Terraform
+  - export TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')
+
+  # Download the lastest version of Terraform
+  - curl --silent --output terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+  - unzip terraform.zip ; rm -f terraform.zip; chmod +x terraform
+
+  # Add Terraform binary to Linux PATH
+  - mkdir -p ${HOME}/bin ; export PATH=${PATH}:${HOME}/bin; mv terraform ${HOME}/bin/
+  - terraform -v
+
+script:
+  # Download Terraform requirements
+  - terraform init
+
+  # Rewrites config files to canonical format
+  - terraform fmt -check=true
+
+  # Test Terraform module
+  - >
+    terraform validate \
+      -var "region=${AWS_REGION}" \
+      -var "name=stop-aws-resources" \
+      -var "cloudwatch_schedule_expression=cron(0 22 ? * MON-FRI *)" \
+      -var "schedule_action=stop" \
+      -var "ec2_schedule=true" \
+      -var "rds_schedule=true" \
+      -var "autoscaling_schedule=true"
+
+  # Test Terraform fixture example
+  - cd examples/test_fixture
+  - terraform init
+  - terraform fmt -check=true
+  - terraform validate
+  - terraform -v
