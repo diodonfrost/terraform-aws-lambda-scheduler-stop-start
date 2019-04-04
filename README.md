@@ -1,5 +1,7 @@
 # terraform-aws-lambda-scheduler-stop-start
 
+[![Build Status](https://api.travis-ci.org/diodonfrost/terraform-aws-lambda-scheduler-stop-start.svg?branch=master)](https://travis-ci.org/diodonfrost/terraform-aws-lambda-scheduler-stop-start)
+
 Terraform module which create lambda scheduler for stop and start resources on AWS
 
 ## Features
