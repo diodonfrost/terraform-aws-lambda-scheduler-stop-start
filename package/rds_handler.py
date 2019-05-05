@@ -9,7 +9,7 @@ LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
 
-def rds_handler(schedule_action, tag_key, tag_value):
+def rds_schedule(schedule_action, tag_key, tag_value):
     """
        Aws rds scheduler function, stop or
        start cluster and  rds instances by using

@@ -9,7 +9,7 @@ LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
 
-def autoscaling_handler(schedule_action, tag_key, tag_value):
+def autoscaling_schedule(schedule_action, tag_key, tag_value):
     """
        Aws autoscaling scheduler function, suspend or
        resume all scaling processes by using the tag defined.
