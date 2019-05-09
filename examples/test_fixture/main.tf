@@ -1,7 +1,7 @@
 # Deploy two lambda for testing with awspec
 
 provider "aws" {
-  region = "eu-west-3"
+  region = "eu-west-1"
 }
 
 module "aws-stop-friday" {
