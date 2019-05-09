@@ -1,3 +1,10 @@
+# Freeze aws provider version
+terraform {
+  required_providers {
+    aws = ">= 2.9.0"
+  }
+}
+
 ################################################
 #
 #            IAM CONFIGURATION
