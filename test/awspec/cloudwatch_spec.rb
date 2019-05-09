@@ -4,8 +4,8 @@ require 'awspec'
 require 'aws-sdk'
 require 'rhcl'
 
-cloudwatch_name = ['trigger-lambda-scheduler-start-ec2',
-                   'trigger-lambda-scheduler-stop-ec2']
+cloudwatch_name = ['trigger-lambda-scheduler-start-aws',
+                   'trigger-lambda-scheduler-stop-aws']
 
 cloudwatch_name.each do |name|
   describe cloudwatch_event(name) do

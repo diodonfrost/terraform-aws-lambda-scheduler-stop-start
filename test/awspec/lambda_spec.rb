@@ -4,8 +4,8 @@ require 'awspec'
 require 'aws-sdk'
 require 'rhcl'
 
-lambda_names = ['start-ec2',
-               'stop-ec2']
+lambda_names = ['start-aws',
+               'stop-aws']
 
 # Lambda function should be created
 lambda_names.each do |name|
