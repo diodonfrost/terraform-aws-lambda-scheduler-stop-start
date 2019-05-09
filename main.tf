@@ -36,7 +36,7 @@ EOF
 # Create policy for manage autoscaling
 resource "aws_iam_role_policy" "schedule_autoscaling" {
   name = "${var.name}-autoscaling-custom-policy-scheduler"
-  role = "${aws_iam_role.scheduler_lambda.id}" 
+  role = "${aws_iam_role.scheduler_lambda.id}"
 
   policy = <<EOF
 {
