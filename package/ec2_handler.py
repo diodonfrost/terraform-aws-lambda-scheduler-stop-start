@@ -9,7 +9,7 @@ LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
 
-def ec2_handler(schedule_action, tag_key, tag_value):
+def ec2_schedule(schedule_action, tag_key, tag_value):
     """
        Aws ec2 scheduler function, stop or
        start ec2 instances by using the tag defined.

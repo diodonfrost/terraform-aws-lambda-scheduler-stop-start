@@ -2,9 +2,9 @@
 
 import os
 
-from autoscaling_handler import autoscaling_handler
-from ec2_handler import ec2_handler
-from rds_handler import rds_handler
+import autoscaling_handler
+import ec2_handler
+import rds_handler
 
 # Retrieve variables from Lmanda ENVIRONMENT
 schedule_action = os.getenv('SCHEDULE_ACTION', 'stop')
@@ -19,10 +19,13 @@ def lambda_handler(event, context):
     """ Main function entrypoint for lambda """
 
     if autoscaling_schedule == 'true':
-        autoscaling_handler(schedule_action, tag_key, tag_value)
+        autoscaling_handler.autoscaling_schedule(
+            schedule_action, tag_key, tag_value)
 
     if ec2_schedule == 'true':
-        ec2_handler(schedule_action, tag_key, tag_value)
+        ec2_handler.ec2_schedule(
+            schedule_action, tag_key, tag_value)
 
     if rds_schedule == 'true':
-        rds_handler(schedule_action, tag_key, tag_value)
+        rds_handler.rds_schedule(
+            schedule_action, tag_key, tag_value)

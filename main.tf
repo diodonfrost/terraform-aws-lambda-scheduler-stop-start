@@ -1,3 +1,10 @@
+# Freeze aws provider version
+terraform {
+  required_providers {
+    aws = ">= 2.9.0"
+  }
+}
+
 ################################################
 #
 #            IAM CONFIGURATION
@@ -27,9 +34,9 @@ EOF
 }
 
 # Create policy for manage autoscaling
-resource "aws_iam_policy" "schedule_autoscaling" {
-  name        = "${var.name}-autoscaling-custom-policy-scheduler"
-  description = "allow shutdown and startup autoscaling instances"
+resource "aws_iam_role_policy" "schedule_autoscaling" {
+  name = "${var.name}-autoscaling-custom-policy-scheduler"
+  role = "${aws_iam_role.scheduler_lambda.id}"
 
   policy = <<EOF
 {
@@ -56,9 +63,9 @@ EOF
 }
 
 # Create custom policy for manage ec2
-resource "aws_iam_policy" "schedule_ec2" {
-  name        = "${var.name}-ec2-custom-policy-scheduler"
-  description = "allow shutdown and startup ec2 instances"
+resource "aws_iam_role_policy" "schedule_ec2" {
+  name = "${var.name}-ec2-custom-policy-scheduler"
+  role = "${aws_iam_role.scheduler_lambda.id}"
 
   policy = <<EOF
 {
@@ -81,9 +88,9 @@ EOF
 }
 
 # Create custom policy for manage rds
-resource "aws_iam_policy" "schedule_rds" {
-  name        = "${var.name}-rds-custom-policy-scheduler"
-  description = "allow shutdown and startup rds instances"
+resource "aws_iam_role_policy" "schedule_rds" {
+  name = "${var.name}-rds-custom-policy-scheduler"
+  role = "${aws_iam_role.scheduler_lambda.id}"
 
   policy = <<EOF
 {
@@ -105,24 +112,6 @@ resource "aws_iam_policy" "schedule_rds" {
   ]
 }
 EOF
-}
-
-# Attach custom policy autoscaling to role
-resource "aws_iam_role_policy_attachment" "autoscaling" {
-  role       = "${aws_iam_role.scheduler_lambda.name}"
-  policy_arn = "${aws_iam_policy.schedule_autoscaling.arn}"
-}
-
-# Attach custom policy ec2 to role
-resource "aws_iam_role_policy_attachment" "ec2" {
-  role       = "${aws_iam_role.scheduler_lambda.name}"
-  policy_arn = "${aws_iam_policy.schedule_ec2.arn}"
-}
-
-# Attach custom policy rds to role
-resource "aws_iam_role_policy_attachment" "rds" {
-  role       = "${aws_iam_role.scheduler_lambda.name}"
-  policy_arn = "${aws_iam_policy.schedule_rds.arn}"
 }
 
 ################################################

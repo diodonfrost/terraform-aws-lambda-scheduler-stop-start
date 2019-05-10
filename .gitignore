@@ -3,3 +3,4 @@
 *.zip
 .kitchen
 Gemfile.lock
+terraform.tfstate.d
