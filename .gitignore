@@ -4,3 +4,4 @@
 .kitchen
 Gemfile.lock
 terraform.tfstate.d
+.scannerwork
