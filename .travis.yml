@@ -11,10 +11,12 @@ env:
     - TF_WARN_OUTPUT_ERRORS=1
 
 install:
-  # Install the latest version of terraform with ansible
+  # Install the latest version of terraform with ansible and sonar-scanner
   - sudo pip install ansible
   - sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
+  - sudo ansible-galaxy install diodonfrost.sonar_scanner && sudo ln -s ~/.ansible/roles/diodonfrost.sonar_scanner ~/.ansible/roles/ansible-role-sonar-scanner
   - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml
+  - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-sonar-scanner tests/test.yml
 
 before_script:
   - terraform -version
@@ -43,3 +45,14 @@ script:
   - terraform fmt -check=true
   - terraform validate
   - terraform -v
+
+after_success:
+  # Run sonar-scanner (https://sonarcloud.io/dashboard?id=diodonfrost_terraform-aws-lambda-scheduler-stop-start)
+  - cd ../..
+  - >
+    sonar-scanner \
+      -Dsonar.projectKey=diodonfrost_terraform-aws-lambda-scheduler-stop-start \
+      -Dsonar.organization=diodonfrost-github \
+      -Dsonar.sources=. \
+      -Dsonar.host.url=https://sonarcloud.io \
+      -Dsonar.login=${SONAR_TOKEN}
