@@ -21,6 +21,9 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
 
     autoscaling_group_list = autoscaling_list_groups(tag_key, tag_value)
 
+    # Retrieve instances ID in autoscaling group
+    instance_list = autoscaling_list_instances(autoscaling_group_list)
+
     # Suspend autoscaling group and terminate all its instances
     if schedule_action == 'stop':
         for scaling_name in autoscaling_group_list:
@@ -29,13 +32,10 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
             autoscaling.suspend_processes(AutoScalingGroupName=scaling_name)
             LOGGER.info("Suspend autoscaling group %s", scaling_name)
 
-        # Retrieve instances ID in autoscaling group
-        instance_list = autoscaling_list_instances(autoscaling_group_list)
-
-        # Terminate all instances in autoscaling group
+        # Stop all instances in autoscaling group
         try:
-            ec2.terminate_instances(InstanceIds=instance_list)
-            LOGGER.info("Terminate autoscaling instances %s", instance_list)
+            ec2.stop_instances(InstanceIds=instance_list)
+            LOGGER.info("Stop autoscaling instances %s", instance_list)
         except ClientError:
             print('No instance found')
 
@@ -46,6 +46,13 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
             # Resume autoscaling group
             autoscaling.resume_processes(AutoScalingGroupName=scaling_name)
             LOGGER.info("Resume autoscaling group %s", scaling_name)
+
+            # Start all instances in autoscaling group
+            try:
+                ec2.start_instances(InstanceIds=instance_list)
+                LOGGER.info("Start autoscaling instances %s", instance_list)
+            except ClientError:
+                print('No instance found')
 
 
 def autoscaling_list_groups(tag_key, tag_value):
