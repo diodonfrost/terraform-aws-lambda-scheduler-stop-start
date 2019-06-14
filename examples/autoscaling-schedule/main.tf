@@ -1,9 +1,5 @@
 # Terraform autoscaling group with lambda scheduler
 
-provider "aws" {
-  region = "eu-west-1"
-}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 

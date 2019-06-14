@@ -1,6 +1,4 @@
-provider "aws" {
-  region = "eu-west-1"
-}
+# Terraform ec2 instance with lambda scheduler
 
 data "aws_ami" "ubuntu" {
   most_recent = true

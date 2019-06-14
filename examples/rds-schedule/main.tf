@@ -1,11 +1,12 @@
-provider "aws" {
-  region = "eu-west-1"
-}
+# Terraform rds with lambda scheduler
+
+# Get all availability zones
+data "aws_availability_zones" "available" {}
 
 # Create rds aurora cluster
 resource "aws_rds_cluster" "aurora_with_tag" {
   cluster_identifier  = "aurora-cluster-with-tag"
-  availability_zones  = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]
+  availability_zones  = ["data.aws_availability_zones.availability.names"]
   database_name       = "aurorawithtag"
   master_username     = "foo"
   master_password     = "barbut8chars"
