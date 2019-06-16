@@ -18,17 +18,17 @@ resource "aws_iam_role" "scheduler_lambda" {
 
   assume_role_policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "Service": "lambda.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
 }
 EOF
 }
@@ -40,24 +40,24 @@ resource "aws_iam_role_policy" "schedule_autoscaling" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-        "Action": [
-            "autoscaling:DescribeScalingProcessTypes",
-            "autoscaling:DescribeAutoScalingGroups",
-            "autoscaling:DescribeTags",
-            "autoscaling:SuspendProcesses",
-            "autoscaling:ResumeProcesses",
-            "autoscaling:UpdateAutoScalingGroup",
-            "autoscaling:DescribeAutoScalingInstances",
-            "autoscaling:TerminateInstanceInAutoScalingGroup",
-            "ec2:TerminateInstances"
-        ],
-        "Resource": "*",
-        "Effect": "Allow"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "autoscaling:DescribeScalingProcessTypes",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeTags",
+                "autoscaling:SuspendProcesses",
+                "autoscaling:ResumeProcesses",
+                "autoscaling:UpdateAutoScalingGroup",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:TerminateInstances"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
 }
 EOF
 }
@@ -69,20 +69,20 @@ resource "aws_iam_role_policy" "schedule_ec2" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-        "Action": [
-            "ec2:DescribeInstances",
-            "ec2:DescribeInstanceStatus",
-            "ec2:StopInstances",
-            "ec2:StartInstances",
-            "ec2:DescribeTags"
-        ],
-        "Resource": "*",
-        "Effect": "Allow"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus",
+                "ec2:StopInstances",
+                "ec2:StartInstances",
+                "ec2:DescribeTags"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
 }
 EOF
 }
@@ -94,22 +94,22 @@ resource "aws_iam_role_policy" "schedule_rds" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "rds:ListTagsForResource",
-        "rds:DescribeDBClusters",
-        "rds:StartDBCluster",
-        "rds:StopDBCluster",
-        "rds:DescribeDBInstances",
-        "rds:StartDBInstance",
-        "rds:StopDBInstance"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "rds:ListTagsForResource",
+                "rds:DescribeDBClusters",
+                "rds:StartDBCluster",
+                "rds:StopDBCluster",
+                "rds:DescribeDBInstances",
+                "rds:StartDBInstance",
+                "rds:StopDBInstance"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
 }
 EOF
 }
