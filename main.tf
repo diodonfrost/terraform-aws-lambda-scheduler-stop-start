@@ -114,6 +114,28 @@ resource "aws_iam_role_policy" "schedule_rds" {
 EOF
 }
 
+# Allow lambda cloudwatch logs
+resource "aws_iam_role_policy" "lambda_logging" {
+  name = "${var.name}-lambda-logging"
+  role = "${aws_iam_role.scheduler_lambda.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
 ################################################
 #
 #            LAMBDA FUNCTION
@@ -175,4 +197,10 @@ resource "aws_lambda_permission" "allow_cloudwatch_scheduler" {
   principal     = "events.amazonaws.com"
   function_name = "${aws_lambda_function.stop_start.function_name}"
   source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
+}
+
+# Enable lambda cloudwatch logs
+resource "aws_cloudwatch_log_group" "lambda_Logging" {
+  name              = "/aws/lambda/${var.name}"
+  retention_in_days = 14
 }

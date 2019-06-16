@@ -11,6 +11,7 @@ Terraform module which create lambda scheduler for stop and start resources on A
 *   rds clusters scheduling
 *   rds instances scheduling
 *   autoscalings scheduling
+*   Aws cloudWatch logs for lambda
 
 ## Usage
 ```hcl
