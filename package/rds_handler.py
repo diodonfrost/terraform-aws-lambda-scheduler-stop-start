@@ -4,10 +4,6 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 
-# Setup simple logging for INFO
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.INFO)
-
 
 def rds_schedule(schedule_action, tag_key, tag_value):
     """
@@ -28,23 +24,25 @@ def rds_schedule(schedule_action, tag_key, tag_value):
         if schedule_action == 'stop':
             try:
                 rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
-                LOGGER.info("Stop rds cluster %s", cluster_id)
+                print("Stop rds cluster {0}".format(cluster_id))
             except ClientError as e:
-                if e.response['Error']['Code'] == 'InvalidDBClusterStateFault':
-                    LOGGER.info("rds cluster %s is not started", cluster_id)
+                error_code = e.response['Error']['Code']
+                if error_code == 'InvalidDBClusterStateFault':
+                    logging.info("rds cluster %s is not started", cluster_id)
                 else:
-                    print("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s" % e)
 
-        # Stop rds cluster
+        # Start rds cluster
         elif schedule_action == 'start':
             try:
                 rds.start_db_cluster(DBClusterIdentifier=cluster_id)
-                LOGGER.info("Start rds cluster %s", cluster_id)
+                print("Start rds cluster {0}".format(cluster_id))
             except ClientError as e:
-                if e.response['Error']['Code'] == 'InvalidDBClusterStateFault':
-                    LOGGER.info("rds cluster %s is not stopped", cluster_id)
+                error_code = e.response['Error']['Code']
+                if error_code == 'InvalidDBClusterStateFault':
+                    logging.info("rds cluster %s is not stopped", cluster_id)
                 else:
-                    print("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s" % e)
 
     # Retrieve rds cluster id
     instance_list = rds_list_instances(tag_key, tag_value)
@@ -55,23 +53,25 @@ def rds_schedule(schedule_action, tag_key, tag_value):
         if schedule_action == 'stop':
             try:
                 rds.stop_db_instance(DBInstanceIdentifier=instance_id)
-                LOGGER.info("Stop rds instance %s", instance_id)
+                print("Stop rds instance {0}".format(instance_id))
             except ClientError as e:
-                if e.response['Error']['Code'] == 'InvalidDBInstanceState':
-                    LOGGER.info("rds instance %s is not started", instance_id)
+                error_code = e.response['Error']['Code']
+                if error_code == 'InvalidDBInstanceState':
+                    logging.info("rds instance %s is not started", instance_id)
                 else:
-                    print("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s" % e)
 
         # Start rds instance
         elif schedule_action == 'start':
             try:
                 rds.start_db_instance(DBInstanceIdentifier=instance_id)
-                LOGGER.info("Start rds instance %s", instance_id)
+                print("Start rds instance {0}".format(instance_id))
             except ClientError as e:
-                if e.response['Error']['Code'] == 'InvalidDBInstanceState':
-                    LOGGER.info("rds instance %s is not stopped", instance_id)
+                error_code = e.response['Error']['Code']
+                if error_code == 'InvalidDBInstanceState':
+                    logging.info("rds instance %s is not stopped", instance_id)
                 else:
-                    print("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s" % e)
 
 
 def rds_list_clusters(tag_key, tag_value):

@@ -4,10 +4,6 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 
-# Setup simple logging for INFO
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.INFO)
-
 
 def autoscaling_schedule(schedule_action, tag_key, tag_value):
     """
@@ -26,33 +22,39 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
 
     # Suspend autoscaling group and terminate all its instances
     if schedule_action == 'stop':
-        for scaling_name in autoscaling_group_list:
+        for asg_name in autoscaling_group_list:
 
             # Suspend autoscaling group
-            autoscaling.suspend_processes(AutoScalingGroupName=scaling_name)
-            LOGGER.info("Suspend autoscaling group %s", scaling_name)
+            try:
+                autoscaling.suspend_processes(AutoScalingGroupName=asg_name)
+                print("Suspend autoscaling group {0}".format(asg_name))
+            except ClientError as e:
+                logging.error("Unexpected error: %s" % e)
 
         # Stop all instances in autoscaling group
         try:
             ec2.stop_instances(InstanceIds=instance_list)
-            LOGGER.info("Stop autoscaling instances %s", instance_list)
-        except ClientError:
-            print('No instance found')
+            print("Stop autoscaling instances {0}".format(instance_list))
+        except ClientError as e:
+            logging.error("Unexpected error: %s" % e)
 
     # Resume autoscaling group
     elif schedule_action == 'start':
-        for scaling_name in autoscaling_group_list:
+        for asg_name in autoscaling_group_list:
 
             # Resume autoscaling group
-            autoscaling.resume_processes(AutoScalingGroupName=scaling_name)
-            LOGGER.info("Resume autoscaling group %s", scaling_name)
-
-            # Start all instances in autoscaling group
             try:
-                ec2.start_instances(InstanceIds=instance_list)
-                LOGGER.info("Start autoscaling instances %s", instance_list)
-            except ClientError:
-                print('No instance found')
+                autoscaling.resume_processes(AutoScalingGroupName=asg_name)
+                print("Resume autoscaling group {0}".format(asg_name))
+            except ClientError as e:
+                logging.error("Unexpected error: %s" % e)
+
+        # Start all instances in autoscaling group
+        try:
+            ec2.start_instances(InstanceIds=instance_list)
+            print("Start autoscaling instances {0}".format(instance_list))
+        except ClientError as e:
+            logging.error("Unexpected error: %s" % e)
 
 
 def autoscaling_list_groups(tag_key, tag_value):

@@ -4,10 +4,6 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 
-# Setup simple logging for INFO
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.INFO)
-
 
 def ec2_schedule(schedule_action, tag_key, tag_value):
     """
@@ -25,17 +21,17 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
     if schedule_action == 'stop':
         try:
             ec2.stop_instances(InstanceIds=ec2_instance_list)
-            LOGGER.info("Stop instances %s", ec2_instance_list)
-        except ClientError:
-            print('No instance found')
+            print("Stop instances {0}".format(ec2_instance_list))
+        except ClientError as e:
+            logging.error("Unexpected error: %s" % e)
 
     # Start ec2 instances in list
     elif schedule_action == 'start':
         try:
             ec2.start_instances(InstanceIds=ec2_instance_list)
-            LOGGER.info("Start instances %s", ec2_instance_list)
-        except ClientError:
-            print('No instance found')
+            print("Start instances {0}".format(ec2_instance_list))
+        except ClientError as e:
+            logging.error("Unexpected error: %s" % e)
 
 
 def ec2_list_instances(tag_key, tag_value):
