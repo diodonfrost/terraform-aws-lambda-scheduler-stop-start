@@ -4,9 +4,6 @@ language: python
 python:
   - "3.7"
 
-git:
-  depth: false
-
 env:
   global:
     - AWS_REGION='eu-west-1'
@@ -48,14 +45,3 @@ script:
 #  - terraform fmt -check=true
   - terraform validate
   - terraform -v
-
-after_success:
-  # Run sonar-scanner (https://sonarcloud.io/dashboard?id=diodonfrost_terraform-aws-lambda-scheduler-stop-start)
-  - cd ../..
-  - >
-    sonar-scanner \
-      -Dsonar.projectKey=diodonfrost_terraform-aws-lambda-scheduler-stop-start \
-      -Dsonar.organization=diodonfrost-github \
-      -Dsonar.sources=. \
-      -Dsonar.host.url=https://sonarcloud.io \
-      -Dsonar.login=${SONAR_TOKEN}
