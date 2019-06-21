@@ -11,12 +11,10 @@ env:
     - TF_WARN_OUTPUT_ERRORS=1
 
 install:
-  # Install the latest version of terraform with ansible and sonar-scanner
+  # Install the latest version of terraform with ansible
   - sudo pip install ansible
   - sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
-  - sudo ansible-galaxy install diodonfrost.sonar_scanner && sudo ln -s ~/.ansible/roles/diodonfrost.sonar_scanner ~/.ansible/roles/ansible-role-sonar-scanner
   - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml
-  - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-sonar-scanner tests/test.yml -e "sonar_scanner_version=3.3.0.1492"
 
 before_script:
   - terraform -version
