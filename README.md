@@ -58,7 +58,7 @@ module "stop_ec2_instance" {
 | scheduler_lambda_arn | The Amazon Resource Name (ARN) identifying your Lambda Function |
 | lambda_iam_role_name | The name of the IAM role used by Lambda function |
 | scheduler_lambda_arn | The ARN of the Lambda function |
-| scheduler_function_name | The name of the Lambda function |
+| scheduler_lambda_name | The name of the Lambda function |
 | scheduler_lambda_invoke_arn | The ARN to be used for invoking Lambda function from API Gateway |
 | scheduler_lambda_function_last_modified | The date Lambda function was last modified |
 | scheduler_lambda_function_version | Latest published version of your Lambda function |
