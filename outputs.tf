@@ -13,7 +13,7 @@ output "scheduler_lambda_arn" {
   value       = "${aws_lambda_function.stop_start.arn}"
 }
 
-output "scheduler_function_name" {
+output "scheduler_lambda_name" {
   description = "The name of the Lambda function"
   value       = "${aws_lambda_function.stop_start.function_name}"
 }
