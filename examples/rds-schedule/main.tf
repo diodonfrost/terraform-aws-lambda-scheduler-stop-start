@@ -25,7 +25,7 @@ resource "aws_db_subnet_group" "aurora" {
 }
 
 # Create rds aurora cluster
-resource "aws_rds_cluster" "aurora_with_tag" {
+resource "aws_rds_cluster" "aurora_scheduled" {
   cluster_identifier   = "aurora-cluster-with-tag"
   db_subnet_group_name = "${aws_db_subnet_group.aurora.id}"
   database_name        = "aurorawithtag"
@@ -38,15 +38,15 @@ resource "aws_rds_cluster" "aurora_with_tag" {
   }
 }
 
-resource "aws_rds_cluster_instance" "aurora_with_tag" {
+resource "aws_rds_cluster_instance" "aurora_scheduled" {
   identifier           = "aurora-cluster-with-tag"
   db_subnet_group_name = "${aws_db_subnet_group.aurora.id}"
-  cluster_identifier   = "${aws_rds_cluster.aurora_with_tag.id}"
+  cluster_identifier   = "${aws_rds_cluster.aurora_scheduled.id}"
   instance_class       = "db.t2.small"
 }
 
 # Create rds mariadb instance with tag
-resource "aws_db_instance" "mariadb_with_tag" {
+resource "aws_db_instance" "mariadb_scheduled" {
   identifier           = "mariadb-instance-with-tag"
   name                 = "mariadbwithtag"
   db_subnet_group_name = "${aws_db_subnet_group.aurora.id}"
@@ -65,7 +65,7 @@ resource "aws_db_instance" "mariadb_with_tag" {
 }
 
 # Create rds mysql instance with tag
-resource "aws_db_instance" "mysql_without_tag" {
+resource "aws_db_instance" "mysql_not_scheduled" {
   identifier           = "mysql-instance-without-tag"
   name                 = "mysqlwithouttag"
   db_subnet_group_name = "${aws_db_subnet_group.aurora.id}"
@@ -77,6 +77,10 @@ resource "aws_db_instance" "mysql_without_tag" {
   username             = "foo"
   password             = "foobarbaz"
   skip_final_snapshot  = "true"
+
+  tags = {
+    tostop = "false"
+  }
 }
 
 ### Terraform modules ###
