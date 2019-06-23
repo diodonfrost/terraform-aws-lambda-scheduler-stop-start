@@ -1,7 +1,4 @@
 .terraform
 *.tfstate*
 *.zip
-.kitchen
-Gemfile.lock
 terraform.tfstate.d
-.scannerwork
