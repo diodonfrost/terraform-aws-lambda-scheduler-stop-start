@@ -37,28 +37,46 @@ func TestTerraformAwsExample(t *testing.T) {
 	  lambdaStopName := terraform.Output(t, terraformOptions, "lambda_stop_name")
     lambdaStartName := terraform.Output(t, terraformOptions, "lambda_start_name")
 
-    // Get all ec2 instances IDs with the tag "topstop" and the state running
-    filtersInstancesTagRunning := map[string][]string{
+    // Get all ec2 instances IDs with the tag "topstop:true" and the state running
+    filtersInstancesToStopRunning := map[string][]string{
         "instance-state-name": {"running"},
-        "tag:tostop": {"true"},
+        "tag:tostop":          {"true"},
     }
-    InstancesIDsTagRunning := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesTagRunning)
+    InstancesIDsToStopRunning := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesToStopRunning)
+
+    // Get all ec2 instances IDs with the tag "topstop:false" and the state running
+    filtersInstancesNoStopRunning := map[string][]string{
+        "instance-state-name": {"running"},
+        "tag:tostop":          {"false"},
+    }
+    InstancesIDsNoStopRunning := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesNoStopRunning)
 
     // Invoke lambda function to stop all instances with the tag:value `tostop:true`
     L.RunAwslambda(awsRegion, lambdaStopName)
 
     // Wait for scheduler exectuion
-    time.Sleep(60 * time.Second)
+    time.Sleep(120 * time.Second)
 
-    // Get all ec2 instances IDs with the tag "topstop" and the state stopped
-    filtersInstancesTagStopped := map[string][]string{
+    // Get all ec2 instances IDs with the tag "topstop:true" and the state stopped
+    filtersInstancesToStopStopped := map[string][]string{
 		    "instance-state-name": {"stopped"},
-        "tag:tostop": {"true"},
+        "tag:tostop":          {"true"},
     }
-    InstancesIDsStopped := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesTagStopped)
+    InstancesIDsToStopStopped := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesToStopStopped)
 
-    // Instances trigger by scheduler stop-ec2 should be stopped
-    assert.Equal(t, InstancesIDsTagRunning, InstancesIDsStopped)
+    // Get all ec2 instances IDs with the tag "topstop:false" and the state running
+    filtersInstancesNoStopStopped := map[string][]string{
+		    "instance-state-name": {"running"},
+        "tag:tostop":          {"false"},
+    }
+    InstancesIDsNoStopStopped := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesNoStopStopped)
+
+
+    // Verify the instances trigger by scheduler stop-ec2 with tag "topstop:true" should be stopped
+    assert.Equal(t, InstancesIDsToStopRunning, InstancesIDsToStopStopped)
+
+    // Verify the instances trigger by scheduler stop-ec2 with tag "topstop:false" should be running
+    assert.Equal(t, InstancesIDsNoStopRunning, InstancesIDsNoStopStopped)
 
     // Invoke lambda function to start all instances with the tag:value `tostop:true`
     L.RunAwslambda(awsRegion, lambdaStartName)
@@ -66,9 +84,15 @@ func TestTerraformAwsExample(t *testing.T) {
     // Wait for scheduler exectuion
     time.Sleep(60 * time.Second)
 
-    // Get all ec2 instances IDs with the tag "topstop" and the state running
-    InstancesIDsTagStarted := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesTagRunning)
+    // Get all ec2 instances IDs with the tag "topstop:true" and the state running
+    InstancesIDsToStopStarted := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesToStopRunning)
 
-    // Verify the instances trigger by scheduler start-ec2 should be running
-    assert.Equal(t, InstancesIDsStopped, InstancesIDsTagStarted)
+    // Get all ec2 instances IDs with the tag "topstop:false" and the state running
+    InstancesIDsNoStopStarted := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesNoStopRunning)
+
+    // Verify the instances trigger by scheduler start-ec2 with tag "topstop:true" should be running
+    assert.Equal(t, InstancesIDsToStopStopped, InstancesIDsToStopStarted)
+
+    // Verify the instances trigger by scheduler start-ec2 with tag "topstop:false" should be running
+    assert.Equal(t, InstancesIDsNoStopStopped, InstancesIDsNoStopStarted)
 }
