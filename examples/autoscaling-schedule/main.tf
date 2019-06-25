@@ -32,7 +32,7 @@ resource "aws_launch_configuration" "as_conf" {
 }
 
 # Create autoscaling group with tag
-resource "aws_autoscaling_group" "bar_with_tag" {
+resource "aws_autoscaling_group" "scheduled" {
   count                     = 3
   name                      = "bar-with-tag-${count.index}"
   max_size                  = 5
@@ -52,7 +52,7 @@ resource "aws_autoscaling_group" "bar_with_tag" {
 }
 
 # Create autoscaling group without tag
-resource "aws_autoscaling_group" "foo_without_tag" {
+resource "aws_autoscaling_group" "not_scheduled" {
   count                     = 2
   name                      = "foo-without-tag-${count.index}"
   max_size                  = 5
@@ -63,6 +63,12 @@ resource "aws_autoscaling_group" "foo_without_tag" {
   force_delete              = true
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
   vpc_zone_identifier       = ["${aws_subnet.main.id}"]
+
+  tag {
+    key                 = "tostop"
+    value               = "false"
+    propagate_at_launch = true
+  }
 }
 
 ### Terraform modules ###

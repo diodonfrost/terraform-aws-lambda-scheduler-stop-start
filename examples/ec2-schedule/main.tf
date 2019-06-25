@@ -16,7 +16,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "instance_with_tag" {
+resource "aws_instance" "scheduled" {
   count         = "3"
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
@@ -26,10 +26,14 @@ resource "aws_instance" "instance_with_tag" {
   }
 }
 
-resource "aws_instance" "instance_without_tag" {
+resource "aws_instance" "not_scheduled" {
   count         = "2"
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
+
+  tags = {
+    tostop = "false"
+  }
 }
 
 ### Terraform modules ###
