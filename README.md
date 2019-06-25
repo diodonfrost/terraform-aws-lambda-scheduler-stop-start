@@ -35,7 +35,7 @@ module "stop_ec2_instance" {
 *   [EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-schedule) - Create lamnda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-schedule) - Create lamnda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [Autoscaling scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/autoscaling-schedule) - Create lamnda functions to suspend autoscaling group with tag `tostop = true` and terminate its ec2 instances on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
-*   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/test_fixture) - Deploy environment for testing module with kitchen-ci and awspec
+*   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/test_fixture) - Deploy environment for testing module
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
@@ -67,30 +67,27 @@ module "stop_ec2_instance" {
 
 ## Tests
 
-This module has been packaged with [awspec](https://github.com/k1LoW/awspec) tests through test kitchen. To run them:
+This module has been packaged with [Terratest](https://github.com/gruntwork-io/terratest) to tests this Terraform module.
 
-Install kitchen-terraform and awspec:
+Some of these tests create real resources in an AWS account. That means they cost money to run, especially if you don't clean up after yourself. Please be considerate of the resources you create and take extra care to clean everything up when you're done!
+
+In order to run tests that access your AWS account, you will need to configure your [AWS CLI
+credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html). For example, you could
+set the credentials as the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+Install Terratest with depedencies:
 
 ```shell
-# Install dependencies
-gem install bundler
-bundle install
+# Prerequisite: install Go
+go get ./...
 ```
 
-Launch kitchen tests:
-
 ```shell
-# List all tests with kitchen
-kitchen list
+# Test ec2 scheduler
+go test -v test/terratest/ec2_scheduler_test.go
 
-# Build, and tests terraform module
-kitchen test lambda-scheduler-aws
-
-# for development, create environment
-kitchen converge lambda-scheduler-aws
-
-# Apply awspec tests
-kitchen verify lambda-scheduler-aws
+# Test autoscaling scheduler
+go test -v test/terratest/autoscaling_scheduler_test.go
 ```
 
 ## Authors
@@ -107,3 +104,4 @@ Apache 2 Licensed. See LICENSE for full details.
 *   [Python boto3 ec2](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html)
 *   [Python boto3 rds](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html)
 *   [Python boto3 autoscaling](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/autoscaling.html)
+*   [Terratest](https://github.com/gruntwork-io/terratest)
