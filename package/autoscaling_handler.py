@@ -31,12 +31,19 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
             except ClientError as e:
                 logging.error("Unexpected error: %s" % e)
 
-        # Stop all instances in autoscaling group
-        try:
-            ec2.stop_instances(InstanceIds=instance_list)
-            print("Stop autoscaling instances {0}".format(instance_list))
-        except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+        for ec2_instance in instance_list:
+            # Stop all instances in autoscaling group
+            try:
+                ec2.stop_instances(InstanceIds=[ec2_instance])
+                print("Stop autoscaling instances {0}".format(ec2_instance))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "UnsupportedOperation":
+                    logging.warning(
+                        "%s is a spot instance and can not be stopped", ec2_instance
+                    )
+                else:
+                    logging.error("Unexpected error: %s" % e)
 
     # Resume autoscaling group
     elif schedule_action == 'start':
@@ -49,12 +56,19 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
             except ClientError as e:
                 logging.error("Unexpected error: %s" % e)
 
-        # Start all instances in autoscaling group
-        try:
-            ec2.start_instances(InstanceIds=instance_list)
-            print("Start autoscaling instances {0}".format(instance_list))
-        except ClientError as e:
-            logging.error("Unexpected error: %s" % e)
+        for ec2_instance in instance_list:
+            # Start all instances in autoscaling group
+            try:
+                ec2.start_instances(InstanceIds=[ec2_instance])
+                print("Start autoscaling instances {0}".format(ec2_instance))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "UnsupportedOperation":
+                    logging.warning(
+                        "%s is a spot instance and can not be started", ec2_instance
+                    )
+                else:
+                    logging.error("Unexpected error: %s" % e)
 
 
 def autoscaling_list_groups(tag_key, tag_value):
