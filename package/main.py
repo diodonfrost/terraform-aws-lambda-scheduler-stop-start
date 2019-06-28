@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     tag_key = os.getenv('TAG_KEY', 'tostop')
     tag_value = os.getenv('TAG_VALUE', 'true')
     autoscaling_schedule = os.getenv('AUTOSCALING_SCHEDULE', 'true')
-    spot_schedule = os.getenv('SPOT_SCHEDULE', 'terminate')
+    spot_schedule = os.getenv('SPOT_SCHEDULE', 'false')
     ec2_schedule = os.getenv('EC2_SCHEDULE', 'true')
     rds_schedule = os.getenv('RDS_SCHEDULE', 'true')
 
