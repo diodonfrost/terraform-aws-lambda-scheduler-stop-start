@@ -63,6 +63,27 @@ EOF
 }
 
 # Create custom policy for manage ec2
+resource "aws_iam_role_policy" "schedule_spot" {
+  name = "${var.name}-spot-custom-policy-scheduler"
+  role = "${aws_iam_role.scheduler_lambda.id}"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "ec2:TerminateSpotInstances"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
+}
+EOF
+}
+
+# Create custom policy for manage ec2 instances
 resource "aws_iam_role_policy" "schedule_ec2" {
   name = "${var.name}-ec2-custom-policy-scheduler"
   role = "${aws_iam_role.scheduler_lambda.id}"
@@ -77,7 +98,8 @@ resource "aws_iam_role_policy" "schedule_ec2" {
                 "ec2:DescribeInstanceStatus",
                 "ec2:StopInstances",
                 "ec2:StartInstances",
-                "ec2:DescribeTags"
+                "ec2:DescribeTags",
+                "ec2:TerminateSpotInstances"
             ],
             "Resource": "*",
             "Effect": "Allow"
@@ -167,6 +189,7 @@ resource "aws_lambda_function" "stop_start" {
       EC2_SCHEDULE         = "${var.ec2_schedule}"
       RDS_SCHEDULE         = "${var.rds_schedule}"
       AUTOSCALING_SCHEDULE = "${var.autoscaling_schedule}"
+      SPOT_SCHEDULE        = "${var.spot_schedule}"
     }
   }
 }
