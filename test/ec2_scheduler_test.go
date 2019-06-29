@@ -19,7 +19,7 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
 
 	  terraformOptions := &terraform.Options{
 		    // The path to where our Terraform code is located
-		    TerraformDir: "../../examples/ec2-schedule",
+		    TerraformDir: "../examples/ec2-schedule",
 
 		    // Environment variables to set when running Terraform
 		    EnvVars: map[string]string{

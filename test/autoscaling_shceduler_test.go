@@ -19,7 +19,7 @@ func TestTerraformAutoscalingScheduler(t *testing.T) {
 
 	  terraformOptions := &terraform.Options{
 		    // The path to where our Terraform code is located
-		    TerraformDir: "../../examples/autoscaling-schedule",
+		    TerraformDir: "../examples/autoscaling-schedule",
 
 		    // Environment variables to set when running Terraform
 		    EnvVars: map[string]string{
