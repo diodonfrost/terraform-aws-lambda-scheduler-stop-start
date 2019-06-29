@@ -33,7 +33,7 @@ variable "autoscaling_schedule" {
 }
 
 variable "spot_schedule" {
-  description = "Enable scheduling on spot instances resources"
+  description = "Enable scheduling on spot instance resources"
   default     = "false"
 }
 
