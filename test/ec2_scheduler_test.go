@@ -4,8 +4,10 @@ import (
   "time"
   L "./lib"
 	"testing"
+  "fmt"
 
   "github.com/gruntwork-io/terratest/modules/aws"
+  "github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
   "github.com/stretchr/testify/assert"
 )
@@ -17,9 +19,17 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
     // Pick aws region Ireland
 	  awsRegion := "eu-west-1"
 
+    // Give this Spot Instance a unique ID for a name tag so we can distinguish it from any other EC2 Instance running
+    terratestTag := fmt.Sprintf("terratest-tag-%s", random.UniqueId())
+
 	  terraformOptions := &terraform.Options{
 		    // The path to where our Terraform code is located
 		    TerraformDir: "../examples/ec2-schedule",
+
+        // Variables to pass to our Terraform code using -var options
+		    Vars: map[string]interface{}{
+			      "random_tag": terratestTag,
+        },
 
 		    // Environment variables to set when running Terraform
 		    EnvVars: map[string]string{
@@ -41,6 +51,7 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
     filtersInstancesToStopRunning := map[string][]string{
         "instance-state-name": {"running"},
         "tag:tostop":          {"true"},
+        "tag:terratest_tag":   {terratestTag},
     }
     InstancesIDsToStopRunning := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesToStopRunning)
 
@@ -48,6 +59,7 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
     filtersInstancesNoStopRunning := map[string][]string{
         "instance-state-name": {"running"},
         "tag:tostop":          {"false"},
+        "tag:terratest_tag":   {terratestTag},
     }
     InstancesIDsNoStopRunning := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesNoStopRunning)
 
@@ -61,6 +73,7 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
     filtersInstancesToStopStopped := map[string][]string{
 		    "instance-state-name": {"stopped"},
         "tag:tostop":          {"true"},
+        "tag:terratest_tag":   {terratestTag},
     }
     InstancesIDsToStopStopped := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesToStopStopped)
 
@@ -68,6 +81,7 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
     filtersInstancesNoStopStopped := map[string][]string{
 		    "instance-state-name": {"running"},
         "tag:tostop":          {"false"},
+        "tag:terratest_tag":   {terratestTag},
     }
     InstancesIDsNoStopStopped := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesNoStopStopped)
 

@@ -34,7 +34,8 @@ resource "aws_rds_cluster" "aurora_scheduled" {
   skip_final_snapshot  = "true"
 
   tags = {
-    tostop = "true"
+    tostop        = "true"
+    terratest_tag = "${var.random_tag}"
   }
 }
 
@@ -60,7 +61,8 @@ resource "aws_db_instance" "mariadb_scheduled" {
   skip_final_snapshot  = "true"
 
   tags = {
-    tostop = "true"
+    tostop        = "true"
+    terratest_tag = "${var.random_tag}"
   }
 }
 
@@ -79,7 +81,8 @@ resource "aws_db_instance" "mysql_not_scheduled" {
   skip_final_snapshot  = "true"
 
   tags = {
-    tostop = "false"
+    tostop        = "false"
+    terratest_tag = "${var.random_tag}"
   }
 }
 

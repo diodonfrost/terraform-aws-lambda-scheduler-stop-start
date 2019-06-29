@@ -22,11 +22,8 @@ resource "aws_instance" "scheduled" {
   instance_type = "t2.micro"
 
   tags = {
-    Name     = "shceduled"
-    tostop   = "true"
-    team     = "flarf"
-    lint     = "yes"
-    provider = "terraform"
+    tostop        = "true"
+    terratest_tag = "${var.random_tag}"
   }
 }
 
@@ -36,7 +33,8 @@ resource "aws_instance" "not_scheduled" {
   instance_type = "t2.micro"
 
   tags = {
-    tostop = "false"
+    tostop        = "false"
+    terratest_tag = "${var.random_tag}"
   }
 }
 

@@ -44,11 +44,18 @@ resource "aws_autoscaling_group" "scheduled" {
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
   vpc_zone_identifier       = ["${aws_subnet.main.id}"]
 
-  tag {
-    key                 = "tostop"
-    value               = "true"
-    propagate_at_launch = true
-  }
+  tags = [
+    {
+      key                 = "tostop"
+      value               = "true"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "terratest_tag"
+      value               = "${var.random_tag}"
+      propagate_at_launch = true
+    },
+  ]
 }
 
 # Create autoscaling group without tag
@@ -64,11 +71,18 @@ resource "aws_autoscaling_group" "not_scheduled" {
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
   vpc_zone_identifier       = ["${aws_subnet.main.id}"]
 
-  tag {
-    key                 = "tostop"
-    value               = "false"
-    propagate_at_launch = true
-  }
+  tags = [
+    {
+      key                 = "tostop"
+      value               = "false"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "terratest_tag"
+      value               = "${var.random_tag}"
+      propagate_at_launch = true
+    },
+  ]
 }
 
 ### Terraform modules ###
