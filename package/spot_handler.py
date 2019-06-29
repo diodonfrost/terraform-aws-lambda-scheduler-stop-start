@@ -7,8 +7,8 @@ from botocore.exceptions import ClientError
 
 def spot_schedule(schedule_action, tag_key, tag_value):
     """
-       Aws ec2 spot instance scheduler function, stop or
-       start ec2 spot instances by using the tag defined.
+       Aws spot instance scheduler function,
+       terminate spot instances by using the tag defined.
     """
 
     # Define the connection
@@ -19,7 +19,7 @@ def spot_schedule(schedule_action, tag_key, tag_value):
 
     for spot_instance in spot_instance_list:
 
-        # Stop spot instances in list
+        # Terminate spot instances in list
         if schedule_action == "stop":
             try:
                 ec2.terminate_instances(InstanceIds=[spot_instance])
