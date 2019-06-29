@@ -60,11 +60,18 @@ resource "aws_autoscaling_group" "scheduled" {
     }
   }
 
-  tag {
-    key                 = "tostop"
-    value               = "true"
-    propagate_at_launch = true
-  }
+  tags = [
+    {
+      key                 = "tostop"
+      value               = "true"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "terratest_tag"
+      value               = "${var.random_tag}"
+      propagate_at_launch = true
+    },
+  ]
 }
 
 # Run spot instances that will be not scheduled
@@ -100,11 +107,18 @@ resource "aws_autoscaling_group" "not_scheduled" {
    }
  }
 
- tag {
-   key                 = "tostop"
-   value               = "false"
-   propagate_at_launch = true
- }
+ tags = [
+   {
+     key                 = "tostop"
+     value               = "false"
+     propagate_at_launch = true
+   },
+   {
+     key                 = "terratest_tag"
+     value               = "${var.random_tag}"
+     propagate_at_launch = true
+   },
+ ]
 }
 
 
