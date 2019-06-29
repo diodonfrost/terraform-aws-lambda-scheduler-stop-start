@@ -74,7 +74,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
 ### Terraform modules ###
 
 module "autoscaling-stop-friday" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  source                         = "../../"
   name                           = "stop-autoscaling"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
@@ -89,10 +89,11 @@ module "autoscaling-stop-friday" {
 }
 
 module "autoscaling-start-monday" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  source                         = "../../"
   name                           = "start-autoscaling"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
+  spot_schedule                  = "false"
   ec2_schedule                   = "false"
   rds_schedule                   = "false"
   autoscaling_schedule           = "true"
