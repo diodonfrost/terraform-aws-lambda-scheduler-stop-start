@@ -22,7 +22,11 @@ resource "aws_instance" "scheduled" {
   instance_type = "t2.micro"
 
   tags = {
-    tostop = "true"
+    Name     = "shceduled"
+    tostop   = "true"
+    team     = "flarf"
+    lint     = "yes"
+    provider = "terraform"
   }
 }
 
@@ -39,10 +43,11 @@ resource "aws_instance" "not_scheduled" {
 ### Terraform modules ###
 
 module "ec2-stop-friday" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  source                         = "../../"
   name                           = "stop-ec2"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
+  spot_schedule                  = "false"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
@@ -54,10 +59,11 @@ module "ec2-stop-friday" {
 }
 
 module "ec2-start-monday" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  source                         = "../../"
   name                           = "start-ec2"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
+  spot_schedule                  = "false"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"

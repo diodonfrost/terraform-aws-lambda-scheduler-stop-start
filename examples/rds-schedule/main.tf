@@ -86,10 +86,11 @@ resource "aws_db_instance" "mysql_not_scheduled" {
 ### Terraform modules ###
 
 module "rds-stop-friday" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  source                         = "../../"
   name                           = "stop-rds"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
+  spot_schedule                  = "false"
   ec2_schedule                   = "false"
   rds_schedule                   = "true"
   autoscaling_schedule           = "false"
@@ -101,10 +102,11 @@ module "rds-stop-friday" {
 }
 
 module "rds-start-monday" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
+  source                         = "../../"
   name                           = "start-rds"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
+  spot_schedule                  = "false"
   ec2_schedule                   = "false"
   rds_schedule                   = "true"
   autoscaling_schedule           = "false"

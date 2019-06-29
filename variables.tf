@@ -27,6 +27,16 @@ variable "resources_tag" {
   }
 }
 
+variable "autoscaling_schedule" {
+  description = "Enable scheduling on autoscaling resources"
+  default     = "false"
+}
+
+variable "spot_schedule" {
+  description = "Enable scheduling on spot instance resources"
+  default     = "false"
+}
+
 variable "ec2_schedule" {
   description = "Enable scheduling on ec2 resources"
   default     = "false"
@@ -34,10 +44,5 @@ variable "ec2_schedule" {
 
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
-  default     = "false"
-}
-
-variable "autoscaling_schedule" {
-  description = "Enable scheduling on autoscaling resources"
   default     = "false"
 }
