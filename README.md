@@ -63,7 +63,7 @@ module "stop_ec2_instance" {
 
 | Name | Description |
 |------|-------------|
-| scheduler_lambda_arn | The Amazon Resource Name (ARN) identifying your Lambda Function |
+| lambda_iam_role_arn | The ARN of the IAM role used by Lambda function |
 | lambda_iam_role_name | The name of the IAM role used by Lambda function |
 | scheduler_lambda_arn | The ARN of the Lambda function |
 | scheduler_lambda_name | The name of the Lambda function |
