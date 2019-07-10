@@ -109,7 +109,7 @@ def autoscaling_list_instances(autoscaling_group_list):
     """
     
     if not autoscaling_group_list:
-        return None
+        return []
 
     # Define the connection
     autoscaling = boto3.client('autoscaling')
