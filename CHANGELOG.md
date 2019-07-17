@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.2] - 2019-07-10
+### Changed
+-   Don't shutdown all instances when no autoscaling group is found
+
 ## [1.7.1] - 2019-06-30
 ### Added
 -   Tests for spot instance scheduler
@@ -104,7 +108,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   rds clusters support with scheduler
 
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.1...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.2...HEAD
+[1.7.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.1...1.7.2
 [1.7.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.6.1...1.7.0
 [1.6.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.6.0...1.6.1

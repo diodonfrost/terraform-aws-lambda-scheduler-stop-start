@@ -107,10 +107,13 @@ def autoscaling_list_instances(autoscaling_group_list):
        Aws autoscaling instance list function, list name of
        all autoscaling instances and return it in list.
     """
+    
+    if not autoscaling_group_list:
+        return []
 
     # Define the connection
     autoscaling = boto3.client('autoscaling')
-
+    
     # List autoscaling groups and autoscaling instances
     paginator = autoscaling.get_paginator('describe_auto_scaling_groups')
     page_iterator = paginator.paginate(
