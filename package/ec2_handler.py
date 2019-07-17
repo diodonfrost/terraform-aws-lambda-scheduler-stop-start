@@ -31,7 +31,7 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
                         "%s is a spot instance and can not be stopped", ec2_instance
                     )
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
         # Start ec2 instances in list
         elif schedule_action == "start":
@@ -45,7 +45,7 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
                         "%s is a spot instance and can not be started", ec2_instance
                     )
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
 
 def ec2_list_instances(tag_key, tag_value):

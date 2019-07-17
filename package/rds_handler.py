@@ -30,7 +30,7 @@ def rds_schedule(schedule_action, tag_key, tag_value):
                 if error_code == 'InvalidDBClusterStateFault':
                     logging.info("rds cluster %s is not started", cluster_id)
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
         # Start rds cluster
         elif schedule_action == 'start':
@@ -42,7 +42,7 @@ def rds_schedule(schedule_action, tag_key, tag_value):
                 if error_code == 'InvalidDBClusterStateFault':
                     logging.info("rds cluster %s is not stopped", cluster_id)
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
     # Retrieve rds cluster id
     instance_list = rds_list_instances(tag_key, tag_value)
@@ -59,7 +59,7 @@ def rds_schedule(schedule_action, tag_key, tag_value):
                 if error_code == 'InvalidDBInstanceState':
                     logging.info("rds instance %s is not started", instance_id)
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
         # Start rds instance
         elif schedule_action == 'start':
@@ -71,7 +71,7 @@ def rds_schedule(schedule_action, tag_key, tag_value):
                 if error_code == 'InvalidDBInstanceState':
                     logging.info("rds instance %s is not stopped", instance_id)
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
 
 def rds_list_clusters(tag_key, tag_value):

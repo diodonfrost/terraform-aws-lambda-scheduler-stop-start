@@ -29,7 +29,7 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                 autoscaling.suspend_processes(AutoScalingGroupName=asg_name)
                 print("Suspend autoscaling group {0}".format(asg_name))
             except ClientError as e:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
         for ec2_instance in instance_list:
             # Stop all instances in autoscaling group
@@ -43,7 +43,7 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                         "%s is a spot instance and cannot be stopped", ec2_instance
                     )
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
     # Resume autoscaling group
     elif schedule_action == 'start':
@@ -54,7 +54,7 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                 autoscaling.resume_processes(AutoScalingGroupName=asg_name)
                 print("Resume autoscaling group {0}".format(asg_name))
             except ClientError as e:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
         for ec2_instance in instance_list:
             # Start all instances in autoscaling group
@@ -68,7 +68,7 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                         "%s is not in a state from which it can be started", ec2_instance
                     )
                 else:
-                    logging.error("Unexpected error: %s" % e)
+                    logging.error("Unexpected error: %s", e)
 
 
 def autoscaling_list_groups(tag_key, tag_value):

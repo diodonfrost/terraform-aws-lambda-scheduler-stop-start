@@ -25,7 +25,7 @@ def spot_schedule(schedule_action, tag_key, tag_value):
                 ec2.terminate_instances(InstanceIds=[spot_instance])
                 print("Terminate spot instance {0}".format(spot_instance))
             except ClientError as e:
-                logging.error("Unexpected error: %s" % e)
+                logging.error("Unexpected error: %s", e)
 
 
 def spot_list_instances(tag_key, tag_value):
