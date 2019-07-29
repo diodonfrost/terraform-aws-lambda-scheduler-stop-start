@@ -40,7 +40,8 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                 error_code = e.response["Error"]["Code"]
                 if error_code == "UnsupportedOperation":
                     logging.warning(
-                        "%s is a spot instance and cannot be stopped", ec2_instance
+                        "%s is a spot instance and cannot be stopped"
+                        "by scheduler", ec2_instance
                     )
                 else:
                     logging.error("Unexpected error: %s", e)
@@ -65,7 +66,8 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                 error_code = e.response["Error"]["Code"]
                 if error_code == "IncorrectInstanceState":
                     logging.info(
-                        "%s is not in a state from which it can be started", ec2_instance
+                        "The instance %s is not in a state from which"
+                        "it can be started", ec2_instance
                     )
                 else:
                     logging.error("Unexpected error: %s", e)
@@ -107,13 +109,13 @@ def autoscaling_list_instances(autoscaling_group_list):
        Aws autoscaling instance list function, list name of
        all autoscaling instances and return it in list.
     """
-    
+
     if not autoscaling_group_list:
         return []
 
     # Define the connection
     autoscaling = boto3.client('autoscaling')
-    
+
     # List autoscaling groups and autoscaling instances
     paginator = autoscaling.get_paginator('describe_auto_scaling_groups')
     page_iterator = paginator.paginate(
