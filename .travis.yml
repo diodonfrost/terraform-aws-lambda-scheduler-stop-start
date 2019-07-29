@@ -10,36 +10,43 @@ env:
     - TF_VAR_region=${AWS_REGION}
     - TF_WARN_OUTPUT_ERRORS=1
 
-install:
-  # Install the latest version of terraform with ansible
-  - sudo pip install ansible
-  - sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
-  - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml
+jobs:
+  include:
+    - stage: "Terraform tests"
+      install:
+        # Install the latest version of terraform with ansible
+        - sudo pip install ansible
+        - sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
+        - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml
+        - terraform -version
+      script:
+        # Download Terraform requirements
+        - terraform init
 
-before_script:
-  - terraform -version
+        # Test Terraform module
+        - >
+          terraform validate \
+            -var "region=${AWS_REGION}" \
+            -var "name=stop-aws-resources" \
+            -var "cloudwatch_schedule_expression=cron(0 22 ? * MON-FRI *)" \
+            -var "schedule_action=stop" \
+            -var "ec2_schedule=true" \
+            -var "rds_schedule=true" \
+            -var "autoscaling_schedule=true"
 
-script:
-  # Download Terraform requirements
-  - terraform init
+        # Test Terraform fixture example
+        - cd examples/test_fixture
+        - terraform init
+        - terraform validate
+        - terraform -v
 
-  # Rewrites config files to canonical format
-#  - terraform fmt -check=true
+    - stage: "Python codestyle tests"
+      install:
+        # Install pep8 checking and flake8
+        - sudo pip install pycodestyle flake8
+      script:
+        # Python pep8 test
+        - pycodestyle package
 
-  # Test Terraform module
-  - >
-    terraform validate \
-      -var "region=${AWS_REGION}" \
-      -var "name=stop-aws-resources" \
-      -var "cloudwatch_schedule_expression=cron(0 22 ? * MON-FRI *)" \
-      -var "schedule_action=stop" \
-      -var "ec2_schedule=true" \
-      -var "rds_schedule=true" \
-      -var "autoscaling_schedule=true"
-
-  # Test Terraform fixture example
-  - cd examples/test_fixture
-  - terraform init
-#  - terraform fmt -check=true
-  - terraform validate
-  - terraform -v
+        # Python flake8 test
+        - flake8 package
