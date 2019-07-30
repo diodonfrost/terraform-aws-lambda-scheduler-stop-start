@@ -1,52 +1,33 @@
 ---
 dist: xenial   # required for Python >= 3.7
 language: python
-python:
-  - "3.7"
+python: "3.7"
 
-env:
-  global:
-    - AWS_REGION='eu-west-1'
-    - TF_VAR_region=${AWS_REGION}
-    - TF_WARN_OUTPUT_ERRORS=1
+matrix:
+  include:
+    - python: 2.7
+      env: TOXENV=py27
+    - python: 3.4
+      env: TOXENV=py34
+    - python: 3.5
+      env: TOXENV=py35
+    - python: 3.6
+      env: TOXENV=py36
+    - python: 3.7
+      env: TOXENV=py37
+    - python: pypy
+      env: TOXENV=pypy
+    - python: 3.7
+      env: TOXENV=flake8
+    - python: 3.7
+      env: TOXENV=pylint
+    - python: 3.7
+      env: TOXENV=bandit
 
 jobs:
   include:
-    - stage: "Terraform tests"
-      install:
-        # Install the latest version of terraform with ansible
-        - sudo pip install ansible
-        - sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
-        - sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml
-        - terraform -version
-      script:
-        # Download Terraform requirements
-        - terraform init
-
-        # Test Terraform module
-        - >
-          terraform validate \
-            -var "region=${AWS_REGION}" \
-            -var "name=stop-aws-resources" \
-            -var "cloudwatch_schedule_expression=cron(0 22 ? * MON-FRI *)" \
-            -var "schedule_action=stop" \
-            -var "ec2_schedule=true" \
-            -var "rds_schedule=true" \
-            -var "autoscaling_schedule=true"
-
-        # Test Terraform fixture example
-        - cd examples/test_fixture
-        - terraform init
-        - terraform validate
-        - terraform -v
-
-    - stage: "Python codestyle tests"
-      install:
-        # Install pep8 checking and flake8
-        - sudo pip install pycodestyle flake8
-      script:
-        # Python pep8 test
-        - pycodestyle package
-
-        # Python flake8 test
-        - flake8 package
+    - stage: Python tests
+      before_script: pip install tox
+      script:  tox
+    - stage: Terraform tests
+      script: test/sanity/terraform_tests.sh
