@@ -92,10 +92,13 @@ go get ./...
 
 ```shell
 # Test ec2 scheduler
-go test -v test/ec2_scheduler_test.go
+go test -v test/integration/ec2_scheduler_test.go
+
+# Test spot scheduler
+go test -v test/integration/spot_scheduler_test.go
 
 # Test autoscaling scheduler
-go test -v test/autoscaling_scheduler_test.go
+go test -v test/integration/autoscaling_scheduler_test.go
 ```
 
 ## Authors
