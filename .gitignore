@@ -2,3 +2,4 @@
 *.tfstate*
 *.zip
 terraform.tfstate.d
+.tox
