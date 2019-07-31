@@ -1,16 +1,28 @@
-"""This script stop and start aws resources"""
-
+"""This script stop and start aws resources."""
 import os
 
 import autoscaling_handler
-import spot_handler
+
 import ec2_handler
+
 import rds_handler
+
+import spot_handler
 
 
 def lambda_handler(event, context):
-    """ Main function entrypoint for lambda """
+    """Main function entrypoint for lambda.
 
+    Stop and start AWS resources:
+    - rds instances
+    - rds aurora clusters
+    - instance ec2
+
+    Suspend and resume AWS resources:
+    - ec2 autoscaling groups
+
+    Terminate spot instances (spot instance cannot be stopped by a user)
+    """
     # Retrieve variables from aws lambda ENVIRONMENT
     schedule_action = os.getenv("SCHEDULE_ACTION", "stop")
     tag_key = os.getenv("TAG_KEY", "tostop")

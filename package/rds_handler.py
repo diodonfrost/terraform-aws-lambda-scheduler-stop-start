@@ -1,17 +1,18 @@
-""" rds instances scheduler """
+"""rds instances scheduler."""
 
 import logging
+
 import boto3
+
 from botocore.exceptions import ClientError
 
 
 def rds_schedule(schedule_action, tag_key, tag_value):
-    """
-       Aws rds scheduler function, stop or
-       start cluster and  rds instances by using
-       the tag defined.
-    """
+    """Aws rds scheduler function.
 
+    Stop or start Aurora cluster and rds instances
+    by using the defined tag.
+    """
     # Define the connection
     rds = boto3.client("rds")
 
@@ -79,11 +80,10 @@ def rds_schedule(schedule_action, tag_key, tag_value):
 
 
 def rds_list_clusters(tag_key, tag_value):
-    """
-       Aws rds list cluster function, list all
-       rds clusters name with specific tag
-    """
+    """Aws rds list cluster function.
 
+    List all rds clusters name with specific tag.
+    """
     # Define the connection
     rds = boto3.client("rds")
     paginator = rds.get_paginator("describe_db_clusters")
@@ -112,11 +112,10 @@ def rds_list_clusters(tag_key, tag_value):
 
 
 def rds_list_instances(tag_key, tag_value):
-    """
-       Aws rds list instance function, list all
-       rds instances name with specific tag
-    """
+    """Aws rds list instance function.
 
+    List all rds instances name with specific tag.
+    """
     # Define the connection
     rds = boto3.client("rds")
     paginator = rds.get_paginator("describe_db_instances")

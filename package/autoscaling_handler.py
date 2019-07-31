@@ -1,16 +1,18 @@
-""" autoscaling instances scheduler """
+"""Autoscaling instances scheduler."""
 
 import logging
+
 import boto3
+
 from botocore.exceptions import ClientError
 
 
 def autoscaling_schedule(schedule_action, tag_key, tag_value):
-    """
-       Aws autoscaling scheduler function, suspend or
-       resume all scaling processes by using the tag defined.
-    """
+    """Aws autoscaling scheduler function.
 
+    Suspend or resume all autoscaling scaling groups
+    by using the defined tag.
+    """
     # Define the connection
     autoscaling = boto3.client("autoscaling")
     ec2 = boto3.client("ec2")
@@ -75,11 +77,11 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
 
 
 def autoscaling_list_groups(tag_key, tag_value):
-    """
-       Aws autoscaling list function, list name of
-       all autoscaling group and return it in list.
-    """
+    """Aws autoscaling list function.
 
+    List name of all autoscaling groups
+    and return it in list.
+    """
     # Define the connection
     autoscaling = boto3.client("autoscaling")
 
@@ -106,11 +108,11 @@ def autoscaling_list_groups(tag_key, tag_value):
 
 
 def autoscaling_list_instances(autoscaling_group_list):
-    """
-       Aws autoscaling instance list function, list name of
-       all autoscaling instances and return it in list.
-    """
+    """Aws autoscaling instance list function.
 
+    List name of all instances in the autoscaling groups
+    and return it in list.
+    """
     if not autoscaling_group_list:
         return []
 

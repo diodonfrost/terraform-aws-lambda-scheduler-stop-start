@@ -1,16 +1,17 @@
-""" ec2 instances scheduler """
+"""ec2 instances scheduler."""
 
 import logging
+
 import boto3
+
 from botocore.exceptions import ClientError
 
 
 def ec2_schedule(schedule_action, tag_key, tag_value):
-    """
-       Aws ec2 scheduler function, stop or
-       start ec2 instances by using the tag defined.
-    """
+    """Aws ec2 scheduler function.
 
+    Stop or start ec2 instances by using the tag defined.
+    """
     # Define the connection
     ec2 = boto3.client("ec2")
 
@@ -53,11 +54,11 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
 
 
 def ec2_list_instances(tag_key, tag_value):
-    """
-       Aws ec2 instance list function, list name of all ec2 instances
-       all ec2 instances with specific tag and return it in list.
-    """
+    """Aws ec2 instance list function.
 
+    List name of all ec2 instances all ec2 instances
+    with specific tag and return it in list.
+    """
     # Define the connection
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_instances")
