@@ -12,26 +12,24 @@ def lambda_handler(event, context):
     """ Main function entrypoint for lambda """
 
     # Retrieve variables from aws lambda ENVIRONMENT
-    schedule_action = os.getenv('SCHEDULE_ACTION', 'stop')
-    tag_key = os.getenv('TAG_KEY', 'tostop')
-    tag_value = os.getenv('TAG_VALUE', 'true')
-    autoscaling_schedule = os.getenv('AUTOSCALING_SCHEDULE', 'true')
-    spot_schedule = os.getenv('SPOT_SCHEDULE', 'false')
-    ec2_schedule = os.getenv('EC2_SCHEDULE', 'true')
-    rds_schedule = os.getenv('RDS_SCHEDULE', 'true')
+    schedule_action = os.getenv("SCHEDULE_ACTION", "stop")
+    tag_key = os.getenv("TAG_KEY", "tostop")
+    tag_value = os.getenv("TAG_VALUE", "true")
+    autoscaling_schedule = os.getenv("AUTOSCALING_SCHEDULE", "true")
+    spot_schedule = os.getenv("SPOT_SCHEDULE", "false")
+    ec2_schedule = os.getenv("EC2_SCHEDULE", "true")
+    rds_schedule = os.getenv("RDS_SCHEDULE", "true")
 
-    if autoscaling_schedule == 'true':
+    if autoscaling_schedule == "true":
         autoscaling_handler.autoscaling_schedule(
-            schedule_action, tag_key, tag_value)
+            schedule_action, tag_key, tag_value
+        )
 
-    if spot_schedule == 'terminate':
-        spot_handler.spot_schedule(
-            schedule_action, tag_key, tag_value)
+    if spot_schedule == "terminate":
+        spot_handler.spot_schedule(schedule_action, tag_key, tag_value)
 
-    if ec2_schedule == 'true':
-        ec2_handler.ec2_schedule(
-            schedule_action, tag_key, tag_value)
+    if ec2_schedule == "true":
+        ec2_handler.ec2_schedule(schedule_action, tag_key, tag_value)
 
-    if rds_schedule == 'true':
-        rds_handler.rds_schedule(
-            schedule_action, tag_key, tag_value)
+    if rds_schedule == "true":
+        rds_handler.rds_schedule(schedule_action, tag_key, tag_value)

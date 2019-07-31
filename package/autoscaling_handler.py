@@ -12,8 +12,8 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
     """
 
     # Define the connection
-    autoscaling = boto3.client('autoscaling')
-    ec2 = boto3.client('ec2')
+    autoscaling = boto3.client("autoscaling")
+    ec2 = boto3.client("ec2")
 
     autoscaling_group_list = autoscaling_list_groups(tag_key, tag_value)
 
@@ -21,7 +21,7 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
     instance_list = autoscaling_list_instances(autoscaling_group_list)
 
     # Suspend autoscaling group and terminate all its instances
-    if schedule_action == 'stop':
+    if schedule_action == "stop":
         for asg_name in autoscaling_group_list:
 
             # Suspend autoscaling group
@@ -40,14 +40,14 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                 error_code = e.response["Error"]["Code"]
                 if error_code == "UnsupportedOperation":
                     logging.warning(
-                        "%s is a spot instance and cannot be stopped"
-                        "by scheduler", ec2_instance
+                        "%s is a spot instance and cannot be stopped by user",
+                        ec2_instance,
                     )
                 else:
                     logging.error("Unexpected error: %s", e)
 
     # Resume autoscaling group
-    elif schedule_action == 'start':
+    elif schedule_action == "start":
         for asg_name in autoscaling_group_list:
 
             # Resume autoscaling group
@@ -67,7 +67,8 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
                 if error_code == "IncorrectInstanceState":
                     logging.info(
                         "The instance %s is not in a state from which"
-                        "it can be started", ec2_instance
+                        "it can be started",
+                        ec2_instance,
                     )
                 else:
                     logging.error("Unexpected error: %s", e)
@@ -80,10 +81,10 @@ def autoscaling_list_groups(tag_key, tag_value):
     """
 
     # Define the connection
-    autoscaling = boto3.client('autoscaling')
+    autoscaling = boto3.client("autoscaling")
 
     # List autoscaling groups and autoscaling instances
-    paginator = autoscaling.get_paginator('describe_auto_scaling_groups')
+    paginator = autoscaling.get_paginator("describe_auto_scaling_groups")
     page_iterator = paginator.paginate()
 
     # Initialize autoscaling group list
@@ -91,14 +92,14 @@ def autoscaling_list_groups(tag_key, tag_value):
 
     # Retrieve ec2 autoscalinggroup tags
     for page in page_iterator:
-        for group in page['AutoScalingGroups']:
+        for group in page["AutoScalingGroups"]:
 
             # Check if the right tag is present
-            for tag in group['Tags']:
-                if tag['Key'] == tag_key and tag['Value'] == tag_value:
+            for tag in group["Tags"]:
+                if tag["Key"] == tag_key and tag["Value"] == tag_value:
 
                     # Retrieve and add in list autoscaling name
-                    autoscaling_group = group['AutoScalingGroupName']
+                    autoscaling_group = group["AutoScalingGroupName"]
                     autoscaling_group_list.insert(0, autoscaling_group)
 
     return autoscaling_group_list
@@ -114,22 +115,23 @@ def autoscaling_list_instances(autoscaling_group_list):
         return []
 
     # Define the connection
-    autoscaling = boto3.client('autoscaling')
+    autoscaling = boto3.client("autoscaling")
 
     # List autoscaling groups and autoscaling instances
-    paginator = autoscaling.get_paginator('describe_auto_scaling_groups')
+    paginator = autoscaling.get_paginator("describe_auto_scaling_groups")
     page_iterator = paginator.paginate(
-        AutoScalingGroupNames=autoscaling_group_list)
+        AutoScalingGroupNames=autoscaling_group_list
+    )
 
     # Initialize autoscaling instance list
     autoscaling_instance_list = []
 
     # Retrieve instance in specific autoscaling group
     for page in page_iterator:
-        for scalinggroup in page['AutoScalingGroups']:
-            for instance in scalinggroup['Instances']:
+        for scalinggroup in page["AutoScalingGroups"]:
+            for instance in scalinggroup["Instances"]:
 
-                autoscaling_instance = instance['InstanceId']
+                autoscaling_instance = instance["InstanceId"]
                 autoscaling_instance_list.insert(0, autoscaling_instance)
 
     return autoscaling_instance_list

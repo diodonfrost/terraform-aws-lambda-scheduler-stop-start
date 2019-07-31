@@ -29,7 +29,8 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
                 if error_code == "UnsupportedOperation":
                     logging.warning(
                         "%s is a spot instance and can not be stopped"
-                        "by scheduler", ec2_instance
+                        "by scheduler",
+                        ec2_instance,
                     )
                 else:
                     logging.error("Unexpected error: %s", e)
@@ -44,7 +45,8 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
                 if error_code == "UnsupportedOperation":
                     logging.warning(
                         "%s is a spot instance and can not be started"
-                        "by scheduler", ec2_instance
+                        "by scheduler",
+                        ec2_instance,
                     )
                 else:
                     logging.error("Unexpected error: %s", e)
