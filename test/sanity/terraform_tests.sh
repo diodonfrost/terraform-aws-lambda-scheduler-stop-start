@@ -17,6 +17,9 @@ terraform validate \
   -var "rds_schedule=true" \
   -var "autoscaling_schedule=true"
 
+# Terraform lint
+terraform fmt -check -diff main.tf
+
 # Test Terraform fixture example
 cd examples/test_fixture || exist
 terraform init
