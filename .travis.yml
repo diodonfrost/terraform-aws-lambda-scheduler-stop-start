@@ -1,28 +1,55 @@
 ---
 dist: xenial   # required for Python >= 3.7
 language: python
-python: "3.7"
+install: pip install tox boto3 botocore
 
-matrix:
+jobs:
   include:
-    - python: 2.7
-      env: TOXENV=py27
-    - python: 3.4
-      env: TOXENV=py34
-    - python: 3.5
-      env: TOXENV=py35
-    - python: 3.6
-      env: TOXENV=py36
-    - python: 3.7
-      env: TOXENV=py37
-    - python: 3.7
-      env: TOXENV=flake8
-    - python: 3.7
-      env: TOXENV=pylint
-    - python: 3.7
-      env: TOXENV=bandit
-    - python: 3.7
-      env: TOXENV=black
+    - stage: Terraform tests
+      python: 3.7
+      script: test/sanity/terraform_tests.sh
 
-before_script: pip install tox boto3 botocore
-script: tox
+    - stage: Python tests
+      python: 2.7
+      env: TOXENV=py27
+      script: tox
+
+    - stage: Python tests
+      python: 3.4
+      env: TOXENV=py34
+      script: tox
+
+    - stage: Python tests
+      python: 3.5
+      env: TOXENV=py35
+      script: tox
+
+    - stage: Python tests
+      python: 3.6
+      env: TOXENV=py36
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=py37
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=flake8
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=pylint
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=bandit
+      script: tox
+
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=black
+      script: tox
