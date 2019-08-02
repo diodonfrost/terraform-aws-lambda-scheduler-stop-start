@@ -3,6 +3,12 @@ dist: xenial   # required for Python >= 3.7
 language: python
 install: pip install tox boto3 botocore
 
+env:
+  global:
+    - AWS_REGION='eu-west-1'
+    - TF_VAR_region=${AWS_REGION}
+    - TF_WARN_OUTPUT_ERRORS=1
+
 jobs:
   include:
 #----------------------------------------------------------------------
