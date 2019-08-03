@@ -5,9 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/v1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.8.0] - 2019-08-03
+### Added
+-   Test Python code with Tox
+-   Test Python code with travis-ci
+-   Test Terraform code with terraform fmt command
+
 ### Changed
--   Pep8 codestyle convention
--   Test Python pep8 with travis-ci
+-   Flake8 codestyle convention
+-   Black formating
+-   Pylint refactoring
 
 ## [1.7.2] - 2019-07-10
 ### Changed
@@ -111,8 +119,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   rds clusters support with scheduler
 
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.2...HEAD
-[1.7.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.1...1.7.2
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.8.0...HEAD
+[1.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.2...1.8.0
+[1.7.2]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.1...1.7.2
 [1.7.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.6.1...1.7.0
 [1.6.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.6.0...1.6.1
