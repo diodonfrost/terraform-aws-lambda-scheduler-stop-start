@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """ec2 instances scheduler."""
 
 import logging

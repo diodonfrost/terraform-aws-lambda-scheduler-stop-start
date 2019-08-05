@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Spot instances scheduler."""
 
 import logging
