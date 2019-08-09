@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/v1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.9.0] - 2019-08-09
 ### Added
 -   Force utf-8 encoding
+
+### Changed
+-   Refactoring whole Python code
+-   Set Flake8 max-complexity to 10 instead of 20
+-   Change waiting delay in integration tests
 
 ## [1.8.0] - 2019-08-03
 ### Added
@@ -121,7 +128,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   rds clusters support with scheduler
 
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.8.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.9.0...HEAD
+[1.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.2...1.8.0
 [1.7.2]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.1...1.7.2
 [1.7.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/1.7.0...1.7.1
