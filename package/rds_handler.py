@@ -15,15 +15,10 @@ def rds_schedule(schedule_action, tag_key, tag_value):
     Stop or start Aurora cluster and rds instances
     by using the defined tag.
     """
-    # Define the connection
     rds = boto3.client("rds")
 
-    # Retrieve rds cluster id
-    cluster_list = rds_list_clusters(tag_key, tag_value)
-
-    for cluster_id in cluster_list:
-
-        # Stop rds cluster
+    for cluster_id in rds_list_clusters(tag_key, tag_value):
+        # Stop Aurora cluster
         if schedule_action == "stop":
             try:
                 rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
@@ -35,7 +30,7 @@ def rds_schedule(schedule_action, tag_key, tag_value):
                 else:
                     logging.error("Unexpected error: %s", e)
 
-        # Start rds cluster
+        # Start Aurora cluster
         elif schedule_action == "start":
             try:
                 rds.start_db_cluster(DBClusterIdentifier=cluster_id)
@@ -47,12 +42,7 @@ def rds_schedule(schedule_action, tag_key, tag_value):
                 else:
                     logging.error("Unexpected error: %s", e)
 
-    # Retrieve rds cluster id
-    instance_list = rds_list_instances(tag_key, tag_value)
-
-    for instance_id in instance_list:
-
-        # Stop rds instance
+    for instance_id in rds_list_instances(tag_key, tag_value):
         if schedule_action == "stop":
             try:
                 rds.stop_db_instance(DBInstanceIdentifier=instance_id)
@@ -66,7 +56,6 @@ def rds_schedule(schedule_action, tag_key, tag_value):
                 else:
                     logging.error("Unexpected error: %s", e)
 
-        # Start rds instance
         elif schedule_action == "start":
             try:
                 rds.start_db_instance(DBInstanceIdentifier=instance_id)
@@ -86,16 +75,11 @@ def rds_list_clusters(tag_key, tag_value):
 
     List all rds clusters name with specific tag.
     """
-    # Define the connection
+    cluster_list = []
     rds = boto3.client("rds")
     paginator = rds.get_paginator("describe_db_clusters")
-    page_iterator = paginator.paginate()
 
-    # Initialize rds cluster list
-    cluster_list = []
-
-    # Retrieve rds cluster tags
-    for page in page_iterator:
+    for page in paginator.paginate():
         for cluster_rds in page["DBClusters"]:
             response_cluster = rds.list_tags_for_resource(
                 ResourceName=cluster_rds["DBClusterArn"]
@@ -105,11 +89,8 @@ def rds_list_clusters(tag_key, tag_value):
             # Retrieve rds cluster with specific tag
             for tag in taglist:
                 if tag["Key"] == tag_key and tag["Value"] == tag_value:
-
-                    # Retrieve rds cluster id and add in list
                     cluster_id = cluster_rds["DBClusterIdentifier"]
                     cluster_list.insert(0, cluster_id)
-
     return cluster_list
 
 
@@ -118,16 +99,11 @@ def rds_list_instances(tag_key, tag_value):
 
     List all rds instances name with specific tag.
     """
-    # Define the connection
+    instance_list = []
     rds = boto3.client("rds")
     paginator = rds.get_paginator("describe_db_instances")
-    page_iterator = paginator.paginate()
 
-    # Initialize rds instance list
-    instance_list = []
-
-    # Retrieve rds instances tags
-    for page in page_iterator:
+    for page in paginator.paginate():
         for instance_rds in page["DBInstances"]:
             reponse_instance = rds.list_tags_for_resource(
                 ResourceName=instance_rds["DBInstanceArn"]
@@ -137,8 +113,6 @@ def rds_list_instances(tag_key, tag_value):
             # Retrieve rds instance with specific tag
             for tag in taglist:
                 if tag["Key"] == tag_key and tag["Value"] == tag_value:
-
                     instance_id = instance_rds["DBInstanceIdentifier"]
                     instance_list.insert(0, instance_id)
-
     return instance_list

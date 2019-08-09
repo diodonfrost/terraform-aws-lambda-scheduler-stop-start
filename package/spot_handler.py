@@ -14,15 +14,9 @@ def spot_schedule(schedule_action, tag_key, tag_value):
 
     Terminate spot instances by using the defined tag.
     """
-    # Define the connection
     ec2 = boto3.client("ec2")
 
-    # Get spot instance list
-    spot_instance_list = spot_list_instances(tag_key, tag_value)
-
-    for spot_instance in spot_instance_list:
-
-        # Terminate spot instances in list
+    for spot_instance in spot_list_instances(tag_key, tag_value):
         if schedule_action == "stop":
             try:
                 ec2.terminate_instances(InstanceIds=[spot_instance])
@@ -37,7 +31,7 @@ def spot_list_instances(tag_key, tag_value):
     List name of all ec2 spot instances with
     specific tag and return it in list.
     """
-    # Define the connection
+    spot_list = []
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_instances")
     page_iterator = paginator.paginate(
@@ -51,16 +45,9 @@ def spot_list_instances(tag_key, tag_value):
         ]
     )
 
-    # Initialize instance list
-    spot_list = []
-
-    # Retrieve spot instances
     for page in page_iterator:
         for reservation in page["Reservations"]:
             for spot in reservation["Instances"]:
-
-                # Retrieve spot instance id and add in list
                 spot_id = spot["InstanceId"]
                 spot_list.insert(0, spot_id)
-
     return spot_list

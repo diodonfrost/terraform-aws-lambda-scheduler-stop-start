@@ -14,15 +14,10 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
 
     Stop or start ec2 instances by using the tag defined.
     """
-    # Define the connection
     ec2 = boto3.client("ec2")
 
-    # Retrieve instance list
-    ec2_instance_list = ec2_list_instances(tag_key, tag_value)
-
-    for ec2_instance in ec2_instance_list:
-
-        # Stop ec2 instances in list
+    # Stop ec2 instances with defined tag
+    for ec2_instance in ec2_list_instances(tag_key, tag_value):
         if schedule_action == "stop":
             try:
                 ec2.stop_instances(InstanceIds=[ec2_instance])
@@ -38,7 +33,7 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
                 else:
                     logging.error("Unexpected error: %s", e)
 
-        # Start ec2 instances in list
+        # Start ec2 instances with defined tag
         elif schedule_action == "start":
             try:
                 ec2.start_instances(InstanceIds=[ec2_instance])
@@ -61,7 +56,7 @@ def ec2_list_instances(tag_key, tag_value):
     List name of all ec2 instances all ec2 instances
     with specific tag and return it in list.
     """
-    # Define the connection
+    instance_list = []
     ec2 = boto3.client("ec2")
     paginator = ec2.get_paginator("describe_instances")
     page_iterator = paginator.paginate(
@@ -74,16 +69,9 @@ def ec2_list_instances(tag_key, tag_value):
         ]
     )
 
-    # Initialize instance list
-    instance_list = []
-
-    # Retrieve ec2 instances
     for page in page_iterator:
         for reservation in page["Reservations"]:
             for instance in reservation["Instances"]:
-
-                # Retrieve ec2 instance id and add in list
                 instance_id = instance["InstanceId"]
                 instance_list.insert(0, instance_id)
-
     return instance_list
