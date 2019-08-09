@@ -15,59 +15,86 @@ def rds_schedule(schedule_action, tag_key, tag_value):
     Stop or start Aurora cluster and rds instances
     by using the defined tag.
     """
+    if schedule_action == "stop":
+        rds_stop_clusters(tag_key, tag_value)
+        rds_stop_instances(tag_key, tag_value)
+    elif schedule_action == "start":
+        rds_start_clusters(tag_key, tag_value)
+        rds_start_instances(tag_key, tag_value)
+    else:
+        logging.error("Bad scheduler action")
+
+
+def rds_stop_clusters(tag_key, tag_value):
+    """Rds stop cluster function.
+
+    Shuting donw Aurora clusters with defined tag.
+    """
     rds = boto3.client("rds")
 
     for cluster_id in rds_list_clusters(tag_key, tag_value):
-        # Stop Aurora cluster
-        if schedule_action == "stop":
-            try:
-                rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
-                print("Stop rds cluster {0}".format(cluster_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBClusterStateFault":
-                    logging.info("rds cluster %s is not started", cluster_id)
-                else:
-                    logging.error("Unexpected error: %s", e)
+        try:
+            rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
+            print("Stop rds cluster {0}".format(cluster_id))
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "InvalidDBClusterStateFault":
+                logging.info("%s", e)
+            else:
+                logging.error("Unexpected error: %s", e)
 
-        # Start Aurora cluster
-        elif schedule_action == "start":
-            try:
-                rds.start_db_cluster(DBClusterIdentifier=cluster_id)
-                print("Start rds cluster {0}".format(cluster_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBClusterStateFault":
-                    logging.info("rds cluster %s is not stopped", cluster_id)
-                else:
-                    logging.error("Unexpected error: %s", e)
+
+def rds_stop_instances(tag_key, tag_value):
+    """Rds stop instance function.
+
+    Shuting donw rds instances with defined tag.
+    """
+    rds = boto3.client("rds")
 
     for instance_id in rds_list_instances(tag_key, tag_value):
-        if schedule_action == "stop":
-            try:
-                rds.stop_db_instance(DBInstanceIdentifier=instance_id)
-                print("Stop rds instance {0}".format(instance_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBInstanceState":
-                    logging.info(
-                        "rds instance %s is not started", instance_id
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+        try:
+            rds.stop_db_instance(DBInstanceIdentifier=instance_id)
+            print("Stop rds instance {0}".format(instance_id))
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "InvalidDBInstanceState":
+                logging.info("%s", e)
+            else:
+                logging.error("Unexpected error: %s", e)
 
-        elif schedule_action == "start":
-            try:
-                rds.start_db_instance(DBInstanceIdentifier=instance_id)
-                print("Start rds instance {0}".format(instance_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBInstanceState":
-                    logging.info(
-                        "rds instance %s is not stopped", instance_id
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+
+def rds_start_clusters(tag_key, tag_value):
+    """Rds start cluster function.
+
+    Starting up Aurora clusters with defined tag.
+    """
+    rds = boto3.client("rds")
+
+    for cluster_id in rds_list_clusters(tag_key, tag_value):
+        try:
+            rds.start_db_cluster(DBClusterIdentifier=cluster_id)
+            print("Start rds cluster {0}".format(cluster_id))
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "InvalidDBClusterStateFault":
+                logging.info("%s", e)
+            else:
+                logging.error("Unexpected error: %s", e)
+
+
+def rds_start_instances(tag_key, tag_value):
+    """Rds start instance function.
+
+    Shuting donw rds instances with defined tag.
+    """
+    rds = boto3.client("rds")
+
+    for instance_id in rds_list_instances(tag_key, tag_value):
+        try:
+            rds.start_db_instance(DBInstanceIdentifier=instance_id)
+            print("Start rds instance {0}".format(instance_id))
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "InvalidDBInstanceState":
+                logging.info("%s", e)
+            else:
+                logging.error("Unexpected error: %s", e)
 
 
 def rds_list_clusters(tag_key, tag_value):

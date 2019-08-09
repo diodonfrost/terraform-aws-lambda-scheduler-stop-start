@@ -14,40 +14,49 @@ def ec2_schedule(schedule_action, tag_key, tag_value):
 
     Stop or start ec2 instances by using the tag defined.
     """
+    if schedule_action == "stop":
+        ec2_stop_instances(tag_key, tag_value)
+    elif schedule_action == "start":
+        ec2_start_instances(tag_key, tag_value)
+    else:
+        logging.error("Bad scheduler action")
+
+
+def ec2_stop_instances(tag_key, tag_value):
+    """Aws ec2 stop instance function.
+
+    Shuting donw ec2 instance with defined tag.
+    """
     ec2 = boto3.client("ec2")
 
-    # Stop ec2 instances with defined tag
     for ec2_instance in ec2_list_instances(tag_key, tag_value):
-        if schedule_action == "stop":
-            try:
-                ec2.stop_instances(InstanceIds=[ec2_instance])
-                print("Stop instances {0}".format(ec2_instance))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "UnsupportedOperation":
-                    logging.warning(
-                        "%s is a spot instance and can not be stopped"
-                        "by scheduler",
-                        ec2_instance,
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+        try:
+            ec2.stop_instances(InstanceIds=[ec2_instance])
+            print("Stop instances {0}".format(ec2_instance))
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "UnsupportedOperation":
+                logging.warning("%s", e)
+            else:
+                logging.error("Unexpected error: %s", e)
 
-        # Start ec2 instances with defined tag
-        elif schedule_action == "start":
-            try:
-                ec2.start_instances(InstanceIds=[ec2_instance])
-                print("Start instances {0}".format(ec2_instance))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "UnsupportedOperation":
-                    logging.warning(
-                        "%s is a spot instance and can not be started"
-                        "by scheduler",
-                        ec2_instance,
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
+
+def ec2_start_instances(tag_key, tag_value):
+    """Aws ec2 start instance function.
+
+    Starting up ec2 instance with defined tag.
+    """
+    ec2 = boto3.client("ec2")
+
+    for ec2_instance in ec2_list_instances(tag_key, tag_value):
+        try:
+            ec2.start_instances(InstanceIds=[ec2_instance])
+            print("Start instances {0}".format(ec2_instance))
+        except ClientError as e:
+            error_code = e.response["Error"]["Code"]
+            if error_code == "UnsupportedOperation":
+                logging.warning("%s", e)
+            else:
+                logging.error("Unexpected error: %s", e)
 
 
 def ec2_list_instances(tag_key, tag_value):

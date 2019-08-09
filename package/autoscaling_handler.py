@@ -15,60 +15,75 @@ def autoscaling_schedule(schedule_action, tag_key, tag_value):
     Suspend or resume all autoscaling scaling groups
     by using the defined tag.
     """
-    # Define the connection
+    if schedule_action == "stop":
+        asg_stop_groups(tag_key, tag_value)
+    elif schedule_action == "start":
+        asg_start_groups(tag_key, tag_value)
+    else:
+        logging.error("Bad scheduler action")
+
+
+def asg_stop_groups(tag_key, tag_value):
+    """Aws autoscaling suspend function.
+
+    Suspend autoscaling group and stop its instances
+    with defined tag.
+    """
     autoscaling = boto3.client("autoscaling")
     ec2 = boto3.client("ec2")
-    asg_list = autoscaling_list_groups(tag_key, tag_value)
-    instance_list = autoscaling_list_instances(asg_list)
+    asg_list = asg_list_groups(tag_key, tag_value)
+    instance_list = asg_list_instances(asg_list)
 
-    # Suspend autoscaling group and stop all its instances
-    if schedule_action == "stop":
-        for asg_name in asg_list:
-            try:
-                autoscaling.suspend_processes(AutoScalingGroupName=asg_name)
-                print("Suspend autoscaling group {0}".format(asg_name))
-            except ClientError as e:
+    for asg_name in asg_list:
+        try:
+            autoscaling.suspend_processes(AutoScalingGroupName=asg_name)
+            print("Suspend autoscaling group {0}".format(asg_name))
+        except ClientError as e:
+            logging.error("Unexpected error: %s", e)
+
+    # Stop autoscaling instance
+    for ec2_instance in instance_list:
+        try:
+            ec2.stop_instances(InstanceIds=[ec2_instance])
+            print("Stop autoscaling instances {0}".format(ec2_instance))
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "UnsupportedOperation":
+                logging.warning("%s", e)
+            else:
                 logging.error("Unexpected error: %s", e)
 
-        for ec2_instance in instance_list:
-            try:
-                ec2.stop_instances(InstanceIds=[ec2_instance])
-                print("Stop autoscaling instances {0}".format(ec2_instance))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "UnsupportedOperation":
-                    logging.warning(
-                        "%s is a spot instance and cannot be stopped by user",
-                        ec2_instance,
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
 
-    # Resume autoscaling group
-    elif schedule_action == "start":
-        for asg_name in asg_list:
-            try:
-                autoscaling.resume_processes(AutoScalingGroupName=asg_name)
-                print("Resume autoscaling group {0}".format(asg_name))
-            except ClientError as e:
+def asg_start_groups(tag_key, tag_value):
+    """Aws autoscaling resume function.
+
+    Resume autoscaling group and start its instances
+    with defined tag.
+    """
+    autoscaling = boto3.client("autoscaling")
+    ec2 = boto3.client("ec2")
+    asg_list = asg_list_groups(tag_key, tag_value)
+    instance_list = asg_list_instances(asg_list)
+
+    for asg_name in asg_list:
+        try:
+            autoscaling.resume_processes(AutoScalingGroupName=asg_name)
+            print("Resume autoscaling group {0}".format(asg_name))
+        except ClientError as e:
+            logging.error("Unexpected error: %s", e)
+
+    # Start autoscaling instance
+    for ec2_instance in instance_list:
+        try:
+            ec2.start_instances(InstanceIds=[ec2_instance])
+            print("Start autoscaling instances {0}".format(ec2_instance))
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "IncorrectInstanceState":
+                logging.warning("%s", e)
+            else:
                 logging.error("Unexpected error: %s", e)
 
-        for ec2_instance in instance_list:
-            try:
-                ec2.start_instances(InstanceIds=[ec2_instance])
-                print("Start autoscaling instances {0}".format(ec2_instance))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "IncorrectInstanceState":
-                    logging.info(
-                        "The instance %s is not in a state from which"
-                        "it can be started", ec2_instance
-                    )
-                else:
-                    logging.error("Unexpected error: %s", e)
 
-
-def autoscaling_list_groups(tag_key, tag_value):
+def asg_list_groups(tag_key, tag_value):
     """Aws autoscaling list function.
 
     List name of all autoscaling groups with
@@ -87,7 +102,7 @@ def autoscaling_list_groups(tag_key, tag_value):
     return asg_list
 
 
-def autoscaling_list_instances(asg_list):
+def asg_list_instances(asg_list):
     """Aws autoscaling instance list function.
 
     List name of all instances in the autoscaling groups
