@@ -97,8 +97,7 @@ def asg_list_groups(tag_key, tag_value):
         for group in page["AutoScalingGroups"]:
             for tag in group["Tags"]:
                 if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                    autoscaling_group = group["AutoScalingGroupName"]
-                    asg_list.insert(0, autoscaling_group)
+                    asg_list.append(group["AutoScalingGroupName"])
     return asg_list
 
 
@@ -117,6 +116,5 @@ def asg_list_instances(asg_list):
     for page in paginator.paginate(AutoScalingGroupNames=asg_list):
         for scalinggroup in page["AutoScalingGroups"]:
             for instance in scalinggroup["Instances"]:
-                asg_instance = instance["InstanceId"]
-                asg_instance_list.insert(0, asg_instance)
+                asg_instance_list.append(instance["InstanceId"])
     return asg_instance_list

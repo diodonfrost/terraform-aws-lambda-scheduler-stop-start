@@ -48,6 +48,5 @@ def spot_list_instances(tag_key, tag_value):
     for page in page_iterator:
         for reservation in page["Reservations"]:
             for spot in reservation["Instances"]:
-                spot_id = spot["InstanceId"]
-                spot_list.insert(0, spot_id)
+                spot_list.append(spot["InstanceId"])
     return spot_list

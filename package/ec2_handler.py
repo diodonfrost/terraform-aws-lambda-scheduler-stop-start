@@ -81,6 +81,5 @@ def ec2_list_instances(tag_key, tag_value):
     for page in page_iterator:
         for reservation in page["Reservations"]:
             for instance in reservation["Instances"]:
-                instance_id = instance["InstanceId"]
-                instance_list.insert(0, instance_id)
+                instance_list.append(instance["InstanceId"])
     return instance_list

@@ -116,8 +116,7 @@ def rds_list_clusters(tag_key, tag_value):
             # Retrieve rds cluster with specific tag
             for tag in taglist:
                 if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                    cluster_id = cluster_rds["DBClusterIdentifier"]
-                    cluster_list.insert(0, cluster_id)
+                    cluster_list.append(cluster_rds["DBClusterIdentifier"])
     return cluster_list
 
 
@@ -140,6 +139,5 @@ def rds_list_instances(tag_key, tag_value):
             # Retrieve rds instance with specific tag
             for tag in taglist:
                 if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                    instance_id = instance_rds["DBInstanceIdentifier"]
-                    instance_list.insert(0, instance_id)
+                    instance_list.append(instance_rds["DBInstanceIdentifier"])
     return instance_list
