@@ -4,6 +4,11 @@
 
 Stop and start ec2, rds resources and autoscaling groups with lambda function.
 
+## Terraform versions
+For Terraform 0.12 use version v2.* of this module.
+
+If you are using Terraform 0.11 you can use versions v1.*.
+
 ## Features
 
 *   Aws lambda runtine Python 3.7
