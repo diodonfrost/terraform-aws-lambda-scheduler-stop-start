@@ -17,20 +17,20 @@ data "aws_ami" "ubuntu" {
 }
 
 # Create vpc use by asg
-resource "aws_vpc" "main" {
+resource "aws_vpc" "this" {
   cidr_block = "10.0.0.0/16"
 }
 
 # Create subnet use bt asg
-resource "aws_subnet" "main" {
-  vpc_id     = "${aws_vpc.main.id}"
+resource "aws_subnet" "this" {
+  vpc_id     = aws_vpc.this.id
   cidr_block = "10.0.1.0/24"
 }
 
 # Run spot instances that will be scheduled
 resource "aws_launch_template" "scheduled" {
   name_prefix   = "spot-scheduled"
-  image_id      = "${data.aws_ami.ubuntu.id}"
+  image_id      = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 }
 
@@ -38,7 +38,7 @@ resource "aws_autoscaling_group" "scheduled" {
   desired_capacity    = 3
   max_size            = 3
   min_size            = 3
-  vpc_zone_identifier = ["${aws_subnet.main.id}"]
+  vpc_zone_identifier = [aws_subnet.this.id]
 
   mixed_instances_policy {
      instances_distribution {
@@ -47,7 +47,7 @@ resource "aws_autoscaling_group" "scheduled" {
 
     launch_template {
       launch_template_specification {
-        launch_template_id = "${aws_launch_template.scheduled.id}"
+        launch_template_id = aws_launch_template.scheduled.id
       }
 
       override {
@@ -68,7 +68,7 @@ resource "aws_autoscaling_group" "scheduled" {
     },
     {
       key                 = "terratest_tag"
-      value               = "${var.random_tag}"
+      value               = var.random_tag
       propagate_at_launch = true
     },
   ]
@@ -77,7 +77,7 @@ resource "aws_autoscaling_group" "scheduled" {
 # Run spot instances that will be not scheduled
 resource "aws_launch_template" "not_scheduled" {
  name_prefix   = "spot-not_scheduled"
- image_id      = "${data.aws_ami.ubuntu.id}"
+ image_id      = data.aws_ami.ubuntu.id
  instance_type = "t2.micro"
 }
 
@@ -85,7 +85,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
  desired_capacity    = 2
  max_size            = 2
  min_size            = 2
- vpc_zone_identifier = ["${aws_subnet.main.id}"]
+ vpc_zone_identifier = [aws_subnet.this.id]
 
  mixed_instances_policy {
     instances_distribution {
@@ -94,7 +94,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
 
    launch_template {
      launch_template_specification {
-       launch_template_id = "${aws_launch_template.scheduled.id}"
+       launch_template_id = aws_launch_template.scheduled.id
      }
 
      override {
@@ -115,7 +115,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
    },
    {
      key                 = "terratest_tag"
-     value               = "${var.random_tag}"
+     value               = var.random_tag
      propagate_at_launch = true
    },
  ]

@@ -16,18 +16,18 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_vpc" "main" {
+resource "aws_vpc" "this" {
   cidr_block = "10.0.0.0/16"
 }
 
-resource "aws_subnet" "main" {
-  vpc_id     = "${aws_vpc.main.id}"
+resource "aws_subnet" "this" {
+  vpc_id     = aws_vpc.this.id
   cidr_block = "10.0.1.0/24"
 }
 
-resource "aws_launch_configuration" "as_conf" {
+resource "aws_launch_configuration" "this" {
   name          = "web_config"
-  image_id      = "${data.aws_ami.ubuntu.id}"
+  image_id      = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 }
 
@@ -41,8 +41,8 @@ resource "aws_autoscaling_group" "scheduled" {
   health_check_type         = "EC2"
   desired_capacity          = 1
   force_delete              = true
-  launch_configuration      = "${aws_launch_configuration.as_conf.name}"
-  vpc_zone_identifier       = ["${aws_subnet.main.id}"]
+  launch_configuration      = aws_launch_configuration.this.name
+  vpc_zone_identifier       = [aws_subnet.this.id]
 
   tags = [
     {
@@ -52,7 +52,7 @@ resource "aws_autoscaling_group" "scheduled" {
     },
     {
       key                 = "terratest_tag"
-      value               = "${var.random_tag}"
+      value               = var.random_tag
       propagate_at_launch = true
     },
   ]
@@ -68,8 +68,8 @@ resource "aws_autoscaling_group" "not_scheduled" {
   health_check_type         = "EC2"
   desired_capacity          = 1
   force_delete              = true
-  launch_configuration      = "${aws_launch_configuration.as_conf.name}"
-  vpc_zone_identifier       = ["${aws_subnet.main.id}"]
+  launch_configuration      = aws_launch_configuration.this.name
+  vpc_zone_identifier       = [aws_subnet.this.id]
 
   tags = [
     {
@@ -79,7 +79,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
     },
     {
       key                 = "terratest_tag"
-      value               = "${var.random_tag}"
+      value               = var.random_tag
       propagate_at_launch = true
     },
   ]
