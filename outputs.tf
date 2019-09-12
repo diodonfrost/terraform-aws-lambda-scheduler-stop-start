@@ -1,11 +1,11 @@
 output "lambda_iam_role_arn" {
   description = "The ARN of the IAM role used by Lambda function"
-  value       = aws_iam_role.this.arn
+  value       = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
 }
 
 output "lambda_iam_role_name" {
   description = "The name of the IAM role used by Lambda function"
-  value       = aws_iam_role.this.name
+  value       = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
 }
 
 output "scheduler_lambda_arn" {

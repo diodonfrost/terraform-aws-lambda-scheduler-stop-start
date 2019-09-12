@@ -15,6 +15,7 @@ terraform {
 ################################################
 
 resource "aws_iam_role" "this" {
+  count       = var.custom_iam_role_arn == null ? 1 : 0
   name        = "${var.name}-scheduler-lambda"
   description = "Allows Lambda functions to stop and start ec2 and rds resources"
 
@@ -36,8 +37,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "schedule_autoscaling" {
-  name = "${var.name}-autoscaling-custom-policy-scheduler"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-autoscaling-custom-policy-scheduler"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -64,8 +66,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "schedule_spot" {
-  name = "${var.name}-spot-custom-policy-scheduler"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-spot-custom-policy-scheduler"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -84,8 +87,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "schedule_ec2" {
-  name = "${var.name}-ec2-custom-policy-scheduler"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-ec2-custom-policy-scheduler"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -109,8 +113,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "schedule_rds" {
-  name = "${var.name}-rds-custom-policy-scheduler"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-rds-custom-policy-scheduler"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -135,8 +140,9 @@ EOF
 }
 
 resource "aws_iam_role_policy" "lambda_logging" {
-  name = "${var.name}-lambda-logging"
-  role = aws_iam_role.this.id
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-lambda-logging"
+  role  = aws_iam_role.this[0].id
 
   policy = <<EOF
 {
@@ -172,7 +178,7 @@ data "archive_file" "this" {
 resource "aws_lambda_function" "this" {
   filename         = data.archive_file.this.output_path
   function_name    = var.name
-  role             = aws_iam_role.this.arn
+  role             = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
   handler          = "main.lambda_handler"
   source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"

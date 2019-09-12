@@ -14,6 +14,13 @@ variable "name" {
   type        = string
 }
 
+variable "custom_iam_role_arn" {
+  description = "Custom IAM role arn for the scheduling lambda"
+  type        = string
+  default     = null
+}
+
+
 variable "schedule_action" {
   description = "Define schedule action to apply on resources, accepted value are 'stop or 'start"
   type        = string
