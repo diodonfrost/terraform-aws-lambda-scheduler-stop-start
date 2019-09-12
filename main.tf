@@ -1,7 +1,10 @@
 # Freeze aws provider version
 terraform {
+  required_version = ">= 0.12"
+
   required_providers {
-    aws = ">= 2.9.0"
+    aws     = ">= 2.9.0"
+    archive = ">= 1.2.2"
   }
 }
 
@@ -11,8 +14,7 @@ terraform {
 #
 ################################################
 
-# Create role for stop and start aws resouces
-resource "aws_iam_role" "scheduler_lambda" {
+resource "aws_iam_role" "this" {
   name        = "${var.name}-scheduler-lambda"
   description = "Allows Lambda functions to stop and start ec2 and rds resources"
 
@@ -33,10 +35,9 @@ resource "aws_iam_role" "scheduler_lambda" {
 EOF
 }
 
-# Create policy for manage autoscaling
 resource "aws_iam_role_policy" "schedule_autoscaling" {
   name = "${var.name}-autoscaling-custom-policy-scheduler"
-  role = "${aws_iam_role.scheduler_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -62,10 +63,9 @@ resource "aws_iam_role_policy" "schedule_autoscaling" {
 EOF
 }
 
-# Create custom policy for manage ec2
 resource "aws_iam_role_policy" "schedule_spot" {
   name = "${var.name}-spot-custom-policy-scheduler"
-  role = "${aws_iam_role.scheduler_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -83,10 +83,9 @@ resource "aws_iam_role_policy" "schedule_spot" {
 EOF
 }
 
-# Create custom policy for manage ec2 instances
 resource "aws_iam_role_policy" "schedule_ec2" {
   name = "${var.name}-ec2-custom-policy-scheduler"
-  role = "${aws_iam_role.scheduler_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -109,10 +108,9 @@ resource "aws_iam_role_policy" "schedule_ec2" {
 EOF
 }
 
-# Create custom policy for manage rds
 resource "aws_iam_role_policy" "schedule_rds" {
   name = "${var.name}-rds-custom-policy-scheduler"
-  role = "${aws_iam_role.scheduler_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -136,10 +134,9 @@ resource "aws_iam_role_policy" "schedule_rds" {
 EOF
 }
 
-# Allow lambda cloudwatch logs
 resource "aws_iam_role_policy" "lambda_logging" {
   name = "${var.name}-lambda-logging"
-  role = "${aws_iam_role.scheduler_lambda.id}"
+  role = aws_iam_role.this.id
 
   policy = <<EOF
 {
@@ -165,31 +162,31 @@ EOF
 ################################################
 
 # Convert *.py to .zip because AWS Lambda need .zip
-data "archive_file" "convert_py_to_zip" {
+data "archive_file" "this" {
   type        = "zip"
   source_dir  = "${path.module}/package/"
   output_path = "${path.module}/aws-stop-start-resources.zip"
 }
 
 # Create Lambda function for stop or start aws resources
-resource "aws_lambda_function" "stop_start" {
-  filename         = "${data.archive_file.convert_py_to_zip.output_path}"
-  function_name    = "${var.name}"
-  role             = "${aws_iam_role.scheduler_lambda.arn}"
+resource "aws_lambda_function" "this" {
+  filename         = data.archive_file.this.output_path
+  function_name    = var.name
+  role             = aws_iam_role.this.arn
   handler          = "main.lambda_handler"
-  source_code_hash = "${data.archive_file.convert_py_to_zip.output_base64sha256}"
+  source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"
   timeout          = "600"
 
   environment {
     variables = {
-      SCHEDULE_ACTION      = "${var.schedule_action}"
-      TAG_KEY              = "${var.resources_tag["key"]}"
-      TAG_VALUE            = "${var.resources_tag["value"]}"
-      EC2_SCHEDULE         = "${var.ec2_schedule}"
-      RDS_SCHEDULE         = "${var.rds_schedule}"
-      AUTOSCALING_SCHEDULE = "${var.autoscaling_schedule}"
-      SPOT_SCHEDULE        = "${var.spot_schedule}"
+      SCHEDULE_ACTION      = var.schedule_action
+      TAG_KEY              = var.resources_tag["key"]
+      TAG_VALUE            = var.resources_tag["value"]
+      EC2_SCHEDULE         = var.ec2_schedule
+      RDS_SCHEDULE         = var.rds_schedule
+      AUTOSCALING_SCHEDULE = var.autoscaling_schedule
+      SPOT_SCHEDULE        = var.spot_schedule
     }
   }
 }
@@ -200,30 +197,32 @@ resource "aws_lambda_function" "stop_start" {
 #
 ################################################
 
-# Create event cloud watch for trigger lambda scheduler
-resource "aws_cloudwatch_event_rule" "lambda_event" {
+resource "aws_cloudwatch_event_rule" "this" {
   name                = "trigger-lambda-scheduler-${var.name}"
   description         = "Trigger lambda scheduler"
-  schedule_expression = "${var.cloudwatch_schedule_expression}"
+  schedule_expression = var.cloudwatch_schedule_expression
 }
 
-# Set lambda function as target
-resource "aws_cloudwatch_event_target" "lambda_event_target" {
-  arn  = "${aws_lambda_function.stop_start.arn}"
-  rule = "${aws_cloudwatch_event_rule.lambda_event.name}"
+resource "aws_cloudwatch_event_target" "this" {
+  arn  = aws_lambda_function.this.arn
+  rule = aws_cloudwatch_event_rule.this.name
 }
 
-# Allow cloudwatch to invoke lambda scheduler
-resource "aws_lambda_permission" "allow_cloudwatch_scheduler" {
+resource "aws_lambda_permission" "this" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   principal     = "events.amazonaws.com"
-  function_name = "${aws_lambda_function.stop_start.function_name}"
-  source_arn    = "${aws_cloudwatch_event_rule.lambda_event.arn}"
+  function_name = aws_lambda_function.this.function_name
+  source_arn    = aws_cloudwatch_event_rule.this.arn
 }
 
-# Enable lambda cloudwatch logs
-resource "aws_cloudwatch_log_group" "lambda_Logging" {
+################################################
+#
+#            CLOUDWATCH LOG
+#
+################################################
+
+resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
 }
