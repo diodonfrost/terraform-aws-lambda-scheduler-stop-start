@@ -9,112 +9,123 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def autoscaling_schedule(schedule_action, tag_key, tag_value):
-    """Aws autoscaling scheduler function.
+class AutoscalingScheduler:
+    """Abstract autoscaling scheduler in a class."""
 
-    Suspend or resume all autoscaling scaling groups
-    by using the defined tag.
-    """
-    if schedule_action == "stop":
-        asg_stop_groups(tag_key, tag_value)
-    elif schedule_action == "start":
-        asg_start_groups(tag_key, tag_value)
-    else:
-        logging.error("Bad scheduler action")
+    def __init__(self):
+        """Initialize autoscaling scheduler."""
+        #: Initialize aws autoscaling resource
+        self.asg = boto3.client("autoscaling")
+        #: Initialize aws ec2 resource
+        self.ec2 = boto3.client("ec2")
 
+    def stop_groups(self, tag_key, tag_value):
+        """Aws autoscaling suspend function.
 
-def asg_stop_groups(tag_key, tag_value):
-    """Aws autoscaling suspend function.
+        Suspend autoscaling group and stop its instances
+        with defined tag.
 
-    Suspend autoscaling group and stop its instances
-    with defined tag.
-    """
-    autoscaling = boto3.client("autoscaling")
-    ec2 = boto3.client("ec2")
-    asg_list = asg_list_groups(tag_key, tag_value)
-    instance_list = asg_list_instances(asg_list)
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        asg_list = self.list_groups(tag_key, tag_value)
+        instance_list = self.list_instances(asg_list)
 
-    for asg_name in asg_list:
-        try:
-            autoscaling.suspend_processes(AutoScalingGroupName=asg_name)
-            print("Suspend autoscaling group {0}".format(asg_name))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
-
-    # Stop autoscaling instance
-    for ec2_instance in instance_list:
-        try:
-            ec2.stop_instances(InstanceIds=[ec2_instance])
-            print("Stop autoscaling instances {0}".format(ec2_instance))
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "UnsupportedOperation":
-                logging.warning("%s", e)
-            else:
+        for asg_name in asg_list:
+            try:
+                self.asg.suspend_processes(AutoScalingGroupName=asg_name)
+                print("Suspend autoscaling group {0}".format(asg_name))
+            except ClientError as e:
                 logging.error("Unexpected error: %s", e)
 
+        # Stop autoscaling instance
+        for ec2_instance in instance_list:
+            try:
+                self.ec2.stop_instances(InstanceIds=[ec2_instance])
+                print("Stop autoscaling instances {0}".format(ec2_instance))
+            except ClientError as e:
+                if e.response["Error"]["Code"] == "UnsupportedOperation":
+                    logging.warning("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-def asg_start_groups(tag_key, tag_value):
-    """Aws autoscaling resume function.
+    def start_groups(self, tag_key, tag_value):
+        """Aws autoscaling resume function.
 
-    Resume autoscaling group and start its instances
-    with defined tag.
-    """
-    autoscaling = boto3.client("autoscaling")
-    ec2 = boto3.client("ec2")
-    asg_list = asg_list_groups(tag_key, tag_value)
-    instance_list = asg_list_instances(asg_list)
+        Resume autoscaling group and start its instances
+        with defined tag.
 
-    for asg_name in asg_list:
-        try:
-            autoscaling.resume_processes(AutoScalingGroupName=asg_name)
-            print("Resume autoscaling group {0}".format(asg_name))
-        except ClientError as e:
-            logging.error("Unexpected error: %s", e)
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        asg_list = self.list_groups(tag_key, tag_value)
+        instance_list = self.list_instances(asg_list)
 
-    # Start autoscaling instance
-    for ec2_instance in instance_list:
-        try:
-            ec2.start_instances(InstanceIds=[ec2_instance])
-            print("Start autoscaling instances {0}".format(ec2_instance))
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "IncorrectInstanceState":
-                logging.warning("%s", e)
-            else:
+        for asg_name in asg_list:
+            try:
+                self.asg.resume_processes(AutoScalingGroupName=asg_name)
+                print("Resume autoscaling group {0}".format(asg_name))
+            except ClientError as e:
                 logging.error("Unexpected error: %s", e)
 
+        # Start autoscaling instance
+        for ec2_instance in instance_list:
+            try:
+                self.ec2.start_instances(InstanceIds=[ec2_instance])
+                print("Start autoscaling instances {0}".format(ec2_instance))
+            except ClientError as e:
+                if e.response["Error"]["Code"] == "IncorrectInstanceState":
+                    logging.warning("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-def asg_list_groups(tag_key, tag_value):
-    """Aws autoscaling list function.
+    def list_groups(self, tag_key, tag_value):
+        """Aws autoscaling list function.
 
-    List name of all autoscaling groups with
-    specific tag and return it in list.
-    """
-    asg_list = []
-    autoscaling = boto3.client("autoscaling")
-    paginator = autoscaling.get_paginator("describe_auto_scaling_groups")
+        List name of all autoscaling groups with
+        specific tag and return it in list.
 
-    for page in paginator.paginate():
-        for group in page["AutoScalingGroups"]:
-            for tag in group["Tags"]:
-                if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                    asg_list.append(group["AutoScalingGroupName"])
-    return asg_list
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
 
+        :return list asg_list:
+            The names of the Auto Scaling groups
+        """
+        asg_list = []
+        paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
-def asg_list_instances(asg_list):
-    """Aws autoscaling instance list function.
+        for page in paginator.paginate():
+            for group in page["AutoScalingGroups"]:
+                for tag in group["Tags"]:
+                    if tag["Key"] == tag_key and tag["Value"] == tag_value:
+                        asg_list.append(group["AutoScalingGroupName"])
+        return asg_list
 
-    List name of all instances in the autoscaling groups
-    and return it in list.
-    """
-    if not asg_list:
-        return []
-    asg_instance_list = []
-    autoscaling = boto3.client("autoscaling")
-    paginator = autoscaling.get_paginator("describe_auto_scaling_groups")
+    def list_instances(self, asg_list):
+        """Aws autoscaling instance list function.
 
-    for page in paginator.paginate(AutoScalingGroupNames=asg_list):
-        for scalinggroup in page["AutoScalingGroups"]:
-            for instance in scalinggroup["Instances"]:
-                asg_instance_list.append(instance["InstanceId"])
-    return asg_instance_list
+        List name of all instances in the autoscaling groups
+        and return it in list.
+
+        :param list asg_list:
+            The names of the Auto Scaling groups.
+
+        :return list asg_instance_list:
+            The names of the instances in Auto Scaling groups.
+        """
+        if not asg_list:
+            return []
+        asg_instance_list = []
+        paginator = self.asg.get_paginator("describe_auto_scaling_groups")
+
+        for page in paginator.paginate(AutoScalingGroupNames=asg_list):
+            for scalinggroup in page["AutoScalingGroups"]:
+                for instance in scalinggroup["Instances"]:
+                    asg_instance_list.append(instance["InstanceId"])
+        return asg_instance_list

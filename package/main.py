@@ -3,7 +3,7 @@
 """This script stop and start aws resources."""
 import os
 
-import autoscaling_handler
+from autoscaling_handler import AutoscalingScheduler
 
 import ec2_handler
 
@@ -35,9 +35,11 @@ def lambda_handler(event, context):
     rds_schedule = os.getenv("RDS_SCHEDULE", "true")
 
     if autoscaling_schedule == "true":
-        autoscaling_handler.autoscaling_schedule(
-            schedule_action, tag_key, tag_value
-        )
+        scheduler = AutoscalingScheduler()
+        if schedule_action == "stop":
+            scheduler.stop_groups(tag_key, tag_value)
+        elif schedule_action == "start":
+            scheduler.start_groups(tag_key, tag_value)
 
     if spot_schedule == "terminate":
         spot_handler.spot_schedule(schedule_action, tag_key, tag_value)
