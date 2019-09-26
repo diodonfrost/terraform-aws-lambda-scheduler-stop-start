@@ -9,77 +9,75 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def ec2_schedule(schedule_action, tag_key, tag_value):
-    """Aws ec2 scheduler function.
+class Ec2Scheduler:
+    """Abstract ec2 scheduler in a class."""
 
-    Stop or start ec2 instances by using the tag defined.
-    """
-    if schedule_action == "stop":
-        ec2_stop_instances(tag_key, tag_value)
-    elif schedule_action == "start":
-        ec2_start_instances(tag_key, tag_value)
-    else:
-        logging.error("Bad scheduler action")
+    def __init__(self):
+        """Initialize autoscaling scheduler."""
+        #: Initialize aws ec2 resource
+        self.ec2 = boto3.client("ec2")
 
+    def stop_instances(self, tag_key, tag_value):
+        """Aws ec2 instance stop function.
 
-def ec2_stop_instances(tag_key, tag_value):
-    """Aws ec2 stop instance function.
+        Stop ec2 instances with defined tag.
 
-    Shuting donw ec2 instance with defined tag.
-    """
-    ec2 = boto3.client("ec2")
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        for ec2_instance in self.list_instances(tag_key, tag_value):
+            try:
+                self.ec2.stop_instances(InstanceIds=[ec2_instance])
+                print("Stop instances {0}".format(ec2_instance))
+            except ClientError as e:
+                if e.response["Error"]["Code"] == "UnsupportedOperation":
+                    logging.warning("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-    for ec2_instance in ec2_list_instances(tag_key, tag_value):
-        try:
-            ec2.stop_instances(InstanceIds=[ec2_instance])
-            print("Stop instances {0}".format(ec2_instance))
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "UnsupportedOperation":
-                logging.warning("%s", e)
-            else:
-                logging.error("Unexpected error: %s", e)
+    def start_instances(self, tag_key, tag_value):
+        """Aws ec2 instance start function.
 
+        Start ec2 instances with defined tag.
 
-def ec2_start_instances(tag_key, tag_value):
-    """Aws ec2 start instance function.
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        for ec2_instance in self.list_instances(tag_key, tag_value):
+            try:
+                self.ec2.start_instances(InstanceIds=[ec2_instance])
+                print("Start instances {0}".format(ec2_instance))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "UnsupportedOperation":
+                    logging.warning("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-    Starting up ec2 instance with defined tag.
-    """
-    ec2 = boto3.client("ec2")
+    def list_instances(self, tag_key, tag_value):
+        """Aws ec2 instance list function.
 
-    for ec2_instance in ec2_list_instances(tag_key, tag_value):
-        try:
-            ec2.start_instances(InstanceIds=[ec2_instance])
-            print("Start instances {0}".format(ec2_instance))
-        except ClientError as e:
-            error_code = e.response["Error"]["Code"]
-            if error_code == "UnsupportedOperation":
-                logging.warning("%s", e)
-            else:
-                logging.error("Unexpected error: %s", e)
+        List name of all ec2 instances all ec2 instances
+        with specific tag and return it in list.
+        """
+        instance_list = []
+        paginator = self.ec2.get_paginator("describe_instances")
+        page_iterator = paginator.paginate(
+            Filters=[
+                {"Name": "tag:" + tag_key, "Values": [tag_value]},
+                {
+                    "Name": "instance-state-name",
+                    "Values": ["pending", "running", "stopping", "stopped"],
+                },
+            ]
+        )
 
-
-def ec2_list_instances(tag_key, tag_value):
-    """Aws ec2 instance list function.
-
-    List name of all ec2 instances all ec2 instances
-    with specific tag and return it in list.
-    """
-    instance_list = []
-    ec2 = boto3.client("ec2")
-    paginator = ec2.get_paginator("describe_instances")
-    page_iterator = paginator.paginate(
-        Filters=[
-            {"Name": "tag:" + tag_key, "Values": [tag_value]},
-            {
-                "Name": "instance-state-name",
-                "Values": ["pending", "running", "stopping", "stopped"],
-            },
-        ]
-    )
-
-    for page in page_iterator:
-        for reservation in page["Reservations"]:
-            for instance in reservation["Instances"]:
-                instance_list.append(instance["InstanceId"])
-    return instance_list
+        for page in page_iterator:
+            for reservation in page["Reservations"]:
+                for instance in reservation["Instances"]:
+                    instance_list.append(instance["InstanceId"])
+        return instance_list
