@@ -9,7 +9,7 @@ import ec2_handler
 
 import rds_handler
 
-import spot_handler
+from spot_handler import SpotScheduler
 
 
 def lambda_handler(event, context):
@@ -42,7 +42,9 @@ def lambda_handler(event, context):
             scheduler.start_groups(tag_key, tag_value)
 
     if spot_schedule == "terminate":
-        spot_handler.spot_schedule(schedule_action, tag_key, tag_value)
+        scheduler = SpotScheduler()
+        if schedule_action == "stop":
+            scheduler.terminate_spot(tag_key, tag_value)
 
     if ec2_schedule == "true":
         ec2_handler.ec2_schedule(schedule_action, tag_key, tag_value)
