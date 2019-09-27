@@ -7,7 +7,7 @@ from autoscaling_handler import AutoscalingScheduler
 
 from ec2_handler import Ec2Scheduler
 
-import rds_handler
+from rds_handler import RdsScheduler
 
 from spot_handler import SpotScheduler
 
@@ -54,4 +54,10 @@ def lambda_handler(event, context):
             scheduler.start_instances(tag_key, tag_value)
 
     if rds_schedule == "true":
-        rds_handler.rds_schedule(schedule_action, tag_key, tag_value)
+        scheduler = RdsScheduler()
+        if schedule_action == "stop":
+            scheduler.stop_instances(tag_key, tag_value)
+            scheduler.stop_clusters(tag_key, tag_value)
+        elif schedule_action == "start":
+            scheduler.start_instances(tag_key, tag_value)
+            scheduler.start_clusters(tag_key, tag_value)

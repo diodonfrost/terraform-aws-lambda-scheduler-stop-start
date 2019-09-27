@@ -9,135 +9,150 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def rds_schedule(schedule_action, tag_key, tag_value):
-    """Aws rds scheduler function.
+class RdsScheduler:
+    """Abstract rds scheduler in a class."""
 
-    Stop or start Aurora cluster and rds instances
-    by using the defined tag.
-    """
-    if schedule_action == "stop":
-        rds_stop_clusters(tag_key, tag_value)
-        rds_stop_instances(tag_key, tag_value)
-    elif schedule_action == "start":
-        rds_start_clusters(tag_key, tag_value)
-        rds_start_instances(tag_key, tag_value)
-    else:
-        logging.error("Bad scheduler action")
+    def __init__(self):
+        """Initialize autoscaling scheduler."""
+        #: Initialize aws ec2 resource
+        self.rds = boto3.client("rds")
 
+    def stop_clusters(self, tag_key, tag_value):
+        """Aws rds cluster stop function.
 
-def rds_stop_clusters(tag_key, tag_value):
-    """Rds stop cluster function.
+        Stop rds cluster with defined tag.
 
-    Shuting donw Aurora clusters with defined tag.
-    """
-    rds = boto3.client("rds")
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        for cluster_id in self.list_clusters(tag_key, tag_value):
+            try:
+                self.rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
+                print("Stop rds cluster {0}".format(cluster_id))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBClusterStateFault":
+                    logging.info("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-    for cluster_id in rds_list_clusters(tag_key, tag_value):
-        try:
-            rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
-            print("Stop rds cluster {0}".format(cluster_id))
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "InvalidDBClusterStateFault":
-                logging.info("%s", e)
-            else:
-                logging.error("Unexpected error: %s", e)
+    def stop_instances(self, tag_key, tag_value):
+        """Aws rds instance stop function.
 
+        Stop rds instances with defined tag.
 
-def rds_stop_instances(tag_key, tag_value):
-    """Rds stop instance function.
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        for instance_id in self.list_instances(tag_key, tag_value):
+            try:
+                self.rds.stop_db_instance(DBInstanceIdentifier=instance_id)
+                print("Stop rds instance {0}".format(instance_id))
+            except ClientError as e:
+                if e.response["Error"]["Code"] == "InvalidDBInstanceState":
+                    logging.info("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-    Shuting donw rds instances with defined tag.
-    """
-    rds = boto3.client("rds")
+    def start_clusters(self, tag_key, tag_value):
+        """Aws rds cluster start function.
 
-    for instance_id in rds_list_instances(tag_key, tag_value):
-        try:
-            rds.stop_db_instance(DBInstanceIdentifier=instance_id)
-            print("Stop rds instance {0}".format(instance_id))
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "InvalidDBInstanceState":
-                logging.info("%s", e)
-            else:
-                logging.error("Unexpected error: %s", e)
+        Start rds cluster with defined tag.
 
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        for cluster_id in self.list_clusters(tag_key, tag_value):
+            try:
+                self.rds.start_db_cluster(DBClusterIdentifier=cluster_id)
+                print("Start rds cluster {0}".format(cluster_id))
+            except ClientError as e:
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBClusterStateFault":
+                    logging.info("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
-def rds_start_clusters(tag_key, tag_value):
-    """Rds start cluster function.
+    def start_instances(self, tag_key, tag_value):
+        """Aws rds instance start function.
 
-    Starting up Aurora clusters with defined tag.
-    """
-    rds = boto3.client("rds")
+        Start rds instance with defined tag.
 
-    for cluster_id in rds_list_clusters(tag_key, tag_value):
-        try:
-            rds.start_db_cluster(DBClusterIdentifier=cluster_id)
-            print("Start rds cluster {0}".format(cluster_id))
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "InvalidDBClusterStateFault":
-                logging.info("%s", e)
-            else:
-                logging.error("Unexpected error: %s", e)
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
+        """
+        for instance_id in self.list_instances(tag_key, tag_value):
+            try:
+                self.rds.start_db_instance(DBInstanceIdentifier=instance_id)
+                print("Start rds instance {0}".format(instance_id))
+            except ClientError as e:
+                if e.response["Error"]["Code"] == "InvalidDBInstanceState":
+                    logging.info("%s", e)
+                else:
+                    logging.error("Unexpected error: %s", e)
 
+    def list_clusters(self, tag_key, tag_value):
+        """Aws rds cluster list function.
 
-def rds_start_instances(tag_key, tag_value):
-    """Rds start instance function.
+        Return the list of all rds clusters
 
-    Shuting donw rds instances with defined tag.
-    """
-    rds = boto3.client("rds")
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
 
-    for instance_id in rds_list_instances(tag_key, tag_value):
-        try:
-            rds.start_db_instance(DBInstanceIdentifier=instance_id)
-            print("Start rds instance {0}".format(instance_id))
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "InvalidDBInstanceState":
-                logging.info("%s", e)
-            else:
-                logging.error("Unexpected error: %s", e)
+        :return list cluster_list:
+            The list Id of filtered rds clusters
+        """
+        cluster_list = []
+        paginator = self.rds.get_paginator("describe_db_clusters")
 
+        for page in paginator.paginate():
+            for custer in page["DBClusters"]:
+                response_cluster = self.rds.list_tags_for_resource(
+                    ResourceName=custer["DBClusterArn"]
+                )
+                taglist = response_cluster["TagList"]
 
-def rds_list_clusters(tag_key, tag_value):
-    """Aws rds list cluster function.
+                # Retrieve rds cluster with specific tag
+                for tag in taglist:
+                    if tag["Key"] == tag_key and tag["Value"] == tag_value:
+                        cluster_list.append(custer["DBClusterIdentifier"])
+        return cluster_list
 
-    List all rds clusters name with specific tag.
-    """
-    cluster_list = []
-    rds = boto3.client("rds")
-    paginator = rds.get_paginator("describe_db_clusters")
+    def list_instances(self, tag_key, tag_value):
+        """Aws rds instance list function.
 
-    for page in paginator.paginate():
-        for cluster_rds in page["DBClusters"]:
-            response_cluster = rds.list_tags_for_resource(
-                ResourceName=cluster_rds["DBClusterArn"]
-            )
-            taglist = response_cluster["TagList"]
+        Return the list of all rds instances
 
-            # Retrieve rds cluster with specific tag
-            for tag in taglist:
-                if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                    cluster_list.append(cluster_rds["DBClusterIdentifier"])
-    return cluster_list
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
 
+        :return list instance_list:
+            The list Id of filtered rds instances
+        """
+        instance_list = []
+        paginator = self.rds.get_paginator("describe_db_instances")
 
-def rds_list_instances(tag_key, tag_value):
-    """Aws rds list instance function.
+        for page in paginator.paginate():
+            for instance in page["DBInstances"]:
+                reponse_instance = self.rds.list_tags_for_resource(
+                    ResourceName=instance["DBInstanceArn"]
+                )
+                taglist = reponse_instance["TagList"]
 
-    List all rds instances name with specific tag.
-    """
-    instance_list = []
-    rds = boto3.client("rds")
-    paginator = rds.get_paginator("describe_db_instances")
-
-    for page in paginator.paginate():
-        for instance_rds in page["DBInstances"]:
-            reponse_instance = rds.list_tags_for_resource(
-                ResourceName=instance_rds["DBInstanceArn"]
-            )
-            taglist = reponse_instance["TagList"]
-
-            # Retrieve rds instance with specific tag
-            for tag in taglist:
-                if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                    instance_list.append(instance_rds["DBInstanceIdentifier"])
-    return instance_list
+                # Retrieve rds instance with specific tag
+                for tag in taglist:
+                    if tag["Key"] == tag_key and tag["Value"] == tag_value:
+                        instance_list.append(instance["DBInstanceIdentifier"])
+        return instance_list
