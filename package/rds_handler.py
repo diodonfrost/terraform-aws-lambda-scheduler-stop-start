@@ -17,10 +17,10 @@ class RdsScheduler:
         #: Initialize aws ec2 resource
         self.rds = boto3.client("rds")
 
-    def stop_clusters(self, tag_key, tag_value):
-        """Aws rds cluster stop function.
+    def stop(self, tag_key, tag_value):
+        """Aws rds cluster and instance stop function.
 
-        Stop rds cluster with defined tag.
+        Stop rds aurora clusters and rds db instances with defined tag.
 
         :param str tag_key:
             Aws tag key to use for filter resources
@@ -38,16 +38,6 @@ class RdsScheduler:
                 else:
                     logging.error("Unexpected error: %s", e)
 
-    def stop_instances(self, tag_key, tag_value):
-        """Aws rds instance stop function.
-
-        Stop rds instances with defined tag.
-
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
-        """
         for instance_id in self.list_instances(tag_key, tag_value):
             try:
                 self.rds.stop_db_instance(DBInstanceIdentifier=instance_id)
@@ -58,10 +48,10 @@ class RdsScheduler:
                 else:
                     logging.error("Unexpected error: %s", e)
 
-    def start_clusters(self, tag_key, tag_value):
+    def start(self, tag_key, tag_value):
         """Aws rds cluster start function.
 
-        Start rds cluster with defined tag.
+        Start rds aurora clusters and db instances a with defined tag.
 
         :param str tag_key:
             Aws tag key to use for filter resources
@@ -79,16 +69,6 @@ class RdsScheduler:
                 else:
                     logging.error("Unexpected error: %s", e)
 
-    def start_instances(self, tag_key, tag_value):
-        """Aws rds instance start function.
-
-        Start rds instance with defined tag.
-
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
-        """
         for instance_id in self.list_instances(tag_key, tag_value):
             try:
                 self.rds.start_db_instance(DBInstanceIdentifier=instance_id)

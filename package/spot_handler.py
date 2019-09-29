@@ -17,7 +17,7 @@ class SpotScheduler:
         #: Initialize aws ec2 resource
         self.ec2 = boto3.client("ec2")
 
-    def terminate_spot(self, tag_key, tag_value):
+    def terminate(self, tag_key, tag_value):
         """Aws spot instance scheduler function.
 
         Terminate spot instances by using the defined tag.

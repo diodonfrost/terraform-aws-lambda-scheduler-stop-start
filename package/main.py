@@ -34,30 +34,25 @@ def lambda_handler(event, context):
     ec2_schedule = os.getenv("EC2_SCHEDULE", "true")
     rds_schedule = os.getenv("RDS_SCHEDULE", "true")
 
-    if autoscaling_schedule == "true":
-        scheduler = AutoscalingScheduler()
-        if schedule_action == "stop":
-            scheduler.stop_groups(tag_key, tag_value)
-        elif schedule_action == "start":
-            scheduler.start_groups(tag_key, tag_value)
+    asg_scheduler = AutoscalingScheduler()
+    spot_scheduler = SpotScheduler()
+    ec2_scheduler = Ec2Scheduler()
+    rds_scheduler = RdsScheduler()
 
-    if spot_schedule == "terminate":
-        scheduler = SpotScheduler()
-        if schedule_action == "stop":
-            scheduler.terminate_spot(tag_key, tag_value)
+    if autoscaling_schedule == "true" and schedule_action == "stop":
+        asg_scheduler.stop(tag_key, tag_value)
+    elif autoscaling_schedule == "true" and schedule_action == "start":
+        asg_scheduler.start(tag_key, tag_value)
 
-    if ec2_schedule == "true":
-        scheduler = Ec2Scheduler()
-        if schedule_action == "stop":
-            scheduler.stop_instances(tag_key, tag_value)
-        elif schedule_action == "start":
-            scheduler.start_instances(tag_key, tag_value)
+    if spot_schedule == "terminate" and schedule_action == "stop":
+        spot_scheduler.terminate(tag_key, tag_value)
 
-    if rds_schedule == "true":
-        scheduler = RdsScheduler()
-        if schedule_action == "stop":
-            scheduler.stop_instances(tag_key, tag_value)
-            scheduler.stop_clusters(tag_key, tag_value)
-        elif schedule_action == "start":
-            scheduler.start_instances(tag_key, tag_value)
-            scheduler.start_clusters(tag_key, tag_value)
+    if ec2_schedule == "true" and schedule_action == "stop":
+        ec2_scheduler.stop(tag_key, tag_value)
+    elif ec2_schedule == "true" and schedule_action == "start":
+        ec2_scheduler.start(tag_key, tag_value)
+
+    if rds_schedule == "true" and schedule_action == "stop":
+        rds_scheduler.stop(tag_key, tag_value)
+    elif rds_schedule == "true" and schedule_action == "start":
+        rds_scheduler.start(tag_key, tag_value)

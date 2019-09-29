@@ -19,7 +19,7 @@ class AutoscalingScheduler:
         #: Initialize aws ec2 resource
         self.ec2 = boto3.client("ec2")
 
-    def stop_groups(self, tag_key, tag_value):
+    def stop(self, tag_key, tag_value):
         """Aws autoscaling suspend function.
 
         Suspend autoscaling group and stop its instances
@@ -51,7 +51,7 @@ class AutoscalingScheduler:
                 else:
                     logging.error("Unexpected error: %s", e)
 
-    def start_groups(self, tag_key, tag_value):
+    def start(self, tag_key, tag_value):
         """Aws autoscaling resume function.
 
         Resume autoscaling group and start its instances

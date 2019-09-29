@@ -17,7 +17,7 @@ class Ec2Scheduler:
         #: Initialize aws ec2 resource
         self.ec2 = boto3.client("ec2")
 
-    def stop_instances(self, tag_key, tag_value):
+    def stop(self, tag_key, tag_value):
         """Aws ec2 instance stop function.
 
         Stop ec2 instances with defined tag.
@@ -37,7 +37,7 @@ class Ec2Scheduler:
                 else:
                     logging.error("Unexpected error: %s", e)
 
-    def start_instances(self, tag_key, tag_value):
+    def start(self, tag_key, tag_value):
         """Aws ec2 instance start function.
 
         Start ec2 instances with defined tag.
