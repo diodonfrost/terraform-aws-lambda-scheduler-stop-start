@@ -67,7 +67,7 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
 	L.RunAwslambda(awsRegion, lambdaStopName)
 
 	// Wait for scheduler exectuion
-	time.Sleep(160 * time.Second)
+	time.Sleep(180 * time.Second)
 
 	// Get all ec2 instances IDs with the tag "topstop:true" and the state stopped
 	filtersInstancesToStopStopped := map[string][]string{
@@ -95,7 +95,7 @@ func TestTerraformAwsEc2Scheduler(t *testing.T) {
 	L.RunAwslambda(awsRegion, lambdaStartName)
 
 	// Wait for scheduler exectuion
-	time.Sleep(120 * time.Second)
+	time.Sleep(180 * time.Second)
 
 	// Get all ec2 instances IDs with the tag "topstop:true" and the state running
 	InstancesIDsToStopStarted := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesToStopRunning)
