@@ -89,10 +89,9 @@ class RdsScheduler:
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :return list cluster_list:
+        :yield str:
             The list Id of filtered rds clusters
         """
-        cluster_list = []
         paginator = self.rds.get_paginator("describe_db_clusters")
 
         for page in paginator.paginate():
@@ -105,8 +104,7 @@ class RdsScheduler:
                 # Retrieve rds cluster with specific tag
                 for tag in taglist:
                     if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                        cluster_list.append(custer["DBClusterIdentifier"])
-        return cluster_list
+                        yield custer["DBClusterIdentifier"]
 
     def list_instances(self, tag_key, tag_value):
         """Aws rds instance list function.
@@ -118,10 +116,9 @@ class RdsScheduler:
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :return list instance_list:
+        :yield str:
             The list Id of filtered rds instances
         """
-        instance_list = []
         paginator = self.rds.get_paginator("describe_db_instances")
 
         for page in paginator.paginate():
@@ -134,5 +131,4 @@ class RdsScheduler:
                 # Retrieve rds instance with specific tag
                 for tag in taglist:
                     if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                        instance_list.append(instance["DBInstanceIdentifier"])
-        return instance_list
+                        yield instance["DBInstanceIdentifier"]

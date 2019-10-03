@@ -97,15 +97,13 @@ class AutoscalingScheduler:
         :return list asg_list:
             The names of the Auto Scaling groups
         """
-        asg_list = []
         paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
         for page in paginator.paginate():
             for group in page["AutoScalingGroups"]:
                 for tag in group["Tags"]:
                     if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                        asg_list.append(group["AutoScalingGroupName"])
-        return asg_list
+                        yield group["AutoScalingGroupName"]
 
     def list_instances(self, asg_list):
         """Aws autoscaling instance list function.
@@ -116,16 +114,14 @@ class AutoscalingScheduler:
         :param list asg_list:
             The names of the Auto Scaling groups.
 
-        :return list asg_instance_list:
+        :yield str:
             The names of the instances in Auto Scaling groups.
         """
         if not asg_list:
-            return []
-        asg_instance_list = []
+            yield []
         paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
         for page in paginator.paginate(AutoScalingGroupNames=asg_list):
             for scalinggroup in page["AutoScalingGroups"]:
                 for instance in scalinggroup["Instances"]:
-                    asg_instance_list.append(instance["InstanceId"])
-        return asg_instance_list
+                    yield instance["InstanceId"]

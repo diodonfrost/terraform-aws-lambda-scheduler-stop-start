@@ -63,8 +63,10 @@ class Ec2Scheduler:
 
         List name of all ec2 instances all ec2 instances
         with specific tag and return it in list.
+
+        :yield str:
+            The Id of ec2 instances
         """
-        instance_list = []
         paginator = self.ec2.get_paginator("describe_instances")
         page_iterator = paginator.paginate(
             Filters=[
@@ -79,5 +81,4 @@ class Ec2Scheduler:
         for page in page_iterator:
             for reservation in page["Reservations"]:
                 for instance in reservation["Instances"]:
-                    instance_list.append(instance["InstanceId"])
-        return instance_list
+                    yield instance["InstanceId"]

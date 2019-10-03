@@ -45,10 +45,9 @@ class SpotScheduler:
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :return list spot_list:
+        :yield str:
             The Id of the spot instances
         """
-        spot_list = []
         paginator = self.ec2.get_paginator("describe_instances")
         page_iterator = paginator.paginate(
             Filters=[
@@ -64,5 +63,4 @@ class SpotScheduler:
         for page in page_iterator:
             for reservation in page["Reservations"]:
                 for spot in reservation["Instances"]:
-                    spot_list.append(spot["InstanceId"])
-        return spot_list
+                    yield spot["InstanceId"]
