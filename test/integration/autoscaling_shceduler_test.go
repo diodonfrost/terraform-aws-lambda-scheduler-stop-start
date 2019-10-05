@@ -47,6 +47,9 @@ func TestTerraformAutoscalingScheduler(t *testing.T) {
 	lambdaStopName := terraform.Output(t, terraformOptions, "lambda_stop_name")
 	lambdaStartName := terraform.Output(t, terraformOptions, "lambda_start_name")
 
+	// Wait for terraform execution
+	time.Sleep(10 * time.Second)
+
 	// Get all ec2 instances IDs with the tag "topstop:true" and the state running
 	filtersInstancesToStopRunning := map[string][]string{
 		"instance-state-name": {"running"},
@@ -95,7 +98,7 @@ func TestTerraformAutoscalingScheduler(t *testing.T) {
 	L.RunAwslambda(awsRegion, lambdaStartName)
 
 	// Wait for scheduler exectuion
-	time.Sleep(160 * time.Second)
+	time.Sleep(120 * time.Second)
 
 	// Get all ec2 instances IDs with the tag "topstop:true" and the state running
 	InstancesIDsToStopStarted := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesToStopRunning)

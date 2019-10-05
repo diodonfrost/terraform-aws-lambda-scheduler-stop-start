@@ -46,6 +46,9 @@ func TestTerraformAwsSpotScheduler(t *testing.T) {
 	// Run `terraform output` to get the value of an output variables
 	lambdaStopName := terraform.Output(t, terraformOptions, "lambda_stop_name")
 
+	// Wait for terraform execution
+	time.Sleep(10 * time.Second)
+
 	// Get all ec2 spot IDs with the tag "topstop:true" and the state running
 	filtersSpotToTerminateRunning := map[string][]string{
 		"instance-state-name": {"running"},
