@@ -45,7 +45,7 @@ class SpotScheduler:
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :yield str:
+        :yield Iterator[str]:
             The Id of the spot instances
         """
         paginator = self.ec2.get_paginator("describe_instances")

@@ -89,7 +89,7 @@ class RdsScheduler:
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :yield str:
+        :yield Iterator[str]:
             The list Id of filtered rds clusters
         """
         paginator = self.rds.get_paginator("describe_db_clusters")
@@ -116,7 +116,7 @@ class RdsScheduler:
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :yield str:
+        :yield Iterator[str]:
             The list Id of filtered rds instances
         """
         paginator = self.rds.get_paginator("describe_db_instances")

@@ -64,7 +64,7 @@ class Ec2Scheduler:
         List name of all ec2 instances all ec2 instances
         with specific tag and return it in list.
 
-        :yield str:
+        :yield Iterator[str]:
             The Id of ec2 instances
         """
         paginator = self.ec2.get_paginator("describe_instances")
