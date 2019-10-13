@@ -9,7 +9,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-class RdsScheduler:
+class RdsScheduler(object):
     """Abstract rds scheduler in a class."""
 
     def __init__(self):

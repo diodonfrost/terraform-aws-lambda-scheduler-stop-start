@@ -9,7 +9,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-class Ec2Scheduler:
+class Ec2Scheduler(object):
     """Abstract ec2 scheduler in a class."""
 
     def __init__(self):

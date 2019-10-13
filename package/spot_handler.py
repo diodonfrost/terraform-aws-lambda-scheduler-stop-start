@@ -9,7 +9,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-class SpotScheduler:
+class SpotScheduler(object):
     """Abstract spot scheduler in a class."""
 
     def __init__(self):

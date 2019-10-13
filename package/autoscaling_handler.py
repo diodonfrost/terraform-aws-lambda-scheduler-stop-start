@@ -9,7 +9,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-class AutoscalingScheduler:
+class AutoscalingScheduler(object):
     """Abstract autoscaling scheduler in a class."""
 
     def __init__(self):
