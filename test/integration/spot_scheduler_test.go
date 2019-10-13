@@ -71,7 +71,7 @@ func TestTerraformAwsSpotScheduler(t *testing.T) {
 	L.RunAwslambda(awsRegion, lambdaStopName)
 
 	// Wait for scheduler exectuion
-	time.Sleep(160 * time.Second)
+	time.Sleep(180 * time.Second)
 
 	// Get all spot instances IDs with the tag "topstop:true" and the state terminate
 	filtersSpotToStopTerminate := map[string][]string{
