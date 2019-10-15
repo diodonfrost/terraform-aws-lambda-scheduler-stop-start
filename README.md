@@ -17,7 +17,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 *   rds clusters scheduling
 *   rds instances scheduling
 *   autoscalings scheduling
-*   Aws cloudWatch logs for lambda
+*   Aws CloudWatch logs for lambda
 
 ### Caveats
 You can't stop and start an [Amazon Spot instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/how-spot-instances-work.html) (only the Spot service can stop and start a Spot Instance), but you can reboot or terminate a Spot Instance. That why this module support only scheduler action `terminate` for spot instance.
@@ -33,7 +33,6 @@ module "stop_ec2_instance" {
   spot_schedule                  = "terminate"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
-  autoscaling_schedule           = "false"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
