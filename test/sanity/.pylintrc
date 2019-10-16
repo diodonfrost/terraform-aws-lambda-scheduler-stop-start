@@ -144,7 +144,8 @@ disable=print-statement,
         duplicate-code,
         unused-argument,
         too-many-branches,
-        useless-object-inheritance
+        useless-object-inheritance,
+        inconsistent-return-statements
 
 
 # Enable the message, report, category or checker with the given id(s). You can
