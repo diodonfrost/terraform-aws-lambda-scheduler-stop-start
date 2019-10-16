@@ -120,7 +120,7 @@ class AutoscalingScheduler(object):
             The names of the instances in Auto Scaling groups.
         """
         if not asg_list:
-            yield from []
+            return iter([])
         paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
         for page in paginator.paginate(AutoScalingGroupNames=asg_list):
