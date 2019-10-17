@@ -43,7 +43,10 @@ class RdsScheduler(object):
                 self.rds.stop_db_instance(DBInstanceIdentifier=instance_id)
                 print("Stop rds instance {0}".format(instance_id))
             except ClientError as e:
-                if e.response["Error"]["Code"] == "InvalidDBInstanceState":
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBInstanceState":
+                    logging.info("%s", e)
+                elif error_code == "InvalidParameterCombination":
                     logging.info("%s", e)
                 else:
                     logging.error("Unexpected error: %s", e)
@@ -74,7 +77,10 @@ class RdsScheduler(object):
                 self.rds.start_db_instance(DBInstanceIdentifier=instance_id)
                 print("Start rds instance {0}".format(instance_id))
             except ClientError as e:
-                if e.response["Error"]["Code"] == "InvalidDBInstanceState":
+                error_code = e.response["Error"]["Code"]
+                if error_code == "InvalidDBInstanceState":
+                    logging.info("%s", e)
+                elif error_code == "InvalidParameterCombination":
                     logging.info("%s", e)
                 else:
                     logging.error("Unexpected error: %s", e)
