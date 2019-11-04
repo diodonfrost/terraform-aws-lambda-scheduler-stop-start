@@ -12,12 +12,14 @@ from botocore.exceptions import ClientError
 class AutoscalingScheduler(object):
     """Abstract autoscaling scheduler in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize autoscaling scheduler."""
-        #: Initialize aws autoscaling resource
-        self.asg = boto3.client("autoscaling")
-        #: Initialize aws ec2 resource
-        self.ec2 = boto3.client("ec2")
+        if region_name:
+            self.ec2 = boto3.client("ec2", region_name=region_name)
+            self.asg = boto3.client("autoscaling", region_name=region_name)
+        else:
+            self.ec2 = boto3.client("ec2")
+            self.asg = boto3.client("autoscaling")
 
     def stop(self, tag_key, tag_value):
         """Aws autoscaling suspend function.

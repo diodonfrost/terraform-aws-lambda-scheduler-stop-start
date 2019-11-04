@@ -12,10 +12,13 @@ from botocore.exceptions import ClientError
 class SpotScheduler(object):
     """Abstract spot scheduler in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize autoscaling scheduler."""
         #: Initialize aws ec2 resource
-        self.ec2 = boto3.client("ec2")
+        if region_name:
+            self.ec2 = boto3.client("ec2", region_name=region_name)
+        else:
+            self.ec2 = boto3.client("ec2")
 
     def terminate(self, tag_key, tag_value):
         """Aws spot instance scheduler function.

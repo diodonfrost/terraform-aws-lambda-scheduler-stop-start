@@ -12,10 +12,13 @@ from botocore.exceptions import ClientError
 class Ec2Scheduler(object):
     """Abstract ec2 scheduler in a class."""
 
-    def __init__(self):
+    def __init__(self, region_name=None):
         """Initialize autoscaling scheduler."""
         #: Initialize aws ec2 resource
-        self.ec2 = boto3.client("ec2")
+        if region_name:
+            self.ec2 = boto3.client("ec2", region_name=region_name)
+        else:
+            self.ec2 = boto3.client("ec2")
 
     def stop(self, tag_key, tag_value):
         """Aws ec2 instance stop function.

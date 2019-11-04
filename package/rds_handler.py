@@ -12,10 +12,13 @@ from botocore.exceptions import ClientError
 class RdsScheduler(object):
     """Abstract rds scheduler in a class."""
 
-    def __init__(self):
-        """Initialize autoscaling scheduler."""
-        #: Initialize aws ec2 resource
-        self.rds = boto3.client("rds")
+    def __init__(self, region_name=None):
+        """Initialize rds scheduler."""
+        #: Initialize aws rds resource
+        if region_name:
+            self.rds = boto3.client("rds", region_name=region_name)
+        else:
+            self.rds = boto3.client("rds")
 
     def stop(self, tag_key, tag_value):
         """Aws rds cluster and instance stop function.
