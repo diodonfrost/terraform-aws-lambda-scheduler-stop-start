@@ -5,3 +5,4 @@ terraform.tfstate.d
 .tox
 __pycache__
 .pytest_cache
+.coverage
