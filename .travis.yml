@@ -71,3 +71,8 @@ jobs:
       python: 3.7
       env: TOXENV=black
       script: tox
+    
+    - stage: Python tests
+      python: 3.7
+      env: TOXENV=pytest
+      script: tox
