@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/v1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.2.0] - 2019-11-10
+### Added
+-   Python test units
+-   Aws region specification
+
 ## [2.1.5] - 2019-10-17
 ### Changed
 -   Improve rds error catching
@@ -157,7 +162,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   rds clusters support with scheduler
 
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.1.5...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.2.0...HEAD
+[2.2.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.1.5...2.2.0
 [2.1.5]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.1.4...2.1.5
 [2.1.4]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.1.3...2.1.4
 [2.1.3]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.1.2...2.1.3
