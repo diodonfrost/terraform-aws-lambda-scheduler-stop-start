@@ -22,15 +22,29 @@ def launch_ec2_instances(count, region_name, tag_key, tag_value):
     )
 
 
-def launch_ec2_spot(count, region_name):
+def launch_ec2_spot(count, region_name, tag_key, tag_value):
     """Create ec2 spot instances."""
     client = boto3.client("ec2", region_name=region_name)
-    client.request_spot_instances(
-        InstanceCount=count,
-        LaunchSpecification={
-            "ImageId": "ami-02df9ea15c1778c9c",
-            "InstanceType": "t2.micro",
+    client.run_instances(
+        ImageId="ami-02df9ea15c1778c9c",
+        MaxCount=count,
+        MinCount=count,
+        InstanceMarketOptions={
+            "MarketType": "spot",
+            "SpotOptions": {
+                "SpotInstanceType": "one-time",
+                "InstanceInterruptionBehavior": "terminate"
+            }
         },
+        TagSpecifications=[
+            {
+                "ResourceType": "instance",
+                "Tags": [
+                    {"Key": "Name", "Value": "instance_test"},
+                    {"Key": tag_key, "Value": tag_value},
+                ],
+            }
+        ],
     )
 
 
