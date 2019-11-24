@@ -13,7 +13,7 @@ import pytest
 @pytest.mark.parametrize(
     "aws_region, tag_key, tag_value, result_count",
     [
-        ("eu-west-1", "tostop-test-1", "true", 9),
+        ("eu-west-1", "tostop-asg-test-1", "true", 9),
         ("eu-west-1", "badtagkey", "badtagvalue", 0),
     ],
 )
@@ -26,7 +26,7 @@ def test_stop_asg_scheduler(aws_region, tag_key, tag_value, result_count):
 
     try:
         asg_scheduler = AutoscalingScheduler(aws_region)
-        asg_scheduler.stop("tostop-test-1", "true")
+        asg_scheduler.stop("tostop-asg-test-1", "true")
 
         suspend_process = client.describe_auto_scaling_groups(
             AutoScalingGroupNames=[asg_name]
@@ -45,7 +45,7 @@ def test_stop_asg_scheduler(aws_region, tag_key, tag_value, result_count):
 @pytest.mark.parametrize(
     "aws_region, tag_key, tag_value, result_count",
     [
-        ("eu-west-1", "tostart-test-2", "true", 0),
+        ("eu-west-1", "tostop-asg-test-2", "true", 0),
         ("eu-west-1", "badtagkey", "badtagvalue", 9),
     ],
 )
@@ -59,7 +59,7 @@ def test_start_asg_scheduler(aws_region, tag_key, tag_value, result_count):
     try:
         client.suspend_processes(AutoScalingGroupName=asg_name)
         asg_scheduler = AutoscalingScheduler(aws_region)
-        asg_scheduler.start("tostart-test-2", "true")
+        asg_scheduler.start("tostop-asg-test-2", "true")
 
         suspend_process = client.describe_auto_scaling_groups(
             AutoScalingGroupNames=[asg_name]

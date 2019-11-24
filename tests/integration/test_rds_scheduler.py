@@ -20,14 +20,14 @@ import pytest
     [
         (
             "eu-west-1",
-            {"key": "tostop", "value": "true"},
-            {"key": "tostop", "value": "true"},
+            {"key": "tostop-rds-test-1", "value": "true"},
+            {"key": "tostop-rds-test-1", "value": "true"},
             "stopped",
         ),
         (
             "eu-west-1",
             {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostop", "value": "true"},
+            {"key": "tostop-rds-test-1", "value": "true"},
             "available",
         ),
     ],
@@ -44,7 +44,7 @@ def test_stop_db_instance(aws_region, db_tag, scheduler_tag, result_count):
         )
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.stop(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostop" and db_tag["value"] == "true":
+        if db_tag["key"] == "tostop-rds-test-1" and db_tag["value"] == "true":
             waiter_db_instance_stopped(aws_region, db_id)
 
         db_state = client.describe_db_instances(DBInstanceIdentifier=db_id)
@@ -61,14 +61,14 @@ def test_stop_db_instance(aws_region, db_tag, scheduler_tag, result_count):
     [
         (
             "eu-west-1",
-            {"key": "tostart", "value": "true"},
-            {"key": "tostart", "value": "true"},
+            {"key": "tostop-rds-test-2", "value": "true"},
+            {"key": "tostop-rds-test-2", "value": "true"},
             "available",
         ),
         (
             "eu-west-1",
             {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostart", "value": "true"},
+            {"key": "tostop-rds-test-2", "value": "true"},
             "stopped",
         ),
     ],
@@ -87,7 +87,7 @@ def test_start_db_instance(aws_region, db_tag, scheduler_tag, result_count):
         waiter_db_instance_stopped(aws_region, db_id)
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.start(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostart" and db_tag["value"] == "true":
+        if db_tag["key"] == "tostop-rds-test-2" and db_tag["value"] == "true":
             client.get_waiter("db_instance_available").wait(
                 DBInstanceIdentifier=db_id
             )
@@ -106,14 +106,14 @@ def test_start_db_instance(aws_region, db_tag, scheduler_tag, result_count):
     [
         (
             "eu-west-1",
-            {"key": "tostop-cluster", "value": "true"},
-            {"key": "tostop-cluster", "value": "true"},
+            {"key": "tostop-rds-test-3", "value": "true"},
+            {"key": "tostop-rds-test-3", "value": "true"},
             "stopped",
         ),
         (
             "eu-west-1",
             {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostop-cluster", "value": "true"},
+            {"key": "tostop-rds-test-3", "value": "true"},
             "available",
         ),
     ],
@@ -134,7 +134,7 @@ def test_stop_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
         waitter_db_cluster_available(aws_region, cluster_id)
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.stop(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostop-cluster" and db_tag["value"] == "true":
+        if db_tag["key"] == "tostop-rds-test-3" and db_tag["value"] == "true":
             waitter_db_cluster_stopped(aws_region, cluster_id)
             waiter_db_instance_stopped(aws_region, db_id)
 
@@ -171,14 +171,14 @@ def test_stop_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
     [
         (
             "eu-west-1",
-            {"key": "tostart-cluster", "value": "true"},
-            {"key": "tostart-cluster", "value": "true"},
+            {"key": "tostop-rds-test-4", "value": "true"},
+            {"key": "tostop-rds-test-4", "value": "true"},
             "available",
         ),
         (
             "eu-west-1",
             {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostart-cluster", "value": "true"},
+            {"key": "tostop-rds-test-4", "value": "true"},
             "stopped",
         ),
     ],
@@ -203,7 +203,7 @@ def test_start_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
 
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.start(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostart-cluster" and db_tag["value"] == "true":
+        if db_tag["key"] == "tostop-rds-test-4" and db_tag["value"] == "true":
             waitter_db_cluster_available(aws_region, cluster_id)
             client.get_waiter("db_instance_available").wait(
                 DBInstanceIdentifier=db_id
