@@ -20,6 +20,11 @@ variable "custom_iam_role_arn" {
   default     = null
 }
 
+variable "aws_regions" {
+  description = "A list of one or more aws regions where the lambda will be apply, default use the current region"
+  type        = list(string)
+  default     = null
+}
 
 variable "schedule_action" {
   description = "Define schedule action to apply on resources, accepted value are 'stop or 'start"

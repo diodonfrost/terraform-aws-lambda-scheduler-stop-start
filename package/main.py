@@ -28,6 +28,7 @@ def lambda_handler(event, context):
     _strategy = {}
     # Retrieve variables from aws lambda ENVIRONMENT
     schedule_action = os.getenv("SCHEDULE_ACTION")
+    aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
     tag_key = os.getenv("TAG_KEY")
     tag_value = os.getenv("TAG_VALUE")
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
@@ -36,12 +37,11 @@ def lambda_handler(event, context):
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
 
     for key, value in _strategy.items():
-        if value == "true":
-            strategy = key()
-            if schedule_action == "stop":
+        for aws_region in aws_regions:
+            strategy = key(aws_region)
+            if schedule_action == "stop" and value == "true":
                 strategy.stop(tag_key, tag_value)
-            elif schedule_action == "start":
+            elif schedule_action == "start" and value == "true":
                 strategy.start(tag_key, tag_value)
-        elif value == "terminate" and schedule_action == "stop":
-            strategy = key()
-            strategy.terminate(tag_key, tag_value)
+            elif schedule_action == "stop" and value == "terminate":
+                strategy.terminate(tag_key, tag_value)

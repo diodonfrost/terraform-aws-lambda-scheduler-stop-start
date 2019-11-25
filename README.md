@@ -72,6 +72,7 @@ module "start_ec2_instance" {
 |------|-------------|------|---------|----------|
 | name | Define name to use for lambda function, cloudwatch event and iam role | string | n/a | yes |
 | custom_iam_role_arn | Custom IAM role arn for the scheduling lambda | string | null | no |
+| aws_regions | A list of one or more aws regions where the lambda will be apply, default use the current region | list | null | no |
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
 | resources_tag | Set the tag use for identify resources to stop or start | map | { tostop = "true" } | yes |

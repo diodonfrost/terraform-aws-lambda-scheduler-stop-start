@@ -8,6 +8,8 @@ terraform {
   }
 }
 
+data "aws_region" "current" {}
+
 ################################################
 #
 #            IAM CONFIGURATION
@@ -186,6 +188,7 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
+      AWS_REGIONS          = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
       SCHEDULE_ACTION      = var.schedule_action
       TAG_KEY              = var.resources_tag["key"]
       TAG_VALUE            = var.resources_tag["value"]
