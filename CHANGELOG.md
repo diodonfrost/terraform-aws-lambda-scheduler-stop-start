@@ -1,175 +1,174 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/v1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 ## [2.3.0] - 2019-11-26
 ### Added
--   Multi aws regions support
--   Python integration tests
+- Multi aws regions support
+- Python integration tests
 
 ## [2.2.1] - 2019-11-14
 ### Changed
--   Refactoring Python unit tests
+- Refactoring Python unit tests
 
 ## [2.2.0] - 2019-11-10
 ### Added
--   Python test units
--   Aws region specification
+- Python test units
+- Aws region specification
 
 ## [2.1.5] - 2019-10-17
 ### Changed
--   Improve rds error catching
+- Improve rds error catching
 
 ## [2.1.4] - 2019-10-16
 ### Changed
--   Fix autoscaling scheduler when autoscaling list are empty
+- Fix autoscaling scheduler when autoscaling list are empty
 
 ## [2.1.3] - 2019-10-13
 ### Changed
--   Use new python class style
--   Optimize integration tests
+- Use new python class style
+- Optimize integration tests
 
 ## [2.1.2] - 2019-10-06
 ### Changed
--   Optimize python code with yield
+- Optimize python code with yield
 
 ## [2.1.1] - 2019-09-29
 ### Changed
--   Use poo style on python code
+- Use poo style on python code
 
 ## [2.1.0] - 2019-09-12
 ### Added
--  Custom IAM role
+- Custom IAM role
 
 ## [2.0.0] - 2019-09-12
 ### Changed
--   Terraform 0.12 support
--   Refactoring list resources function
+- Terraform 0.12 support
+- Refactoring list resources function
 
 ## [1.9.0] - 2019-08-09
 ### Added
--   Force utf-8 encoding
+- Force utf-8 encoding
 
 ### Changed
--   Refactoring whole Python code
--   Set Flake8 max-complexity to 10 instead of 20
--   Change waiting delay in integration tests
+- Refactoring whole Python code
+- Set Flake8 max-complexity to 10 instead of 20
+- Change waiting delay in integration tests
 
 ## [1.8.0] - 2019-08-03
 ### Added
--   Test Python code with Tox
--   Test Python code with travis-ci
--   Test Terraform code with terraform fmt command
+- Test Python code with Tox
+- Test Python code with travis-ci
+- Test Terraform code with terraform fmt command
 
 ### Changed
--   Flake8 codestyle convention
--   Black formating
--   Pylint refactoring
+- Flake8 codestyle convention
+- Black formating
+- Pylint refactoring
 
 ## [1.7.2] - 2019-07-10
 ### Changed
--   Don't shutdown all instances when no autoscaling group is found
+- Don't shutdown all instances when no autoscaling group is found
 
 ## [1.7.1] - 2019-06-30
 ### Added
--   Tests for spot instance scheduler
--   Parallel testing with Terratest
+- Tests for spot instance scheduler
+- Parallel testing with Terratest
 
 ### Changed
--   Update test directory structure
+- Update test directory structure
 
 ## [1.7.0] - 2019-06-30
 ### Added
--   Spot instance support
--   Terratest tests for ec2 shceduler
--   Terratest tests for autoscaling scheduler
+- Spot instance support
+- Terratest tests for ec2 shceduler
+- Terratest tests for autoscaling scheduler
 
 ### Changed
 -  Update README.md
 
 ### Removed
--   Remove Gemfile
+- Remove Gemfile
 
 ## [1.6.1] - 2019-06-21
 ### Added
--   Ouputs in Terraform examples
+- Ouputs in Terraform examples
 
 ### Changed
--   Lambda outputs name
+- Lambda outputs name
 
 ## [1.6.0] - 2019-06-20
 ### Added
--   Enable Lambda Cloudwatch logs
+- Enable Lambda Cloudwatch logs
 
 ### Changed
--   Improve Python exception handler
--   Improve Terraform rds example
--   Linting Python main.py
+- Improve Python exception handler
+- Improve Terraform rds example
+- Linting Python main.py
 
 ## [1.5.0] - 2019-05-31
 ### Changed
--   Power-off instances instead of terminating with autoscaling scheduler
--   Use aws region eu-west-1 with Terraform examples
+- Power-off instances instead of terminating with autoscaling scheduler
+- Use aws region eu-west-1 with Terraform examples
 
 ## [1.4.3] - 2019-05-09
 ### Changed
--   Update awspec tests
--   Update version in Gemfile
+- Update awspec tests
+- Update version in Gemfile
 
 ## [v1.4.2] - 2019-05-04
 ### Added
--   Use travis-ci pipeline
+- Use travis-ci pipeline
 
 ## [v1.4.1] - 2019-04-05
 ### Changed
--   Add boto3 paginator for autoscaling and rds function
--   Improve Terraform examples
+- Add boto3 paginator for autoscaling and rds function
+- Improve Terraform examples
 
 ## [v1.4.0] - 2019-04-02
 ### Added
--   Add more aws examples
+- Add more aws examples
 
 ### Changed
--   Split python code into multiple file
--   Refactoring python code
--   Fix autoscaling deletion
+- Split python code into multiple file
+- Refactoring python code
+- Fix autoscaling deletion
 
 ## [v1.3.0] - 2019-02-23
 ### Added
--   Add python log output for every resources stop and start
+- Add python log output for every resources stop and start
 
 ### Changed
--   Fix tag filter for instances start and stop
+- Fix tag filter for instances start and stop
 
 ## [v1.2.2] - 2019-02-19
 ### Added
--   Improve comments
+- Improve comments
 
 ### Changed
--   Lint code
+- Lint code
 
 ## [v1.2.1] - 2019-02-10
 ### Changed
--   When autoscaling shceduler is set to stop, terminate all instances in it
+- When autoscaling shceduler is set to stop, terminate all instances in it
 
 ## [v1.2.0] - 2019-02-09
 ### Added
--   kitchen-ci with awspec test
--   Test fixture example
+- kitchen-ci with awspec test
+- Test fixture example
 
 ## [v1.1.0] - 2019-02-07
 ### Added
--   Autoscaling support with scheduler
+- Autoscaling support with scheduler
 
 ## [v1.0.0] - 2019-02-05
 ### Added
--   ec2 instances support with scheduler
--   rds instances support with scheduler
--   rds clusters support with scheduler
-
+- ec2 instances support with scheduler
+- rds instances support with scheduler
+- rds clusters support with scheduler
 
 [Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.3.0...HEAD
 [2.3.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.2.1...2.3.0
