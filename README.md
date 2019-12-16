@@ -9,6 +9,12 @@ For Terraform 0.12 use version v2.* of this module.
 
 If you are using Terraform 0.11 you can use versions v1.*.
 
+## Future version v3.*
+
+*  Multi aws tags support (backward compatibility)
+*  Terminate action for autoscaling group instance 
+*  Python type hints
+
 ## Features
 
 *   Aws lambda runtine Python 3.7
