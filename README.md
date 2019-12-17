@@ -101,15 +101,44 @@ module "start_ec2_instance" {
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-## Tests end-to-end
-
-This module has been packaged with [Terratest](https://github.com/gruntwork-io/terratest) to tests this Terraform module.
+## Tests
 
 Some of these tests create real resources in an AWS account. That means they cost money to run, especially if you don't clean up after yourself. Please be considerate of the resources you create and take extra care to clean everything up when you're done!
 
 In order to run tests that access your AWS account, you will need to configure your [AWS CLI
 credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html). For example, you could
 set the credentials as the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+### Integration tests
+
+Integration tests are realized with python `boto3` and `pytest` modules. 
+
+Install Python dependency:
+
+```shell
+python3 -m pip install boto3 pytest pytest-cov pytest-xdist
+```
+
+```shell
+# Test python code use by ec2 scheduler scheduler
+python3 -m pytest -n 4 --cov=package tests/integration/test_ec2_scheduler.py
+
+# Test python code use by spot scheduler scheduler
+python3 -m pytest -n 2--cov=package tests/integration/test_spot_scheduler.py
+
+# Test python code use by autoscaling scheduler
+python3 -m pytest -n 4 --cov=package tests/integration/test_asg_scheduler.py
+
+# Test python code use by rds scheduler
+python3 -m pytest -n 8 --cov=package tests/integration/test_rds_scheduler.py
+
+# Test all python code
+python3 -m pytest -n 18 --cov=package tests/integration/
+```
+
+### End-to-end tests
+
+This module has been packaged with [Terratest](https://github.com/gruntwork-io/terratest) to tests this Terraform module.
 
 Install Terratest with depedencies:
 
