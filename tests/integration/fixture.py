@@ -2,6 +2,7 @@
 
 import boto3
 import time
+from random import randint
 
 
 def launch_ec2_instances(count, region_name, tag_key, tag_value):
@@ -83,17 +84,18 @@ def launch_asg(region_name, tag_key, tag_value, launch_conf_name, asg_name):
 def launch_rds_instance(region_name, tag_key, tag_value):
     """Create rds instances with defined aws tags."""
     client = boto3.client("rds", region_name=region_name)
+    name_prefix = str(randint(0, 1000000000))
     response = client.create_db_instance(
-        DBInstanceIdentifier="dbinstance" + str(time.time())[11:],
+        DBInstanceIdentifier="dbinstance" + name_prefix,
         AllocatedStorage=10,
         BackupRetentionPeriod=0,
-        DBName="dbinstance" + str(time.time())[11:],
+        DBName="dbinstance" + name_prefix,
         DBInstanceClass="db.m5.large",
         Engine="mariadb",
         MasterUsername="root",
         MasterUserPassword="IamNotHere",
         Tags=[
-            {"Key": "Name", "Value": "dbinstance" + str(time.time())[11:]},
+            {"Key": "Name", "Value": "dbinstance" + name_prefix},
             {"Key": tag_key, "Value": tag_value},
         ],
     )
@@ -103,8 +105,9 @@ def launch_rds_instance(region_name, tag_key, tag_value):
 def launch_rds_cluster(region_name, tag_key, tag_value):
     """Create rds cluster with defined aws tags."""
     client = boto3.client("rds", region_name=region_name)
+    name_prefix = str(randint(0, 1000000000))
     rds_cluster = client.create_db_cluster(
-        DBClusterIdentifier="dbcluster" + str(time.time())[11:],
+        DBClusterIdentifier="dbcluster" + name_prefix,
         Engine="aurora-mysql",
         EngineMode="provisioned",
         MasterUsername="root",
@@ -116,7 +119,7 @@ def launch_rds_cluster(region_name, tag_key, tag_value):
     )
 
     rds_instance = client.create_db_instance(
-        DBInstanceIdentifier="dbinstance" + str(time.time())[11:],
+        DBInstanceIdentifier="dbinstance" + name_prefix,
         DBClusterIdentifier=rds_cluster["DBCluster"]["DBClusterIdentifier"],
         Engine="aurora-mysql",
         DBInstanceClass="db.r5.large",
