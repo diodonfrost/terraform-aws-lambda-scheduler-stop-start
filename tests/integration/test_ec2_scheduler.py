@@ -2,7 +2,7 @@
 
 import boto3
 
-from package.ec2_handler import Ec2Scheduler
+from package.scheduler.ec2_handler import Ec2Scheduler
 
 from .fixture import launch_ec2_instances
 

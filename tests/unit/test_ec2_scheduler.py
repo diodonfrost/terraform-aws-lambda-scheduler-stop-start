@@ -4,7 +4,7 @@ import boto3
 
 from moto import mock_ec2
 
-from package.ec2_handler import Ec2Scheduler
+from package.scheduler.ec2_handler import Ec2Scheduler
 
 from .utils import launch_ec2_instances
 

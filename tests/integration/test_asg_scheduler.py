@@ -3,7 +3,7 @@
 import boto3
 import time
 
-from package.autoscaling_handler import AutoscalingScheduler
+from package.scheduler.autoscaling_handler import AutoscalingScheduler
 
 from .fixture import launch_asg
 

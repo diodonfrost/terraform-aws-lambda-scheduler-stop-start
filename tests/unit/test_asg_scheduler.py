@@ -4,7 +4,7 @@ import boto3
 
 from moto import mock_autoscaling, mock_ec2
 
-from package.autoscaling_handler import AutoscalingScheduler
+from package.scheduler.autoscaling_handler import AutoscalingScheduler
 
 from .utils import launch_asg
 

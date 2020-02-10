@@ -2,7 +2,7 @@
 
 import boto3
 
-from package.spot_handler import SpotScheduler
+from package.scheduler.spot_handler import SpotScheduler
 
 from .fixture import launch_ec2_spot
 

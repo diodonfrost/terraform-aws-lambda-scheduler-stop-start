@@ -3,13 +3,10 @@
 """This script stop and start aws resources."""
 import os
 
-from autoscaling_handler import AutoscalingScheduler
-
-from ec2_handler import Ec2Scheduler
-
-from rds_handler import RdsScheduler
-
-from spot_handler import SpotScheduler
+from scheduler.autoscaling_handler import AutoscalingScheduler
+from scheduler.ec2_handler import Ec2Scheduler
+from scheduler.rds_handler import RdsScheduler
+from scheduler.spot_handler import SpotScheduler
 
 
 def lambda_handler(event, context):

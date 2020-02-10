@@ -2,7 +2,7 @@
 
 from moto import mock_rds2
 
-from package.rds_handler import RdsScheduler
+from package.scheduler.rds_handler import RdsScheduler
 
 from .utils import launch_rds_instance
 

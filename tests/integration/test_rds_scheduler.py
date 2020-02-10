@@ -2,7 +2,7 @@
 
 import boto3
 
-from package.rds_handler import RdsScheduler
+from package.scheduler.rds_handler import RdsScheduler
 
 from .fixture import (
     launch_rds_instance,

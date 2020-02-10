@@ -4,7 +4,7 @@ import boto3
 
 from moto import mock_ec2
 
-from package.spot_handler import SpotScheduler
+from package.scheduler.spot_handler import SpotScheduler
 
 from .utils import launch_ec2_spot
 
