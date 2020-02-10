@@ -2,11 +2,11 @@
 
 """Autoscaling instances scheduler."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from .exceptions import ec2_exception
 
 
 class AutoscalingScheduler(object):
@@ -39,19 +39,16 @@ class AutoscalingScheduler(object):
             try:
                 self.asg.suspend_processes(AutoScalingGroupName=asg_name)
                 print("Suspend autoscaling group {0}".format(asg_name))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                ec2_exception("instance", asg_name, exc)
 
         # Stop autoscaling instance
         for ec2_instance in instance_list:
             try:
                 self.ec2.stop_instances(InstanceIds=[ec2_instance])
                 print("Stop autoscaling instances {0}".format(ec2_instance))
-            except ClientError as e:
-                if e.response["Error"]["Code"] == "UnsupportedOperation":
-                    logging.warning("%s", e)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                ec2_exception("autoscaling group", ec2_instance, exc)
 
     def start(self, tag_key, tag_value):
         """Aws autoscaling resume function.
@@ -71,19 +68,16 @@ class AutoscalingScheduler(object):
             try:
                 self.asg.resume_processes(AutoScalingGroupName=asg_name)
                 print("Resume autoscaling group {0}".format(asg_name))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                ec2_exception("autoscaling group", asg_name, exc)
 
         # Start autoscaling instance
         for ec2_instance in instance_list:
             try:
                 self.ec2.start_instances(InstanceIds=[ec2_instance])
                 print("Start autoscaling instances {0}".format(ec2_instance))
-            except ClientError as e:
-                if e.response["Error"]["Code"] == "IncorrectInstanceState":
-                    logging.warning("%s", e)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                ec2_exception("instance", ec2_instance, exc)
 
     def list_groups(self, tag_key, tag_value):
         """Aws autoscaling list function.

@@ -22,6 +22,10 @@ def ec2_exception(resource_name, resource_id, exception):
         logging.warning(
             "%s %s: %s", resource_name, resource_id, exception,
         )
+    elif error_code == "IncorrectInstanceState":
+        logging.warning(
+            "%s %s: %s", resource_name, resource_id, exception,
+        )
     else:
         logging.error(
             "Unexpected error on %s %s: %s",
