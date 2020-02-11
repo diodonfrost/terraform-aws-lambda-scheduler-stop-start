@@ -6,3 +6,4 @@ terraform.tfstate.d
 __pycache__
 .pytest_cache
 .coverage
+.mypy_cache
