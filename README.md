@@ -124,7 +124,7 @@ python3 -m pip install boto3 pytest pytest-cov pytest-xdist
 python3 -m pytest -n 4 --cov=package tests/integration/test_ec2_scheduler.py
 
 # Test python code use by spot scheduler scheduler
-python3 -m pytest -n 2--cov=package tests/integration/test_spot_scheduler.py
+python3 -m pytest -n 2 --cov=package tests/integration/test_spot_scheduler.py
 
 # Test python code use by autoscaling scheduler
 python3 -m pytest -n 4 --cov=package tests/integration/test_asg_scheduler.py

@@ -2,11 +2,11 @@
 
 """Spot instances scheduler."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+from .exceptions import ec2_exception
 
 
 class SpotScheduler(object):
@@ -34,8 +34,8 @@ class SpotScheduler(object):
             try:
                 self.ec2.terminate_instances(InstanceIds=[spot_instance])
                 print("Terminate spot instance {0}".format(spot_instance))
-            except ClientError as e:
-                logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                ec2_exception("spot instance", spot_instance, exc)
 
     def list_spot(self, tag_key, tag_value):
         """Aws ec2 spot instance list function.
