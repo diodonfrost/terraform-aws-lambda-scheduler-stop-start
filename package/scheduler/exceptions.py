@@ -33,3 +33,37 @@ def ec2_exception(resource_name, resource_id, exception):
             resource_id,
             exception,
         )
+
+
+def rds_exception(resource_name, resource_id, exception):
+    """Exception raised during execution of rds scheduler.
+
+    Log rds exceptions on the specific aws resources
+
+    :param str resource_name:
+        Aws resource name
+    :param str resource_id:
+        Aws resource id
+    :param str exception:
+        Exception message
+    """
+    error_code = exception.response["Error"]["Code"]
+    if error_code == "InvalidDBClusterStateFault":
+        logging.info(
+            "%s %s: %s", resource_name, resource_id, exception,
+        )
+    elif error_code == "InvalidDBInstanceState":
+        logging.info(
+            "%s %s: %s", resource_name, resource_id, exception,
+        )
+    elif error_code == "InvalidParameterCombination":
+        logging.info(
+            "%s %s: %s", resource_name, resource_id, exception,
+        )
+    else:
+        logging.error(
+            "Unexpected error on %s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
+        )

@@ -2,11 +2,12 @@
 
 """rds instances scheduler."""
 
-import logging
-
 import boto3
 
 from botocore.exceptions import ClientError
+
+
+from .exceptions import rds_exception
 
 
 class RdsScheduler(object):
@@ -34,25 +35,15 @@ class RdsScheduler(object):
             try:
                 self.rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
                 print("Stop rds cluster {0}".format(cluster_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBClusterStateFault":
-                    logging.info("%s", e)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                rds_exception("rds cluster", cluster_id, exc)
 
         for instance_id in self.list_instances(tag_key, tag_value):
             try:
                 self.rds.stop_db_instance(DBInstanceIdentifier=instance_id)
                 print("Stop rds instance {0}".format(instance_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBInstanceState":
-                    logging.info("%s", e)
-                elif error_code == "InvalidParameterCombination":
-                    logging.info("%s", e)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                rds_exception("rds instance", instance_id, exc)
 
     def start(self, tag_key, tag_value):
         """Aws rds cluster start function.
@@ -68,25 +59,15 @@ class RdsScheduler(object):
             try:
                 self.rds.start_db_cluster(DBClusterIdentifier=cluster_id)
                 print("Start rds cluster {0}".format(cluster_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBClusterStateFault":
-                    logging.info("%s", e)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                rds_exception("rds cluster", cluster_id, exc)
 
         for instance_id in self.list_instances(tag_key, tag_value):
             try:
                 self.rds.start_db_instance(DBInstanceIdentifier=instance_id)
                 print("Start rds instance {0}".format(instance_id))
-            except ClientError as e:
-                error_code = e.response["Error"]["Code"]
-                if error_code == "InvalidDBInstanceState":
-                    logging.info("%s", e)
-                elif error_code == "InvalidParameterCombination":
-                    logging.info("%s", e)
-                else:
-                    logging.error("Unexpected error: %s", e)
+            except ClientError as exc:
+                rds_exception("rds instance", instance_id, exc)
 
     def list_clusters(self, tag_key, tag_value):
         """Aws rds cluster list function.
