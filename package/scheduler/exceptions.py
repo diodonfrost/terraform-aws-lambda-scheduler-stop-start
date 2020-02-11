@@ -8,7 +8,8 @@ import logging
 def ec2_exception(resource_name, resource_id, exception):
     """Exception raised during execution of ec2 scheduler.
 
-    Log ec2 exceptions on the specific aws resources
+    Log instance, spot instance and autoscaling groups exceptions
+    on the specific aws resources.
 
     :param str resource_name:
         Aws resource name
@@ -17,12 +18,8 @@ def ec2_exception(resource_name, resource_id, exception):
     :param str exception:
         Exception message
     """
-    error_code = exception.response["Error"]["Code"]
-    if error_code == "UnsupportedOperation":
-        logging.warning(
-            "%s %s: %s", resource_name, resource_id, exception,
-        )
-    elif error_code == "IncorrectInstanceState":
+    error_codes = ["UnsupportedOperation", "IncorrectInstanceState"]
+    if exception.response["Error"]["Code"] in error_codes:
         logging.warning(
             "%s %s: %s", resource_name, resource_id, exception,
         )
@@ -38,7 +35,7 @@ def ec2_exception(resource_name, resource_id, exception):
 def rds_exception(resource_name, resource_id, exception):
     """Exception raised during execution of rds scheduler.
 
-    Log rds exceptions on the specific aws resources
+    Log rds exceptions on the specific aws resources.
 
     :param str resource_name:
         Aws resource name
@@ -47,17 +44,13 @@ def rds_exception(resource_name, resource_id, exception):
     :param str exception:
         Exception message
     """
-    error_code = exception.response["Error"]["Code"]
-    if error_code == "InvalidDBClusterStateFault":
-        logging.info(
-            "%s %s: %s", resource_name, resource_id, exception,
-        )
-    elif error_code == "InvalidDBInstanceState":
-        logging.info(
-            "%s %s: %s", resource_name, resource_id, exception,
-        )
-    elif error_code == "InvalidParameterCombination":
-        logging.info(
+    error_codes = [
+        "InvalidDBClusterStateFault",
+        "InvalidDBInstanceState",
+        "InvalidParameterCombination",
+    ]
+    if exception.response["Error"]["Code"] in error_codes:
+        logging.warning(
             "%s %s: %s", resource_name, resource_id, exception,
         )
     else:
