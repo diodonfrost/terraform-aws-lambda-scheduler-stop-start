@@ -5,7 +5,7 @@
 import logging
 
 
-def ec2_exception(resource_name, resource_id, exception):
+def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
     """Exception raised during execution of ec2 scheduler.
 
     Log instance, spot instance and autoscaling groups exceptions
@@ -16,7 +16,7 @@ def ec2_exception(resource_name, resource_id, exception):
     :param str resource_id:
         Aws resource id
     :param str exception:
-        Exception message
+        Human readable string describing the exception
     """
     error_codes = ["UnsupportedOperation", "IncorrectInstanceState"]
     if exception.response["Error"]["Code"] in error_codes:
@@ -32,7 +32,7 @@ def ec2_exception(resource_name, resource_id, exception):
         )
 
 
-def rds_exception(resource_name, resource_id, exception):
+def rds_exception(resource_name: str, resource_id: str, exception) -> None:
     """Exception raised during execution of rds scheduler.
 
     Log rds exceptions on the specific aws resources.
@@ -42,7 +42,7 @@ def rds_exception(resource_name, resource_id, exception):
     :param str resource_id:
         Aws resource id
     :param str exception:
-        Exception message
+        Human readable string describing the exception
     """
     error_codes = [
         "InvalidDBClusterStateFault",
