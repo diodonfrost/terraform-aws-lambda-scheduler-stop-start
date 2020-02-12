@@ -2,6 +2,8 @@
 
 """ec2 instances scheduler."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -12,15 +14,14 @@ from .exceptions import ec2_exception
 class Ec2Scheduler(object):
     """Abstract ec2 scheduler in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize autoscaling scheduler."""
-        #: Initialize aws ec2 resource
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
 
-    def stop(self, tag_key, tag_value):
+    def stop(self, tag_key: str, tag_value: str) -> None:
         """Aws ec2 instance stop function.
 
         Stop ec2 instances with defined tag.
@@ -37,7 +38,7 @@ class Ec2Scheduler(object):
             except ClientError as exc:
                 ec2_exception("instance", ec2_instance, exc)
 
-    def start(self, tag_key, tag_value):
+    def start(self, tag_key: str, tag_value: str) -> None:
         """Aws ec2 instance start function.
 
         Start ec2 instances with defined tag.
@@ -54,7 +55,7 @@ class Ec2Scheduler(object):
             except ClientError as exc:
                 ec2_exception("instance", ec2_instance, exc)
 
-    def list_instances(self, tag_key, tag_value):
+    def list_instances(self, tag_key: str, tag_value: str) -> Iterator[str]:
         """Aws ec2 instance list function.
 
         List name of all ec2 instances all ec2 instances
