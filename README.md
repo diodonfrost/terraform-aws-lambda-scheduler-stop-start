@@ -149,13 +149,13 @@ go get ./...
 
 ```shell
 # Test ec2 scheduler
-go test -v tests/end-to-end/ec2_scheduler_test.go
+go test -timeout 900s -v tests/end-to-end/ec2_scheduler_test.go
 
 # Test spot scheduler
-go test -v tests/end-to-end/spot_scheduler_test.go
+go test -timeout 900s -v tests/end-to-end/spot_scheduler_test.go
 
 # Test autoscaling scheduler
-go test -v tests/end-to-end/autoscaling_scheduler_test.go
+go test -timeout 900s -v tests/end-to-end/autoscaling_scheduler_test.go
 ```
 
 ## Authors
