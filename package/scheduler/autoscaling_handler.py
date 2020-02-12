@@ -2,6 +2,8 @@
 
 """Autoscaling instances scheduler."""
 
+from typing import Iterator, List
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -12,7 +14,7 @@ from .exceptions import ec2_exception
 class AutoscalingScheduler(object):
     """Abstract autoscaling scheduler in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize autoscaling scheduler."""
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
@@ -21,7 +23,7 @@ class AutoscalingScheduler(object):
             self.ec2 = boto3.client("ec2")
             self.asg = boto3.client("autoscaling")
 
-    def stop(self, tag_key, tag_value):
+    def stop(self, tag_key: str, tag_value: str) -> None:
         """Aws autoscaling suspend function.
 
         Suspend autoscaling group and stop its instances
@@ -50,7 +52,7 @@ class AutoscalingScheduler(object):
             except ClientError as exc:
                 ec2_exception("autoscaling group", ec2_instance, exc)
 
-    def start(self, tag_key, tag_value):
+    def start(self, tag_key: str, tag_value: str) -> None:
         """Aws autoscaling resume function.
 
         Resume autoscaling group and start its instances
@@ -79,7 +81,7 @@ class AutoscalingScheduler(object):
             except ClientError as exc:
                 ec2_exception("instance", ec2_instance, exc)
 
-    def list_groups(self, tag_key, tag_value):
+    def list_groups(self, tag_key: str, tag_value: str) -> List[str]:
         """Aws autoscaling list function.
 
         List name of all autoscaling groups with
@@ -103,7 +105,7 @@ class AutoscalingScheduler(object):
                         asg_list.append(group["AutoScalingGroupName"])
         return asg_list
 
-    def list_instances(self, asg_list):
+    def list_instances(self, asg_list: List[str]) -> Iterator[str]:
         """Aws autoscaling instance list function.
 
         List name of all instances in the autoscaling groups
