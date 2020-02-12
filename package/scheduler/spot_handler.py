@@ -2,6 +2,8 @@
 
 """Spot instances scheduler."""
 
+from typing import Iterator
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -12,15 +14,14 @@ from .exceptions import ec2_exception
 class SpotScheduler(object):
     """Abstract spot scheduler in a class."""
 
-    def __init__(self, region_name=None):
+    def __init__(self, region_name=None) -> None:
         """Initialize autoscaling scheduler."""
-        #: Initialize aws ec2 resource
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
 
-    def terminate(self, tag_key, tag_value):
+    def terminate(self, tag_key: str, tag_value: str) -> None:
         """Aws spot instance scheduler function.
 
         Terminate spot instances by using the defined tag.
@@ -37,7 +38,7 @@ class SpotScheduler(object):
             except ClientError as exc:
                 ec2_exception("spot instance", spot_instance, exc)
 
-    def list_spot(self, tag_key, tag_value):
+    def list_spot(self, tag_key: str, tag_value: str) -> Iterator[str]:
         """Aws ec2 spot instance list function.
 
         List name of all ec2 spot instances with
