@@ -32,3 +32,13 @@ output "scheduler_lambda_function_version" {
   description = "Latest published version of your Lambda function"
   value       = aws_lambda_function.this.version
 }
+
+output "scheduler_log_group_name" {
+  description = "The name of the scheduler log group"
+  value       = aws_cloudwatch_log_group.this.name
+}
+
+output "scheduler_log_group_arn" {
+  description = "The Amazon Resource Name (ARN) specifying the log group"
+  value       = aws_cloudwatch_log_group.this.arn
+}

@@ -20,6 +20,12 @@ variable "custom_iam_role_arn" {
   default     = null
 }
 
+variable "kms_key_arn" {
+  description = "The ARN for the KMS encryption key. If this configuration is not provided when environment variables are in use, AWS Lambda uses a default service key."
+  type        = string
+  default     = null
+}
+
 variable "aws_regions" {
   description = "A list of one or more aws regions where the lambda will be apply, default use the current region"
   type        = list(string)

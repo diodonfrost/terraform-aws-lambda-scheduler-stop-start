@@ -141,26 +141,49 @@ resource "aws_iam_role_policy" "schedule_rds" {
 EOF
 }
 
-resource "aws_iam_role_policy" "lambda_logging" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-lambda-logging"
-  role  = aws_iam_role.this[0].id
-
-  policy = <<EOF
-{
+locals {
+  lambda_logging_policy = {
     "Version": "2012-10-17",
     "Statement": [
-        {
-            "Action": [
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-            ],
-            "Resource": "arn:aws:logs:*:*:*",
-            "Effect": "Allow"
-        }
+      {
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": "arn:aws:logs:*:*:*",
+        "Effect": "Allow"
+      }
     ]
+  }
+  lambda_logging_and_kms_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": "arn:aws:logs:*:*:*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:CreateGrant"
+        ],
+        "Resource": "${var.kms_key_arn}",
+        "Effect": "Allow"
+      }
+    ]
+  }
 }
-EOF
+
+resource "aws_iam_role_policy" "lambda_logging" {
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-lambda-logging"
+  role   = aws_iam_role.this[0].id
+  policy = var.kms_key_arn == null ? jsonencode(local.lambda_logging_policy) : jsonencode(local.lambda_logging_and_kms_policy)
 }
 
 ################################################
@@ -185,6 +208,7 @@ resource "aws_lambda_function" "this" {
   source_code_hash = data.archive_file.this.output_base64sha256
   runtime          = "python3.7"
   timeout          = "600"
+  kms_key_arn      = var.kms_key_arn == null ? "" : var.kms_key_arn
 
   environment {
     variables = {
@@ -230,7 +254,6 @@ resource "aws_lambda_permission" "this" {
 #            CLOUDWATCH LOG
 #
 ################################################
-
 resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
