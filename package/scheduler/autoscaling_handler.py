@@ -66,13 +66,6 @@ class AutoscalingScheduler(object):
         asg_list = self.list_groups(tag_key, tag_value)
         instance_list = self.list_instances(asg_list)
 
-        for asg_name in asg_list:
-            try:
-                self.asg.resume_processes(AutoScalingGroupName=asg_name)
-                print("Resume autoscaling group {0}".format(asg_name))
-            except ClientError as exc:
-                ec2_exception("autoscaling group", asg_name, exc)
-
         # Start autoscaling instance
         for ec2_instance in instance_list:
             try:
@@ -80,6 +73,13 @@ class AutoscalingScheduler(object):
                 print("Start autoscaling instances {0}".format(ec2_instance))
             except ClientError as exc:
                 ec2_exception("instance", ec2_instance, exc)
+
+        for asg_name in asg_list:
+            try:
+                self.asg.resume_processes(AutoScalingGroupName=asg_name)
+                print("Resume autoscaling group {0}".format(asg_name))
+            except ClientError as exc:
+                ec2_exception("autoscaling group", asg_name, exc)
 
     def list_groups(self, tag_key: str, tag_value: str) -> List[str]:
         """Aws autoscaling list function.
