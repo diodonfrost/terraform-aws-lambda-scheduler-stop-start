@@ -2,6 +2,7 @@
 
 import boto3
 import time
+from random import randint
 
 from package.scheduler.autoscaling_handler import AutoscalingScheduler
 
@@ -20,8 +21,8 @@ import pytest
 def test_stop_asg_scheduler(aws_region, tag_key, tag_value, result_count):
     """Verify stop asg scheduler class method."""
     client = boto3.client("autoscaling", region_name=aws_region)
-    launch_conf_name = "lc-test" + str(time.time())[11:]
-    asg_name = "asg-test" + str(time.time())[11:]
+    launch_conf_name = "lc-test" + str(randint(0, 1000000000))
+    asg_name = "asg-test" + str(randint(0, 1000000000))
     launch_asg(aws_region, tag_key, tag_value, launch_conf_name, asg_name)
 
     try:
@@ -52,8 +53,8 @@ def test_stop_asg_scheduler(aws_region, tag_key, tag_value, result_count):
 def test_start_asg_scheduler(aws_region, tag_key, tag_value, result_count):
     """Verify start asg scheduler class method."""
     client = boto3.client("autoscaling", region_name=aws_region)
-    launch_conf_name = "lc-test" + str(time.time())[11:]
-    asg_name = "asg-test" + str(time.time())[11:]
+    launch_conf_name = "lc-test" + str(randint(0, 1000000000))
+    asg_name = "asg-test" + str(randint(0, 1000000000))
     launch_asg(aws_region, tag_key, tag_value, launch_conf_name, asg_name)
 
     try:

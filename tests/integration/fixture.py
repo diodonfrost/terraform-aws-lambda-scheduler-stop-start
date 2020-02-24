@@ -78,6 +78,7 @@ def launch_asg(region_name, tag_key, tag_value, launch_conf_name, asg_name):
             }
         ],
     )
+    time.sleep(15)
     return launch_config, asg
 
 
