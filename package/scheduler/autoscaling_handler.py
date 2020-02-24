@@ -65,6 +65,7 @@ class AutoscalingScheduler(object):
         """
         asg_list = self.list_groups(tag_key, tag_value)
         instance_list = self.list_instances(asg_list)
+        instance_running_ids = []
 
         # Start autoscaling instance
         for ec2_instance in instance_list:
@@ -73,6 +74,17 @@ class AutoscalingScheduler(object):
                 print("Start autoscaling instances {0}".format(ec2_instance))
             except ClientError as exc:
                 ec2_exception("instance", ec2_instance, exc)
+            else:
+                instance_running_ids.append(ec2_instance)
+
+        try:
+            instance_waiter = self.ec2.get_waiter("instance_running")
+            instance_waiter.wait(
+                InstanceIds=instance_running_ids,
+                WaiterConfig={"Delay": 15, "MaxAttempts": 15},
+            )
+        except ClientError as exc:
+            ec2_exception("waiter", instance_waiter, exc)
 
         for asg_name in asg_list:
             try:
