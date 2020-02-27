@@ -77,14 +77,15 @@ class AutoscalingScheduler(object):
             else:
                 instance_running_ids.append(ec2_instance)
 
-        try:
-            instance_waiter = self.ec2.get_waiter("instance_running")
-            instance_waiter.wait(
-                InstanceIds=instance_running_ids,
-                WaiterConfig={"Delay": 15, "MaxAttempts": 15},
-            )
-        except ClientError as exc:
-            ec2_exception("waiter", instance_waiter, exc)
+        if instance_running_ids:
+            try:
+                instance_waiter = self.ec2.get_waiter("instance_running")
+                instance_waiter.wait(
+                    InstanceIds=instance_running_ids,
+                    WaiterConfig={"Delay": 15, "MaxAttempts": 15},
+                )
+            except ClientError as exc:
+                ec2_exception("waiter", instance_waiter, exc)
 
         for asg_name in asg_list:
             try:
