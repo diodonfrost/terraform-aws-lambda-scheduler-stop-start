@@ -123,8 +123,8 @@ python3 -m pip install boto3 pytest pytest-cov pytest-xdist
 ```
 
 ```shell
-# Test python code use by ec2 scheduler scheduler
-python3 -m pytest -n 4 --cov=package tests/integration/test_ec2_scheduler.py
+# Test python code use by instance scheduler scheduler
+python3 -m pytest -n 4 --cov=package tests/integration/test_instance_scheduler.py
 
 # Test python code use by spot scheduler scheduler
 python3 -m pytest -n 2 --cov=package tests/integration/test_spot_scheduler.py
@@ -151,8 +151,8 @@ go get ./...
 ```
 
 ```shell
-# Test ec2 scheduler
-go test -timeout 900s -v tests/end-to-end/ec2_scheduler_test.go
+# Test instance scheduler
+go test -timeout 900s -v tests/end-to-end/instance_scheduler_test.go
 
 # Test spot scheduler
 go test -timeout 900s -v tests/end-to-end/spot_scheduler_test.go

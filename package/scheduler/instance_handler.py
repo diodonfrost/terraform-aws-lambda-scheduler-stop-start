@@ -11,12 +11,13 @@ from botocore.exceptions import ClientError
 from .exceptions import ec2_exception
 
 
-class Ec2Scheduler(object):
+class InstanceScheduler(object):
     """Abstract ec2 scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
-        """Initialize autoscaling scheduler."""
+        """Initialize ec2 scheduler."""
         if region_name:
+            self.region_name = region_name
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
@@ -31,12 +32,12 @@ class Ec2Scheduler(object):
         :param str tag_value:
             Aws tag value to use for filter resources
         """
-        for ec2_instance in self.list_instances(tag_key, tag_value):
+        for instance_id in self.list_instances(tag_key, tag_value):
             try:
-                self.ec2.stop_instances(InstanceIds=[ec2_instance])
-                print("Stop instances {0}".format(ec2_instance))
+                self.ec2.stop_instances(InstanceIds=[instance_id])
+                print("Stop instances {0}".format(instance_id))
             except ClientError as exc:
-                ec2_exception("instance", ec2_instance, exc)
+                ec2_exception("instance", instance_id, exc)
 
     def start(self, tag_key: str, tag_value: str) -> None:
         """Aws ec2 instance start function.
@@ -48,12 +49,12 @@ class Ec2Scheduler(object):
         :param str tag_value:
             Aws tag value to use for filter resources
         """
-        for ec2_instance in self.list_instances(tag_key, tag_value):
+        for instance_id in self.list_instances(tag_key, tag_value):
             try:
-                self.ec2.start_instances(InstanceIds=[ec2_instance])
-                print("Start instances {0}".format(ec2_instance))
+                self.ec2.start_instances(InstanceIds=[instance_id])
+                print("Start instances {0}".format(instance_id))
             except ClientError as exc:
-                ec2_exception("instance", ec2_instance, exc)
+                ec2_exception("instance", instance_id, exc)
 
     def list_instances(self, tag_key: str, tag_value: str) -> Iterator[str]:
         """Aws ec2 instance list function.

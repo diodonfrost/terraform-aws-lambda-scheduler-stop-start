@@ -4,7 +4,7 @@ import boto3
 
 from moto import mock_ec2
 
-from package.scheduler.ec2_handler import Ec2Scheduler
+from package.scheduler.instance_handler import InstanceScheduler
 
 from .utils import launch_ec2_instances
 
@@ -22,7 +22,7 @@ import pytest
 def test_list_ec2_instance(aws_region, tag_key, tag_value, result_count):
     """Verify list ec2 instances function."""
     launch_ec2_instances(3, aws_region, "tostop", "true")
-    ec2_scheduler = Ec2Scheduler(aws_region)
+    ec2_scheduler = InstanceScheduler(aws_region)
     taglist = ec2_scheduler.list_instances(tag_key, tag_value)
     assert len(list(taglist)) == result_count
 
@@ -43,7 +43,7 @@ def test_start_ec2_instance(aws_region, tag_key, tag_value, result_count):
     for ec2 in client.describe_instances()["Reservations"][0]["Instances"]:
         client.stop_instances(InstanceIds=[ec2["InstanceId"]])
 
-    ec2_scheduler = Ec2Scheduler(aws_region)
+    ec2_scheduler = InstanceScheduler(aws_region)
     ec2_scheduler.start(tag_key, tag_value)
     for ec2 in client.describe_instances()["Reservations"][0]["Instances"]:
         assert ec2["State"] == result_count
@@ -62,7 +62,7 @@ def test_stop_ec2_instance(aws_region, tag_key, tag_value, result_count):
     client = boto3.client("ec2", region_name=aws_region)
     launch_ec2_instances(3, aws_region, tag_key, tag_value)
 
-    ec2_scheduler = Ec2Scheduler(aws_region)
+    ec2_scheduler = InstanceScheduler(aws_region)
     ec2_scheduler.stop("tostop", "true")
     instances = client.describe_instances()["Reservations"][0]["Instances"]
     assert len(instances) == 3

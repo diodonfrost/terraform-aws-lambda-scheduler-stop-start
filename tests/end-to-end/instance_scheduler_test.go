@@ -13,7 +13,7 @@ import (
 )
 
 // Test Terraform ec2 scheduler module
-func TestTerraformAwsEc2Scheduler(t *testing.T) {
+func TestTerraformAwsInstanceScheduler(t *testing.T) {
 	t.Parallel()
 
 	// Pick aws region Ireland

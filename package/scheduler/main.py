@@ -4,7 +4,7 @@
 import os
 
 from scheduler.autoscaling_handler import AutoscalingScheduler
-from scheduler.ec2_handler import Ec2Scheduler
+from scheduler.instance_handler import InstanceScheduler
 from scheduler.rds_handler import RdsScheduler
 from scheduler.spot_handler import SpotScheduler
 
@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     tag_value = os.getenv("TAG_VALUE")
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
     _strategy[SpotScheduler] = os.getenv("SPOT_SCHEDULE")
-    _strategy[Ec2Scheduler] = os.getenv("EC2_SCHEDULE")
+    _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
 
     for key, value in _strategy.items():
