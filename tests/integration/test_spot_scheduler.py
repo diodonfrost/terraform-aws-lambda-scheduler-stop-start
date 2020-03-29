@@ -2,6 +2,7 @@
 
 import boto3
 
+from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from package.scheduler.spot_handler import SpotScheduler
 
 from .fixture import launch_ec2_spot
@@ -35,6 +36,7 @@ def test_terminate_spot_scheduler(aws_region, tag_key, tag_value, result_count):
     try:
         client.get_waiter("instance_running").wait(InstanceIds=instance_ids)
         spot_scheduler = SpotScheduler(aws_region)
+        spot_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         spot_scheduler.terminate("tostop-spot-test-1", "true")
         if tag_key == "tostop-spot-test-1" and tag_value == "true":
             client.get_waiter("instance_terminated").wait(

@@ -1,10 +1,11 @@
-"""Tests for the autoscaling group list function."""
+"""Tests for the autoscaling group scheduler class."""
 
 import boto3
 
-from moto import mock_autoscaling, mock_ec2
+from moto import mock_autoscaling, mock_cloudwatch, mock_ec2
 
 from package.scheduler.autoscaling_handler import AutoscalingScheduler
+from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 
 from .utils import launch_asg
 
@@ -52,12 +53,14 @@ def test_list_autoscaling_instance(aws_region, asg_name, result_count):
 )
 @mock_ec2
 @mock_autoscaling
+@mock_cloudwatch
 def test_asg_instance_stop(aws_region, tag_key, tag_value, result_count):
     """Verify autoscaling instances stop function."""
     client = boto3.client("ec2", region_name=aws_region)
 
     launch_asg(aws_region, "tostop", "true")
     asg_scheduler = AutoscalingScheduler(aws_region)
+    asg_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
     asg_scheduler.stop(tag_key, tag_value)
     asg_instance = client.describe_instances()["Reservations"][0]["Instances"]
     assert len(asg_instance) == 3

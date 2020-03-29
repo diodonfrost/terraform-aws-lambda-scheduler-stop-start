@@ -2,6 +2,7 @@
 
 import boto3
 
+from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from package.scheduler.rds_handler import RdsScheduler
 
 from .fixture import (
@@ -43,6 +44,7 @@ def test_stop_db_instance(aws_region, db_tag, scheduler_tag, result_count):
             DBInstanceIdentifier=db_id
         )
         rds_scheduler = RdsScheduler(aws_region)
+        rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         rds_scheduler.stop(scheduler_tag["key"], scheduler_tag["value"])
         if db_tag["key"] == "tostop-rds-test-1" and db_tag["value"] == "true":
             waiter_db_instance_stopped(aws_region, db_id)
@@ -86,6 +88,7 @@ def test_start_db_instance(aws_region, db_tag, scheduler_tag, result_count):
         client.stop_db_instance(DBInstanceIdentifier=db_id)
         waiter_db_instance_stopped(aws_region, db_id)
         rds_scheduler = RdsScheduler(aws_region)
+        rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         rds_scheduler.start(scheduler_tag["key"], scheduler_tag["value"])
         if db_tag["key"] == "tostop-rds-test-2" and db_tag["value"] == "true":
             client.get_waiter("db_instance_available").wait(
@@ -133,6 +136,7 @@ def test_stop_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
         )
         waitter_db_cluster_available(aws_region, cluster_id)
         rds_scheduler = RdsScheduler(aws_region)
+        rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         rds_scheduler.stop(scheduler_tag["key"], scheduler_tag["value"])
         if db_tag["key"] == "tostop-rds-test-3" and db_tag["value"] == "true":
             waitter_db_cluster_stopped(aws_region, cluster_id)
@@ -202,6 +206,7 @@ def test_start_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
         waiter_db_instance_stopped(aws_region, db_id)
 
         rds_scheduler = RdsScheduler(aws_region)
+        rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         rds_scheduler.start(scheduler_tag["key"], scheduler_tag["value"])
         if db_tag["key"] == "tostop-rds-test-4" and db_tag["value"] == "true":
             waitter_db_cluster_available(aws_region, cluster_id)

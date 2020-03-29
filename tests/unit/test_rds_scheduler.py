@@ -1,4 +1,4 @@
-"""Tests for the rds list function."""
+"""Tests for the rds scheduler class."""
 
 from moto import mock_rds2
 

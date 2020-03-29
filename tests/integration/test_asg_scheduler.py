@@ -5,6 +5,7 @@ import time
 from random import randint
 
 from package.scheduler.autoscaling_handler import AutoscalingScheduler
+from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 
 from .fixture import launch_asg
 
@@ -27,6 +28,7 @@ def test_stop_asg_scheduler(aws_region, tag_key, tag_value, result_count):
 
     try:
         asg_scheduler = AutoscalingScheduler(aws_region)
+        asg_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         asg_scheduler.stop("tostop-asg-test-1", "true")
 
         suspend_process = client.describe_auto_scaling_groups(
@@ -60,6 +62,7 @@ def test_start_asg_scheduler(aws_region, tag_key, tag_value, result_count):
     try:
         client.suspend_processes(AutoScalingGroupName=asg_name)
         asg_scheduler = AutoscalingScheduler(aws_region)
+        asg_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         asg_scheduler.start("tostop-asg-test-2", "true")
 
         suspend_process = client.describe_auto_scaling_groups(

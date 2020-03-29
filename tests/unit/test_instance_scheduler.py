@@ -1,9 +1,10 @@
-"""Tests for the ec2 list function."""
+"""Tests for the instance scheduler class."""
 
 import boto3
 
-from moto import mock_ec2
+from moto import mock_cloudwatch, mock_ec2
 
+from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from package.scheduler.instance_handler import InstanceScheduler
 
 from .utils import launch_ec2_instances
@@ -35,6 +36,7 @@ def test_list_ec2_instance(aws_region, tag_key, tag_value, result_count):
     ]
 )
 @mock_ec2
+@mock_cloudwatch
 def test_start_ec2_instance(aws_region, tag_key, tag_value, result_count):
     """Verify start ec2 instance function."""
     client = boto3.client("ec2", region_name=aws_region)
@@ -44,6 +46,7 @@ def test_start_ec2_instance(aws_region, tag_key, tag_value, result_count):
         client.stop_instances(InstanceIds=[ec2["InstanceId"]])
 
     ec2_scheduler = InstanceScheduler(aws_region)
+    ec2_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
     ec2_scheduler.start(tag_key, tag_value)
     for ec2 in client.describe_instances()["Reservations"][0]["Instances"]:
         assert ec2["State"] == result_count
@@ -57,12 +60,14 @@ def test_start_ec2_instance(aws_region, tag_key, tag_value, result_count):
     ]
 )
 @mock_ec2
+@mock_cloudwatch
 def test_stop_ec2_instance(aws_region, tag_key, tag_value, result_count):
     """Verify stop ec2 instance function."""
     client = boto3.client("ec2", region_name=aws_region)
     launch_ec2_instances(3, aws_region, tag_key, tag_value)
 
     ec2_scheduler = InstanceScheduler(aws_region)
+    ec2_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
     ec2_scheduler.stop("tostop", "true")
     instances = client.describe_instances()["Reservations"][0]["Instances"]
     assert len(instances) == 3

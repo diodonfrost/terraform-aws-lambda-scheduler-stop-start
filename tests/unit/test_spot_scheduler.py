@@ -1,9 +1,10 @@
-"""Tests for the spot list function."""
+"""Tests for the spot scheduler class."""
 
 import boto3
 
-from moto import mock_ec2
+from moto import mock_cloudwatch, mock_ec2
 
+from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from package.scheduler.spot_handler import SpotScheduler
 
 from .utils import launch_ec2_spot
@@ -32,12 +33,14 @@ def test_list_ec2_spot(aws_region, tag_key, tag_value, result_count):
     ]
 )
 @mock_ec2
+@mock_cloudwatch
 def test_terminate_ec2_spot(aws_region, tag_key, tag_value, result_count):
     """Verify terminate ec2 spot instance."""
     client = boto3.client("ec2", region_name=aws_region)
 
     launch_ec2_spot(3, aws_region, "tostop", "true")
     spot_scheduler = SpotScheduler(aws_region)
+    spot_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
     spot_scheduler.terminate(tag_key, tag_value)
     instances = client.describe_instances()["Reservations"][0]["Instances"]
     assert len(instances) == 3
