@@ -14,8 +14,9 @@ from .exceptions import rds_exception
 class RdsScheduler(object):
     """Abstract rds scheduler in a class."""
 
-    def __init__(self, region_name=None) -> None:
+    def __init__(self, region_name=None, cloudwatch_alarm=None) -> None:
         """Initialize rds scheduler."""
+        self.cloudwatch_alarm = cloudwatch_alarm
         if region_name:
             self.rds = boto3.client("rds", region_name=region_name)
         else:
@@ -33,6 +34,7 @@ class RdsScheduler(object):
         """
         for cluster_id in self.list_clusters(tag_key, tag_value):
             try:
+                self.cloudwatch_alarm.disable(cluster_id)
                 self.rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
                 print("Stop rds cluster {0}".format(cluster_id))
             except ClientError as exc:
@@ -40,6 +42,7 @@ class RdsScheduler(object):
 
         for instance_id in self.list_instances(tag_key, tag_value):
             try:
+                self.cloudwatch_alarm.disable(instance_id)
                 self.rds.stop_db_instance(DBInstanceIdentifier=instance_id)
                 print("Stop rds instance {0}".format(instance_id))
             except ClientError as exc:
@@ -59,6 +62,7 @@ class RdsScheduler(object):
             try:
                 self.rds.start_db_cluster(DBClusterIdentifier=cluster_id)
                 print("Start rds cluster {0}".format(cluster_id))
+                self.cloudwatch_alarm.enable(cluster_id)
             except ClientError as exc:
                 rds_exception("rds cluster", cluster_id, exc)
 
@@ -66,6 +70,7 @@ class RdsScheduler(object):
             try:
                 self.rds.start_db_instance(DBInstanceIdentifier=instance_id)
                 print("Start rds instance {0}".format(instance_id))
+                self.cloudwatch_alarm.enable(instance_id)
             except ClientError as exc:
                 rds_exception("rds instance", instance_id, exc)
 

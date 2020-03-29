@@ -14,8 +14,9 @@ from .exceptions import ec2_exception
 class SpotScheduler(object):
     """Abstract spot scheduler in a class."""
 
-    def __init__(self, region_name=None) -> None:
+    def __init__(self, region_name=None, cloudwatch_alarm=None) -> None:
         """Initialize autoscaling scheduler."""
+        self.cloudwatch_alarm = cloudwatch_alarm
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
@@ -33,6 +34,7 @@ class SpotScheduler(object):
         """
         for spot_instance in self.list_spot(tag_key, tag_value):
             try:
+                self.cloudwatch_alarm.disable(spot_instance)
                 self.ec2.terminate_instances(InstanceIds=[spot_instance])
                 print("Terminate spot instance {0}".format(spot_instance))
             except ClientError as exc:

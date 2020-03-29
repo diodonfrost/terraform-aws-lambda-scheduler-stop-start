@@ -18,7 +18,14 @@ def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
     :param str exception:
         Human readable string describing the exception
     """
-    error_codes = ["UnsupportedOperation", "IncorrectInstanceState"]
+    error_codes = [
+        "UnsupportedOperation",
+        "IncorrectInstanceState",
+        "InvalidDBClusterStateFault",
+        "InvalidDBInstanceState",
+        "InvalidParameterCombination",
+    ]
+
     if exception.response["Error"]["Code"] in error_codes:
         logging.warning(
             "%s %s: %s", resource_name, resource_id, exception,
@@ -60,3 +67,20 @@ def rds_exception(resource_name: str, resource_id: str, exception) -> None:
             resource_id,
             exception,
         )
+
+
+def cloudwatch_exception(resource_name: str, resource_id: str, exception):
+    """Exception raised during execution of Cloudwatch scheduler.
+
+    Log Cloudwatch exceptions on the specific aws resources.
+
+    :param str resource_name:
+        Aws resource name
+    :param str resource_id:
+        Aws resource id
+    :param str exception:
+        Human readable string describing the exception
+    """
+    logging.error(
+        "Unexpected error on %s %s: %s", resource_name, resource_id, exception,
+    )

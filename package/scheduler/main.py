@@ -4,6 +4,7 @@
 import os
 
 from scheduler.autoscaling_handler import AutoscalingScheduler
+from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from scheduler.instance_handler import InstanceScheduler
 from scheduler.rds_handler import RdsScheduler
 from scheduler.spot_handler import SpotScheduler
@@ -36,6 +37,7 @@ def lambda_handler(event, context):
     for key, value in _strategy.items():
         for aws_region in aws_regions:
             strategy = key(aws_region)
+            strategy.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
             if schedule_action == "stop" and value == "true":
                 strategy.stop(tag_key, tag_value)
             elif schedule_action == "start" and value == "true":

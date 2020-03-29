@@ -14,10 +14,10 @@ from .exceptions import ec2_exception
 class InstanceScheduler(object):
     """Abstract ec2 scheduler in a class."""
 
-    def __init__(self, region_name=None) -> None:
+    def __init__(self, region_name=None, cloudwatch_alarm=None) -> None:
         """Initialize ec2 scheduler."""
+        self.cloudwatch_alarm = cloudwatch_alarm
         if region_name:
-            self.region_name = region_name
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
@@ -25,7 +25,8 @@ class InstanceScheduler(object):
     def stop(self, tag_key: str, tag_value: str) -> None:
         """Aws ec2 instance stop function.
 
-        Stop ec2 instances with defined tag.
+        Stop ec2 instances with defined tag and disable its Cloudwatch
+        alarms.
 
         :param str tag_key:
             Aws tag key to use for filter resources
@@ -34,6 +35,7 @@ class InstanceScheduler(object):
         """
         for instance_id in self.list_instances(tag_key, tag_value):
             try:
+                self.cloudwatch_alarm.disable(instance_id)
                 self.ec2.stop_instances(InstanceIds=[instance_id])
                 print("Stop instances {0}".format(instance_id))
             except ClientError as exc:
@@ -42,7 +44,8 @@ class InstanceScheduler(object):
     def start(self, tag_key: str, tag_value: str) -> None:
         """Aws ec2 instance start function.
 
-        Start ec2 instances with defined tag.
+        Start ec2 instances with defined tag and enable its Cloudwatch
+        alarms.
 
         :param str tag_key:
             Aws tag key to use for filter resources
@@ -53,6 +56,7 @@ class InstanceScheduler(object):
             try:
                 self.ec2.start_instances(InstanceIds=[instance_id])
                 print("Start instances {0}".format(instance_id))
+                self.cloudwatch_alarm.enable(instance_id)
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
 
