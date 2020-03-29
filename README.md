@@ -2,7 +2,7 @@
 
 [![Build Status](https://api.travis-ci.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start.svg?branch=master)](https://travis-ci.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start)
 
-Stop and start ec2, rds resources and autoscaling groups with lambda function.
+Stop and start instance, rds resources and autoscaling groups with lambda function.
 
 ## Terraform versions
 For Terraform 0.12 use version v2.* of this module.
@@ -17,13 +17,14 @@ If you are using Terraform 0.11 you can use versions v1.*.
 
 ## Features
 
-*   Aws lambda runtine Python 3.7
-*   ec2 instances scheduling
-*   spot instances scheduling
-*   rds clusters scheduling
-*   rds instances scheduling
-*   autoscalings scheduling
-*   Aws CloudWatch logs for lambda
+*  Aws lambda runtine Python 3.7
+*  ec2 instances scheduling
+*  spot instances scheduling
+*  rds clusters scheduling
+*  rds instances scheduling
+*  autoscalings scheduling
+*  cloudwatch alarm scheduling
+*  Aws CloudWatch logs for lambda
 
 ### Caveats
 You can't stop and start an [Amazon Spot instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/how-spot-instances-work.html) (only the Spot service can stop and start a Spot Instance), but you can reboot or terminate a Spot Instance. That why this module support only scheduler action `terminate` for spot instance.
