@@ -141,6 +141,29 @@ resource "aws_iam_role_policy" "schedule_rds" {
 EOF
 }
 
+resource "aws_iam_role_policy" "schedule_cloudwatch" {
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-cloudwatch-custom-policy-scheduler"
+  role  = aws_iam_role.this[0].id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:DisableAlarmActions",
+                "cloudwatch:EnableAlarmActions"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
 locals {
   lambda_logging_policy = {
     "Version": "2012-10-17",
