@@ -85,6 +85,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
   ]
 }
 
+
 ### Terraform modules ###
 
 module "autoscaling-stop-friday" {

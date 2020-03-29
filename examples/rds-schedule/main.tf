@@ -86,6 +86,7 @@ resource "aws_db_instance" "mysql_not_scheduled" {
   }
 }
 
+
 ### Terraform modules ###
 
 module "rds-stop-friday" {
