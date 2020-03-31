@@ -95,19 +95,3 @@ def launch_rds_instance(region_name, tag_key, tag_value):
         ],
     )
     return rds_instance
-
-def put_create_alarm(region_name, name, dimensions):
-    """Create alarm and associates it."""
-    client = boto3.client("cloudwatch", region_name=region_name)
-    client.put_metric_alarm(
-        AlarmName=name,
-        MetricName="StatusCheckFailed_Instance",
-        Namespace="AWS/EC2",
-        Period=60,
-        EvaluationPeriods=2,
-        Statistic="Minimum",
-        Threshold=0.0,
-        ComparisonOperator="GreaterThanThreshold",
-        ActionsEnabled=True,
-        Dimensions=dimensions,
-    )

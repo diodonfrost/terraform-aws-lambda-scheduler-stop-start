@@ -154,7 +154,8 @@ resource "aws_iam_role_policy" "schedule_cloudwatch" {
             "Action": [
                 "cloudwatch:DescribeAlarms",
                 "cloudwatch:DisableAlarmActions",
-                "cloudwatch:EnableAlarmActions"
+                "cloudwatch:EnableAlarmActions",
+                "cloudwatch:ListTagsForResource"
             ],
             "Effect": "Allow",
             "Resource": "*"
@@ -235,14 +236,15 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      AWS_REGIONS          = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
-      SCHEDULE_ACTION      = var.schedule_action
-      TAG_KEY              = var.resources_tag["key"]
-      TAG_VALUE            = var.resources_tag["value"]
-      EC2_SCHEDULE         = var.ec2_schedule
-      RDS_SCHEDULE         = var.rds_schedule
-      AUTOSCALING_SCHEDULE = var.autoscaling_schedule
-      SPOT_SCHEDULE        = var.spot_schedule
+      AWS_REGIONS               = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
+      SCHEDULE_ACTION           = var.schedule_action
+      TAG_KEY                   = var.resources_tag["key"]
+      TAG_VALUE                 = var.resources_tag["value"]
+      EC2_SCHEDULE              = var.ec2_schedule
+      RDS_SCHEDULE              = var.rds_schedule
+      AUTOSCALING_SCHEDULE      = var.autoscaling_schedule
+      SPOT_SCHEDULE             = var.spot_schedule
+      CLOUDWATCH_ALARM_SCHEDULE = var.cloudwatch_alarm_schedule
     }
   }
 }

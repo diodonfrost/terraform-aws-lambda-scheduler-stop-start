@@ -71,3 +71,9 @@ variable "rds_schedule" {
   type        = string
   default     = "false"
 }
+
+variable "cloudwatch_alarm_schedule" {
+  description = "Enable scheduleding on cloudwatch alarm resources"
+  type        = string
+  default     = "false"
+}

@@ -23,51 +23,69 @@ class CloudWatchAlarmScheduler(object):
         else:
             self.cloudwatch = boto3.client("cloudwatch")
 
-    def disable(self, resource_id: str) -> None:
+    def stop(self, tag_key: str, tag_value: str) -> None:
         """Aws Cloudwatch alarm disable function.
 
-        Disable Cloudwatch alarm on defined resource.
+        Disable Cloudwatch alarm with defined tag.
 
-        :param str resource_id:
-            Specify the exact aws resource ID on which Cloudwatch alarm
-            will be disable.
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
         """
-        for alarm_name in self.list_alarm(resource_id):
+        for alarm_name in self.filter_alarms(tag_key, tag_value):
             try:
                 self.cloudwatch.disable_alarm_actions(AlarmNames=[alarm_name])
                 print("Disable Cloudwatch alarm {0}".format(alarm_name))
             except ClientError as exc:
                 cloudwatch_exception("cloudwatch alarm", alarm_name, exc)
 
-    def enable(self, resource_id: str) -> None:
+    def start(self, tag_key: str, tag_value: str) -> None:
         """Aws Cloudwatch alarm enable function.
 
-        Enable Cloudwatch alarm on defined resource.
+        Enable Cloudwatch alarm with defined tag.
 
-        :param str resource_id:
-            Specify the exact aws resource ID on which Cloudwatch alarm
-            will be enable.
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
         """
-        for alarm_name in self.list_alarm(resource_id):
+        for alarm_name in self.filter_alarms(tag_key, tag_value):
             try:
                 self.cloudwatch.enable_alarm_actions(AlarmNames=[alarm_name])
                 print("Enable Cloudwatch alarm {0}".format(alarm_name))
             except ClientError as exc:
                 cloudwatch_exception("cloudwatch alarm", alarm_name, exc)
 
-    def list_alarm(self, resource_id: str) -> Iterator[str]:
-        """Aws Cloudwatch alarm list function.
+    def filter_alarms(self, tag_key: str, tag_value: str) -> Iterator[str]:
+        """Aws Cloudwatch alarm filter function.
 
-        List name of all Cloudwatch alarm attached to the defined
-        aws resource.
+        List name of all Cloudwatch alarm with the defined tag.
+
+        :param str tag_key:
+            Aws tag key to use for filter resources
+        :param str tag_value:
+            Aws tag value to use for filter resources
 
         :yield Iterator[str]:
             The Name of Cloudwatch alarm.
         """
         paginator = self.cloudwatch.get_paginator("describe_alarms")
+        alarm_arn_and_name_list = []
+        cloudwatch_tag_to_filter = {"Key": tag_key, "Value": tag_value}
 
         for page in paginator.paginate():
             for metric_alarm in page["MetricAlarms"]:
-                for dimension in metric_alarm["Dimensions"]:
-                    if resource_id == dimension["Value"]:
-                        yield metric_alarm["AlarmName"]
+                alarm_arn_and_name_list.append(
+                    {
+                        "arn": metric_alarm["AlarmArn"],
+                        "name": metric_alarm["AlarmName"],
+                    }
+                )
+
+        for alarm_arn_and_name in alarm_arn_and_name_list:
+            for alarm_tag in self.cloudwatch.list_tags_for_resource(
+                ResourceARN=alarm_arn_and_name["arn"]
+            )["Tags"]:
+                if cloudwatch_tag_to_filter == alarm_tag:
+                    yield alarm_arn_and_name["name"]
