@@ -18,9 +18,12 @@ resource "aws_cloudwatch_metric_alarm" "scheduled" {
   statistic           = "Average"
   threshold           = "90"
   alarm_actions       = [aws_autoscaling_policy.scheduled[count.index].arn]
-
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.scheduled[count.index].id
+  }
+
+  tags = {
+    tostop = "true"
   }
 }
 
@@ -44,8 +47,11 @@ resource "aws_cloudwatch_metric_alarm" "not_scheduled" {
   statistic           = "Average"
   threshold           = "90"
   alarm_actions       = [aws_autoscaling_policy.not_scheduled[count.index].arn]
-
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.not_scheduled[count.index].id
+  }
+
+  tags = {
+    tostop = "false"
   }
 }

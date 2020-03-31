@@ -133,6 +133,7 @@ module "spot-terminate-friday" {
   ec2_schedule                   = "false"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
+  cloudwatch_alarm_schedule      = "true"
 
   resources_tag = {
     key   = "tostop"

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ## [2.6.0] - 2020-03-30
 ### Added
-- Disable or Enable Cloudwatch alarms on scheduled resources
+- Disable or Enable Cloudwatch alarms attached on scheduled resources
 - Python 3.8 support
 
 ## [2.5.3] - 2020-02-28
@@ -203,7 +203,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.3...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.6.0...HEAD
+[2.6.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.3...2.6.0
 [2.5.3]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.2...2.5.3
 [2.5.2]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.1...2.5.2
 [2.5.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.0...2.5.1

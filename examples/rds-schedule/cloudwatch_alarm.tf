@@ -8,9 +8,12 @@ resource "aws_cloudwatch_metric_alarm" "aurora_scheduled_cpu" {
   statistic           = "Average"
   threshold           = "90"
   alarm_description   = "Average database CPU utilization is too high."
-
   dimensions = {
     DBClusterIdentifier = aws_rds_cluster.aurora_scheduled.id
+  }
+
+  tags = {
+    tostop = "true"
   }
 }
 
@@ -24,9 +27,12 @@ resource "aws_cloudwatch_metric_alarm" "mariadb_scheduled_cpu" {
   statistic           = "Average"
   threshold           = "90"
   alarm_description   = "Average database CPU utilization is too high."
-
   dimensions = {
     DBInstanceIdentifier = aws_db_instance.mariadb_scheduled.id
+  }
+
+  tags = {
+    tostop = "true"
   }
 }
 
@@ -40,8 +46,11 @@ resource "aws_cloudwatch_metric_alarm" "mysql_not_scheduled_cpu" {
   statistic           = "Average"
   threshold           = "90"
   alarm_description   = "Average database CPU utilization is too high."
-
   dimensions = {
     DBInstanceIdentifier = aws_db_instance.mysql_not_scheduled.id
+  }
+
+  tags = {
+    tostop = "false"
   }
 }

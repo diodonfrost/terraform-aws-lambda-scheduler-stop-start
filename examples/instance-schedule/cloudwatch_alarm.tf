@@ -10,11 +10,15 @@ resource "aws_cloudwatch_metric_alarm" "scheduled" {
   comparison_operator = "GreaterThanThreshold"
   threshold           = "0.0"
   metric_name         = "StatusCheckFailed_Instance"
-
   dimensions = {
     InstanceId = aws_instance.scheduled[count.index].id
   }
+
+  tags = {
+    tostop = "true"
+  }
 }
+
 
 resource "aws_cloudwatch_metric_alarm" "not_scheduled" {
   count               = 2
@@ -28,8 +32,11 @@ resource "aws_cloudwatch_metric_alarm" "not_scheduled" {
   comparison_operator = "GreaterThanThreshold"
   threshold           = "0.0"
   metric_name         = "StatusCheckFailed_Instance"
-
   dimensions = {
     InstanceId = aws_instance.not_scheduled[count.index].id
+  }
+
+  tags = {
+    tostop = "false"
   }
 }

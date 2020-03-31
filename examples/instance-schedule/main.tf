@@ -46,6 +46,7 @@ module "ec2-stop-friday" {
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
+  cloudwatch_alarm_schedule      = "true"
 
   resources_tag = {
     key   = "tostop"
@@ -62,6 +63,7 @@ module "ec2-start-monday" {
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
+  cloudwatch_alarm_schedule      = "true"
 
   resources_tag = {
     key   = "tostop"
