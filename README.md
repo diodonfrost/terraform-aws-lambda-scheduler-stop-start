@@ -71,8 +71,6 @@ module "start_ec2_instance" {
 *   [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-schedule) - Create lambda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/test_fixture) - Deploy environment for testing module
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -88,6 +86,7 @@ module "start_ec2_instance" {
 | spot_schedule | Enable scheduling on spot instance resources | string | `"false"` | no |
 | ec2_schedule | Enable scheduling on ec2 instance resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
+| cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | string | `"false"` | no |
 
 ## Outputs
 
@@ -102,8 +101,6 @@ module "start_ec2_instance" {
 | scheduler_lambda_function_version | Latest published version of your Lambda function |
 | scheduler_log_group_name | The name of the scheduler log group |
 | scheduler_log_group_arn | The Amazon Resource Name (ARN) specifying the log group |
-
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Tests
 
