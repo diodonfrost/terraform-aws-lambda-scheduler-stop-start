@@ -175,3 +175,22 @@ def waitter_db_cluster_stopped(region_name, db_cluster_id):
     ):
         i += i + 1
         time.sleep(15)
+
+
+def create_cloudwatch_alarm(region_name, aws_tags):
+    """Create cloudwatch alarm with tags."""
+    client = boto3.client("cloudwatch", region_name=region_name)
+    name_prefix = str(randint(0, 1000000000))
+    client.put_metric_alarm(
+        AlarmName="alarm" + name_prefix,
+        MetricName="StatusCheckFailed_Instance",
+        Namespace="AWS/EC2",
+        Period=60,
+        EvaluationPeriods=2,
+        Statistic="Minimum",
+        Threshold=0.0,
+        ComparisonOperator="GreaterThanThreshold",
+        ActionsEnabled=True,
+        Tags=[aws_tags],
+    )
+    return "alarm" + name_prefix
