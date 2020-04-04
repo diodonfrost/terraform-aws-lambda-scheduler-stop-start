@@ -18,8 +18,10 @@ class InstanceScheduler(object):
         """Initialize ec2 scheduler."""
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
+            self.asg = boto3.client("autoscaling", region_name=region_name)
         else:
             self.ec2 = boto3.client("ec2")
+            self.asg = boto3.client("autoscaling")
 
     def stop(self, tag_key: str, tag_value: str) -> None:
         """Aws ec2 instance stop function.
@@ -79,4 +81,7 @@ class InstanceScheduler(object):
         for page in page_iterator:
             for reservation in page["Reservations"]:
                 for instance in reservation["Instances"]:
-                    yield instance["InstanceId"]
+                    if not self.asg.describe_auto_scaling_instances(
+                        InstanceIds=[instance["InstanceId"]]
+                    )["AutoScalingInstances"]:
+                        yield instance["InstanceId"]
