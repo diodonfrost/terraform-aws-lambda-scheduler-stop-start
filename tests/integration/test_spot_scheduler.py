@@ -27,7 +27,9 @@ import pytest
         ),
     ],
 )
-def test_terminate_spot_scheduler(aws_region, tag_key, tag_value, result_count):
+def test_terminate_spot_scheduler(
+    aws_region, tag_key, tag_value, result_count
+):
     """Verify terminate spot scheduler class method."""
     client = boto3.client("ec2", region_name=aws_region)
     instances = launch_ec2_spot(2, aws_region, tag_key, tag_value)
