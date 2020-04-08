@@ -98,3 +98,28 @@ def test_do_not_stop_asg_instance(aws_region, tag_key, tag_value, result_count):
     assert len(instances) == 3
     for instance in instances:
         assert instance["State"] == result_count
+
+
+@pytest.mark.parametrize(
+    "aws_region, tag_key, tag_value, result_count", [
+        ("eu-west-1", "tostop", "true", {"Code": 80, "Name": "stopped"}),
+        ("eu-west-2", "tostop", "true", {"Code": 80, "Name": "stopped"}),
+    ]
+)
+@mock_ec2
+@mock_cloudwatch
+@mock_autoscaling
+def test_do_not_start_asg_instance(aws_region, tag_key, tag_value, result_count):
+    client = boto3.client("ec2", region_name=aws_region)
+    launch_asg(aws_region, tag_key, tag_value)
+    instances = client.describe_instances()["Reservations"][0]["Instances"]
+    for instance in instances:
+        client.stop_instances(InstanceIds=[instance["InstanceId"]])
+
+    ec2_scheduler = InstanceScheduler(aws_region)
+    ec2_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
+    ec2_scheduler.start("tostop", "true")
+    instances = client.describe_instances()["Reservations"][0]["Instances"]
+    assert len(instances) == 3
+    for instance in instances:
+        assert instance["State"] == result_count
