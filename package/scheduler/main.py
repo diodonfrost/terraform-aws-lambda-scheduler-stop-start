@@ -36,13 +36,8 @@ def lambda_handler(event, context):
     _strategy[CloudWatchAlarmScheduler] = os.getenv(
         "CLOUDWATCH_ALARM_SCHEDULE"
     )
-
-    for key, value in _strategy.items():
-        for aws_region in aws_regions:
-            strategy = key(aws_region)
-            if schedule_action == "stop" and value == "true":
-                strategy.stop(tag_key, tag_value)
-            elif schedule_action == "start" and value == "true":
-                strategy.start(tag_key, tag_value)
-            elif schedule_action == "stop" and value == "terminate":
-                strategy.terminate(tag_key, tag_value)
+    for service, to_schedule in _strategy.items():
+        if to_schedule == "true":
+            for aws_region in aws_regions:
+                strategy = service(aws_region)
+                getattr(strategy, schedule_action)(tag_key, tag_value)
