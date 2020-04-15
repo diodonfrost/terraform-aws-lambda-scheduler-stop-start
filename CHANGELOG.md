@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.8.0] - 2020-04-15
 ### Added
 - Improve instance scheduler unit tests
 - Cloudwatch integration tests
 
 ### Changed
+- Restrict iam log group policy
 - Do not schedule asg instances with ec2 instance scheduler
 
 ## [2.7.0] - 2020-03-31
@@ -217,7 +219,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.7.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.8.0...HEAD
+[2.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.7.0...2.8.0
 [2.7.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.6.0...2.7.0
 [2.6.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.3...2.6.0
 [2.5.3]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.2...2.5.3
