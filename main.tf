@@ -247,6 +247,8 @@ resource "aws_lambda_function" "this" {
       CLOUDWATCH_ALARM_SCHEDULE = var.cloudwatch_alarm_schedule
     }
   }
+
+  tags = var.tags
 }
 
 ################################################

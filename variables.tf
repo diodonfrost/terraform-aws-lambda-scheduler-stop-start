@@ -77,3 +77,9 @@ variable "cloudwatch_alarm_schedule" {
   type        = string
   default     = "false"
 }
+
+variable "tags" {
+  description = "Custom tags on lambda"
+  type = map
+  default = null
+}
