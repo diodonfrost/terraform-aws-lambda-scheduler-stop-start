@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.9.0] - 2020-07-28
+### Added
+- Terraform variable "tags" for tag lambda function
+- github-action workflow
+
+### Changed
+- Freeze pylint version
+
+### Deleted
+- removing kitchen-ci file
+
 ## [2.8.0] - 2020-04-15
 ### Added
 - Improve instance scheduler unit tests
@@ -219,7 +230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.8.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.0...HEAD
+[2.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.8.0...2.9.0
 [2.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.7.0...2.8.0
 [2.7.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.6.0...2.7.0
 [2.6.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.5.3...2.6.0
