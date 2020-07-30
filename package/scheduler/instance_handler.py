@@ -2,7 +2,7 @@
 
 """ec2 instances scheduler."""
 
-from typing import Iterator
+from typing import Set
 
 import boto3
 
@@ -58,15 +58,17 @@ class InstanceScheduler(object):
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
 
-    def list_instances(self, tag_key: str, tag_value: str) -> Iterator[str]:
+    def list_instances(self, tag_key: str, tag_value: str) -> Set[str]:
         """Aws ec2 instance list function.
 
         List name of all ec2 instances all ec2 instances
         with specific tag and return it in list.
 
-        :yield Iterator[str]:
-            The Id of ec2 instances
+        :return Set[str]:
+            The Id of ec2 (without one-time spot instances)
         """
+        spot_ot_list = []
+        ec2_list = []
         paginator = self.ec2.get_paginator("describe_instances")
         page_iterator = paginator.paginate(
             Filters=[
@@ -84,4 +86,20 @@ class InstanceScheduler(object):
                     if not self.asg.describe_auto_scaling_instances(
                         InstanceIds=[instance["InstanceId"]]
                     )["AutoScalingInstances"]:
-                        yield instance["InstanceId"]
+                        ec2_list.append(instance["InstanceId"])
+
+        # Retrieve all one-time SPOT instance
+        paginator_ot = self.ec2.get_paginator(
+            "describe_spot_instance_requests"
+        )
+        page_ot_iterator = paginator_ot.paginate(
+            Filters=[{"Name": "type", "Values": ["one-time"]}]
+        )
+
+        for page_ot in page_ot_iterator:
+            for spot_instance_requests in page_ot["SpotInstanceRequests"]:
+                spot_ot_list.append(spot_instance_requests["InstanceId"])
+
+        # Return all EC2 + persistent SPOT instance which have the
+        # correct matching tag + instance-state
+        return set(ec2_list) - set(spot_ot_list)

@@ -35,6 +35,7 @@ def test_list_autoscaling_group(aws_region, tag_key, tag_value, result_count):
         ("eu-west-2", [], 0),
     ]
 )
+@mock_ec2
 @mock_autoscaling
 def test_list_autoscaling_instance(aws_region, asg_name, result_count):
     """Verify list autoscaling instance function"""

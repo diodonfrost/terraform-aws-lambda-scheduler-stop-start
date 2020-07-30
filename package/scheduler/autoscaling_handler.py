@@ -2,7 +2,7 @@
 
 """Autoscaling instances scheduler."""
 
-from typing import Iterator, List
+from typing import List, Set
 
 import boto3
 
@@ -118,7 +118,7 @@ class AutoscalingScheduler(object):
                         asg_list.append(group["AutoScalingGroupName"])
         return asg_list
 
-    def list_instances(self, asg_list: List[str]) -> Iterator[str]:
+    def list_instances(self, asg_list: List[str]) -> Set[str]:
         """Aws autoscaling instance list function.
 
         List name of all instances in the autoscaling groups
@@ -127,14 +127,34 @@ class AutoscalingScheduler(object):
         :param list asg_list:
             The names of the Auto Scaling groups.
 
-        :yield Iterator[str]:
-            The names of the instances in Auto Scaling groups.
+        :return Set[str]:
+            The names of the instances in Auto Scaling groups
+            (without one-time spot instances).
         """
+        spot_ot_list = []
+        ec2_list = []
+
         if not asg_list:
-            return iter([])
+            return set()
         paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
         for page in paginator.paginate(AutoScalingGroupNames=asg_list):
             for scalinggroup in page["AutoScalingGroups"]:
                 for instance in scalinggroup["Instances"]:
-                    yield instance["InstanceId"]
+                    ec2_list.append(instance["InstanceId"])
+
+        # Retrieve all one-time SPOT instance
+        paginator_ot = self.ec2.get_paginator(
+            "describe_spot_instance_requests"
+        )
+        page_ot_iterator = paginator_ot.paginate(
+            Filters=[{"Name": "type", "Values": ["one-time"]}]
+        )
+
+        for page_ot in page_ot_iterator:
+            for spot_instance_requests in page_ot["SpotInstanceRequests"]:
+                spot_ot_list.append(spot_instance_requests["InstanceId"])
+
+        # Return all EC2 + persistent SPOT instance which have the
+        # correct matching tag + instance-state
+        return set(ec2_list) - set(spot_ot_list)

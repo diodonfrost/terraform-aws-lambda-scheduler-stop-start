@@ -99,6 +99,7 @@ resource "aws_iam_role_policy" "schedule_ec2" {
     "Statement": [
         {
             "Action": [
+                "ec2:DescribeSpotInstanceRequests",
                 "ec2:DescribeInstances",
                 "ec2:DescribeInstanceStatus",
                 "ec2:StopInstances",

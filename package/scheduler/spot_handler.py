@@ -2,7 +2,7 @@
 
 """Spot instances scheduler."""
 
-from typing import Iterator
+from typing import Set
 
 import boto3
 
@@ -38,10 +38,10 @@ class SpotScheduler(object):
             except ClientError as exc:
                 ec2_exception("spot instance", spot_instance, exc)
 
-    def list_spot(self, tag_key: str, tag_value: str) -> Iterator[str]:
+    def list_spot(self, tag_key: str, tag_value: str) -> Set[str]:
         """Aws ec2 spot instance list function.
 
-        List name of all ec2 spot instances with
+        List name of one-time ec2 spot instances with
         specific tag and return it in list.
 
         :param str tag_key:
@@ -49,9 +49,11 @@ class SpotScheduler(object):
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :yield Iterator[str]:
-            The Id of the spot instances
+        :return Set[str]:
+            The Id of the one-time spot instances
         """
+        spot_ot_list = []
+        spot_list = []
         paginator = self.ec2.get_paginator("describe_instances")
         page_iterator = paginator.paginate(
             Filters=[
@@ -67,4 +69,20 @@ class SpotScheduler(object):
         for page in page_iterator:
             for reservation in page["Reservations"]:
                 for spot in reservation["Instances"]:
-                    yield spot["InstanceId"]
+                    spot_list.append(spot["InstanceId"])
+
+        # Retrieve all one-time SPOT instance
+        paginator_ot = self.ec2.get_paginator(
+            "describe_spot_instance_requests"
+        )
+        page_ot_iterator = paginator_ot.paginate(
+            Filters=[{"Name": "type", "Values": ["one-time"]}]
+        )
+
+        for page_ot in page_ot_iterator:
+            for spot_instance_requests in page_ot["SpotInstanceRequests"]:
+                spot_ot_list.append(spot_instance_requests["InstanceId"])
+
+        # Return all one-time SPOT instance which have the correct
+        # matching tag + instance-state
+        return set(spot_ot_list).intersection(spot_list)

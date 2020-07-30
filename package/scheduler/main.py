@@ -37,7 +37,11 @@ def lambda_handler(event, context):
         "CLOUDWATCH_ALARM_SCHEDULE"
     )
     for service, to_schedule in _strategy.items():
-        if to_schedule == "true":
+        if to_schedule in ("true", "terminate"):
             for aws_region in aws_regions:
                 strategy = service(aws_region)
-                getattr(strategy, schedule_action)(tag_key, tag_value)
+                if to_schedule == "terminate":
+                    action = to_schedule
+                else:
+                    action = schedule_action
+                getattr(strategy, action)(tag_key, tag_value)
