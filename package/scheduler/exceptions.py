@@ -28,7 +28,10 @@ def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
 
     if exception.response["Error"]["Code"] in error_codes:
         logging.warning(
-            "%s %s: %s", resource_name, resource_id, exception,
+            "%s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
         )
     else:
         logging.error(
@@ -58,7 +61,10 @@ def rds_exception(resource_name: str, resource_id: str, exception) -> None:
     ]
     if exception.response["Error"]["Code"] in error_codes:
         logging.warning(
-            "%s %s: %s", resource_name, resource_id, exception,
+            "%s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
         )
     else:
         logging.error(
@@ -82,5 +88,8 @@ def cloudwatch_exception(resource_name: str, resource_id: str, exception):
         Human readable string describing the exception
     """
     logging.error(
-        "Unexpected error on %s %s: %s", resource_name, resource_id, exception,
+        "Unexpected error on %s %s: %s",
+        resource_name,
+        resource_id,
+        exception,
     )
