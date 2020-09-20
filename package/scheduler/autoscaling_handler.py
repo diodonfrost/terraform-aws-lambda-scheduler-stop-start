@@ -9,9 +9,10 @@ import boto3
 from botocore.exceptions import ClientError
 
 from .exceptions import ec2_exception
+from .waiters import AwsWaiters
 
 
-class AutoscalingScheduler(object):
+class AutoscalingScheduler(AwsWaiters):
     """Abstract autoscaling scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -22,6 +23,7 @@ class AutoscalingScheduler(object):
         else:
             self.ec2 = boto3.client("ec2")
             self.asg = boto3.client("autoscaling")
+        super().__init__(region_name=region_name)
 
     def stop(self, tag_key: str, tag_value: str) -> None:
         """Aws autoscaling suspend function.
@@ -77,15 +79,7 @@ class AutoscalingScheduler(object):
             else:
                 instance_running_ids.append(ec2_instance)
 
-        if instance_running_ids:
-            try:
-                instance_waiter = self.ec2.get_waiter("instance_running")
-                instance_waiter.wait(
-                    InstanceIds=instance_running_ids,
-                    WaiterConfig={"Delay": 15, "MaxAttempts": 15},
-                )
-            except ClientError as exc:
-                ec2_exception("waiter", instance_waiter, exc)
+        self.instance_running(instance_ids=instance_running_ids)
 
         for asg_name in asg_list:
             try:
