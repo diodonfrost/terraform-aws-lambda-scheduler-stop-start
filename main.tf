@@ -78,6 +78,7 @@ resource "aws_iam_role_policy" "schedule_spot" {
     "Statement": [
         {
             "Action": [
+                "ec2:DescribeInstances",
                 "ec2:TerminateSpotInstances"
             ],
             "Resource": "*",
@@ -99,12 +100,9 @@ resource "aws_iam_role_policy" "schedule_ec2" {
     "Statement": [
         {
             "Action": [
-                "ec2:DescribeInstances",
-                "ec2:DescribeInstanceStatus",
                 "ec2:StopInstances",
                 "ec2:StartInstances",
-                "ec2:DescribeTags",
-                "ec2:TerminateSpotInstances"
+                "autoscaling:DescribeAutoScalingInstances"
             ],
             "Resource": "*",
             "Effect": "Allow"
@@ -152,10 +150,29 @@ resource "aws_iam_role_policy" "schedule_cloudwatch" {
     "Statement": [
         {
             "Action": [
-                "cloudwatch:DescribeAlarms",
                 "cloudwatch:DisableAlarmActions",
-                "cloudwatch:EnableAlarmActions",
-                "cloudwatch:ListTagsForResource"
+                "cloudwatch:EnableAlarmActions"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "resource_groups_tagging_api" {
+  count = var.custom_iam_role_arn == null ? 1 : 0
+  name  = "${var.name}-resource-groups-tagging-api-scheduler"
+  role  = aws_iam_role.this[0].id
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "tag:GetResources"
             ],
             "Effect": "Allow",
             "Resource": "*"

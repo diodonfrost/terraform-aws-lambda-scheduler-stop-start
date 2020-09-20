@@ -2,13 +2,13 @@
 
 """ec2 instances scheduler."""
 
-from typing import Iterator
 
 import boto3
 
 from botocore.exceptions import ClientError
 
 from .exceptions import ec2_exception
+from .filter_resources_by_tags import FilterByTags
 
 
 class InstanceScheduler(object):
@@ -22,6 +22,7 @@ class InstanceScheduler(object):
         else:
             self.ec2 = boto3.client("ec2")
             self.asg = boto3.client("autoscaling")
+        self.tag_api = FilterByTags(region_name=region_name)
 
     def stop(self, tag_key: str, tag_value: str) -> None:
         """Aws ec2 instance stop function.
@@ -34,10 +35,18 @@ class InstanceScheduler(object):
         :param str tag_value:
             Aws tag value to use for filter resources
         """
-        for instance_id in self.list_instances(tag_key, tag_value):
+        format_tag = [{"Key": tag_key, "Values": [tag_value]}]
+
+        for instance_arn in self.tag_api.get_resources(
+            "ec2:instance", format_tag
+        ):
+            instance_id = instance_arn.split("/")[-1]
             try:
-                self.ec2.stop_instances(InstanceIds=[instance_id])
-                print("Stop instances {0}".format(instance_id))
+                if not self.asg.describe_auto_scaling_instances(
+                    InstanceIds=[instance_id]
+                )["AutoScalingInstances"]:
+                    self.ec2.stop_instances(InstanceIds=[instance_id])
+                    print("Stop instances {0}".format(instance_id))
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
 
@@ -51,37 +60,17 @@ class InstanceScheduler(object):
         :param str tag_value:
             Aws tag value to use for filter resources
         """
-        for instance_id in self.list_instances(tag_key, tag_value):
+        format_tag = [{"Key": tag_key, "Values": [tag_value]}]
+
+        for instance_arn in self.tag_api.get_resources(
+            "ec2:instance", format_tag
+        ):
+            instance_id = instance_arn.split("/")[-1]
             try:
-                self.ec2.start_instances(InstanceIds=[instance_id])
-                print("Start instances {0}".format(instance_id))
+                if not self.asg.describe_auto_scaling_instances(
+                    InstanceIds=[instance_id]
+                )["AutoScalingInstances"]:
+                    self.ec2.start_instances(InstanceIds=[instance_id])
+                    print("Start instances {0}".format(instance_id))
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
-
-    def list_instances(self, tag_key: str, tag_value: str) -> Iterator[str]:
-        """Aws ec2 instance list function.
-
-        List name of all ec2 instances all ec2 instances
-        with specific tag and return it in list.
-
-        :yield Iterator[str]:
-            The Id of ec2 instances
-        """
-        paginator = self.ec2.get_paginator("describe_instances")
-        page_iterator = paginator.paginate(
-            Filters=[
-                {"Name": "tag:" + tag_key, "Values": [tag_value]},
-                {
-                    "Name": "instance-state-name",
-                    "Values": ["pending", "running", "stopping", "stopped"],
-                },
-            ]
-        )
-
-        for page in page_iterator:
-            for reservation in page["Reservations"]:
-                for instance in reservation["Instances"]:
-                    if not self.asg.describe_auto_scaling_instances(
-                        InstanceIds=[instance["InstanceId"]]
-                    )["AutoScalingInstances"]:
-                        yield instance["InstanceId"]
