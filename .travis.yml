@@ -1,7 +1,7 @@
 ---
 dist: xenial   # required for Python >= 3.7
 language: python
-install: pip install tox boto3 botocore
+install: pip install tox==3.20.0
 
 env:
   global:
