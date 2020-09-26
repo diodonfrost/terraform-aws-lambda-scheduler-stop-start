@@ -22,8 +22,6 @@ def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
     warning_codes = [
         "UnsupportedOperation",
         "IncorrectInstanceState",
-        "InvalidDBClusterStateFault",
-        "InvalidDBInstanceState",
         "InvalidParameterCombination",
     ]
 
@@ -62,13 +60,17 @@ def rds_exception(resource_name: str, resource_id: str, exception) -> None:
     :param str exception:
         Human readable string describing the exception
     """
-    warning_codes = [
-        "InvalidDBClusterStateFault",
-        "InvalidDBInstanceState",
-        "InvalidParameterCombination",
-    ]
+    info_codes = ["InvalidParameterCombination", "DBClusterNotFoundFault"]
+    warning_codes = ["InvalidDBClusterStateFault", "InvalidDBInstanceState"]
 
-    if exception.response["Error"]["Code"] in warning_codes:
+    if exception.response["Error"]["Code"] in info_codes:
+        logging.info(
+            "%s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
+        )
+    elif exception.response["Error"]["Code"] in warning_codes:
         logging.warning(
             "%s %s: %s",
             resource_name,

@@ -40,10 +40,15 @@ resource "aws_rds_cluster" "aurora_scheduled" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_scheduled" {
-  identifier           = "aurora-cluster-with-tag"
+  identifier           = "aurora-cluster-with-tag-writer"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   cluster_identifier   = aws_rds_cluster.aurora_scheduled.id
   instance_class       = "db.t2.small"
+
+  tags = {
+    tostop        = "true"
+    terratest_tag = var.random_tag
+  }
 }
 
 # Create rds mariadb instance with tag

@@ -123,13 +123,11 @@ resource "aws_iam_role_policy" "schedule_rds" {
     "Statement": [
         {
             "Action": [
-                "rds:ListTagsForResource",
-                "rds:DescribeDBClusters",
                 "rds:StartDBCluster",
                 "rds:StopDBCluster",
-                "rds:DescribeDBInstances",
                 "rds:StartDBInstance",
-                "rds:StopDBInstance"
+                "rds:StopDBInstance",
+                "rds:DescribeDBClusters"
             ],
             "Effect": "Allow",
             "Resource": "*"
