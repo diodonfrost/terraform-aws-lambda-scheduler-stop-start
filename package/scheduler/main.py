@@ -26,18 +26,14 @@ def lambda_handler(event, context):
     # Retrieve variables from aws lambda ENVIRONMENT
     schedule_action = os.getenv("SCHEDULE_ACTION")
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
-    format_tags = [
-        {"Key": os.getenv("TAG_KEY"), "Values": [os.getenv("TAG_VALUE")]}
-    ]
+    format_tags = [{"Key": os.getenv("TAG_KEY"), "Values": [os.getenv("TAG_VALUE")]}]
 
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
     _strategy[SpotScheduler] = os.getenv("SPOT_SCHEDULE")
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
-    _strategy[CloudWatchAlarmScheduler] = os.getenv(
-        "CLOUDWATCH_ALARM_SCHEDULE"
-    )
+    _strategy[CloudWatchAlarmScheduler] = os.getenv("CLOUDWATCH_ALARM_SCHEDULE")
 
     for service, to_schedule in _strategy.items():
         if to_schedule == "true":

@@ -43,9 +43,7 @@ class InstanceScheduler(object):
                 }
             ]
         """
-        for instance_arn in self.tag_api.get_resources(
-            "ec2:instance", aws_tags
-        ):
+        for instance_arn in self.tag_api.get_resources("ec2:instance", aws_tags):
             instance_id = instance_arn.split("/")[-1]
             try:
                 if not self.asg.describe_auto_scaling_instances(
@@ -73,9 +71,7 @@ class InstanceScheduler(object):
                 }
             ]
         """
-        for instance_arn in self.tag_api.get_resources(
-            "ec2:instance", aws_tags
-        ):
+        for instance_arn in self.tag_api.get_resources("ec2:instance", aws_tags):
             instance_id = instance_arn.split("/")[-1]
             try:
                 if not self.asg.describe_auto_scaling_instances(

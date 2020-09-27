@@ -18,9 +18,7 @@ class CloudWatchAlarmScheduler(object):
     def __init__(self, region_name=None) -> None:
         """Initialize Cloudwatch alarm scheduler."""
         if region_name:
-            self.cloudwatch = boto3.client(
-                "cloudwatch", region_name=region_name
-            )
+            self.cloudwatch = boto3.client("cloudwatch", region_name=region_name)
         else:
             self.cloudwatch = boto3.client("cloudwatch")
         self.tag_api = FilterByTags(region_name=region_name)
@@ -42,9 +40,7 @@ class CloudWatchAlarmScheduler(object):
                 }
             ]
         """
-        for alarm_arn in self.tag_api.get_resources(
-            "cloudwatch:alarm", aws_tags
-        ):
+        for alarm_arn in self.tag_api.get_resources("cloudwatch:alarm", aws_tags):
             alarm_name = alarm_arn.split(":")[-1]
             try:
                 self.cloudwatch.disable_alarm_actions(AlarmNames=[alarm_name])
@@ -69,9 +65,7 @@ class CloudWatchAlarmScheduler(object):
                 }
             ]
         """
-        for alarm_arn in self.tag_api.get_resources(
-            "cloudwatch:alarm", aws_tags
-        ):
+        for alarm_arn in self.tag_api.get_resources("cloudwatch:alarm", aws_tags):
             alarm_name = alarm_arn.split(":")[-1]
             try:
                 self.cloudwatch.enable_alarm_actions(AlarmNames=[alarm_name])
