@@ -2,7 +2,7 @@
 
 """Autoscaling instances scheduler."""
 
-from typing import Iterator, List
+from typing import Dict, Iterator, List
 
 import boto3
 
@@ -25,17 +25,26 @@ class AutoscalingScheduler(AwsWaiters):
             self.asg = boto3.client("autoscaling")
         super().__init__(region_name=region_name)
 
-    def stop(self, tag_key: str, tag_value: str) -> None:
+    def stop(self, aws_tags: List[Dict]) -> None:
         """Aws autoscaling suspend function.
 
         Suspend autoscaling group and stop its instances
         with defined tag.
 
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
+        :param list[map] aws_tags:
+            Aws tags to use for filter resources.
+            For example:
+            [
+                {
+                    'Key': 'string',
+                    'Values': [
+                        'string',
+                    ]
+                }
+            ]
         """
+        tag_key = aws_tags[0]["Key"]
+        tag_value = "".join(aws_tags[0]["Values"])
         asg_list = self.list_groups(tag_key, tag_value)
         instance_list = self.list_instances(asg_list)
 
@@ -54,17 +63,26 @@ class AutoscalingScheduler(AwsWaiters):
             except ClientError as exc:
                 ec2_exception("autoscaling group", ec2_instance, exc)
 
-    def start(self, tag_key: str, tag_value: str) -> None:
+    def start(self, aws_tags: List[Dict]) -> None:
         """Aws autoscaling resume function.
 
         Resume autoscaling group and start its instances
         with defined tag.
 
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
+        :param list[map] aws_tags:
+            Aws tags to use for filter resources
+            For example:
+            [
+                {
+                    'Key': 'string',
+                    'Values': [
+                        'string',
+                    ]
+                }
+            ]
         """
+        tag_key = aws_tags[0]["Key"]
+        tag_value = "".join(aws_tags[0]["Values"])
         asg_list = self.list_groups(tag_key, tag_value)
         instance_list = self.list_instances(asg_list)
         instance_running_ids = []

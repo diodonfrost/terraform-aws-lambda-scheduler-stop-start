@@ -13,14 +13,17 @@ import pytest
 
 
 @pytest.mark.parametrize(
-    "aws_region, tag_key, tag_value, result_count", [
-        ("eu-west-1", "badtagkey", "badtagvalue", 0),
-        ("eu-west-2", "badtagkey", "badtagvalue", 0),
-    ]
+    "aws_region, aws_tags, result_count",
+    [
+        ("eu-west-1", [{"Key": "badtagkey", "Values": ["badtagvalue"]}], 0),
+        ("eu-west-2", [{"Key": "badtagkey", "Values": ["badtagvalue"]}], 0),
+    ],
 )
 @mock_ec2
-def test_list_ec2_spot(aws_region, tag_key, tag_value, result_count):
+def test_list_ec2_spot(aws_region, aws_tags, result_count):
     """Verify list ec2 spot function."""
+    tag_key = aws_tags[0]["Key"]
+    tag_value = "".join(aws_tags[0]["Values"])
     launch_ec2_spot(3, aws_region, "tostop", "true")
     spot_list = SpotScheduler(aws_region)
     taglist = spot_list.list_spot(tag_key, tag_value)
@@ -28,20 +31,25 @@ def test_list_ec2_spot(aws_region, tag_key, tag_value, result_count):
 
 
 @pytest.mark.parametrize(
-    "aws_region, tag_key, tag_value, result_count", [
-        ("eu-west-2", "badtagkey", "badtagvalue", {"Code": 16, "Name": "running"}),
-    ]
+    "aws_region, aws_tags, result_count",
+    [
+        (
+            "eu-west-2",
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            {"Code": 16, "Name": "running"},
+        ),
+    ],
 )
 @mock_ec2
 @mock_cloudwatch
-def test_terminate_ec2_spot(aws_region, tag_key, tag_value, result_count):
+def test_terminate_ec2_spot(aws_region, aws_tags, result_count):
     """Verify terminate ec2 spot instance."""
     client = boto3.client("ec2", region_name=aws_region)
 
     launch_ec2_spot(3, aws_region, "tostop", "true")
     spot_scheduler = SpotScheduler(aws_region)
     spot_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
-    spot_scheduler.terminate(tag_key, tag_value)
+    spot_scheduler.terminate(aws_tags)
     instances = client.describe_instances()["Reservations"][0]["Instances"]
     assert len(instances) == 3
     for instance in instances:

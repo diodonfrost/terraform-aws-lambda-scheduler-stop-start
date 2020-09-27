@@ -27,9 +27,7 @@ import pytest
         ),
     ],
 )
-def test_terminate_spot_scheduler(
-    aws_region, tag_key, tag_value, result_count
-):
+def test_terminate_spot_scheduler(aws_region, tag_key, tag_value, result_count):
     """Verify terminate spot scheduler class method."""
     client = boto3.client("ec2", region_name=aws_region)
     instances = launch_ec2_spot(2, aws_region, tag_key, tag_value)
@@ -41,9 +39,7 @@ def test_terminate_spot_scheduler(
         spot_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
         spot_scheduler.terminate("tostop-spot-test-1", "true")
         if tag_key == "tostop-spot-test-1" and tag_value == "true":
-            client.get_waiter("instance_terminated").wait(
-                InstanceIds=instance_ids
-            )
+            client.get_waiter("instance_terminated").wait(InstanceIds=instance_ids)
 
         ec2_describe = client.describe_instances(InstanceIds=instance_ids)
         for ec2 in ec2_describe["Reservations"][0]["Instances"]:

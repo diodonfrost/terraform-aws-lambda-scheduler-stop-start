@@ -2,6 +2,8 @@
 
 """Cloudwatch alarm action scheduler."""
 
+from typing import Dict, List
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -23,20 +25,25 @@ class CloudWatchAlarmScheduler(object):
             self.cloudwatch = boto3.client("cloudwatch")
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, tag_key: str, tag_value: str) -> None:
+    def stop(self, aws_tags: List[Dict]) -> None:
         """Aws Cloudwatch alarm disable function.
 
-        Disable Cloudwatch alarm with defined tag.
+        Disable Cloudwatch alarm with defined tags.
 
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
+        :param list[map] aws_tags:
+            Aws tags to use for filter resources.
+            For example:
+            [
+                {
+                    'Key': 'string',
+                    'Values': [
+                        'string',
+                    ]
+                }
+            ]
         """
-        format_tag = [{"Key": tag_key, "Values": [tag_value]}]
-
         for alarm_arn in self.tag_api.get_resources(
-            "cloudwatch:alarm", format_tag
+            "cloudwatch:alarm", aws_tags
         ):
             alarm_name = alarm_arn.split(":")[-1]
             try:
@@ -45,20 +52,25 @@ class CloudWatchAlarmScheduler(object):
             except ClientError as exc:
                 cloudwatch_exception("cloudwatch alarm", alarm_name, exc)
 
-    def start(self, tag_key: str, tag_value: str) -> None:
+    def start(self, aws_tags: List[Dict]) -> None:
         """Aws Cloudwatch alarm enable function.
 
-        Enable Cloudwatch alarm with defined tag.
+        Enable Cloudwatch alarm with defined tags.
 
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
+        :param list[map] aws_tags:
+            Aws tags to use for filter resources.
+            For example:
+            [
+                {
+                    'Key': 'string',
+                    'Values': [
+                        'string',
+                    ]
+                }
+            ]
         """
-        format_tag = [{"Key": tag_key, "Values": [tag_value]}]
-
         for alarm_arn in self.tag_api.get_resources(
-            "cloudwatch:alarm", format_tag
+            "cloudwatch:alarm", aws_tags
         ):
             alarm_name = alarm_arn.split(":")[-1]
             try:

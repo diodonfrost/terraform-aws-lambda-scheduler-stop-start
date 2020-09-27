@@ -152,9 +152,9 @@ def waitter_db_cluster_available(region_name, db_cluster_id):
     client = boto3.client("rds", region_name=region_name)
     i = 0
     while (
-        client.describe_db_clusters(DBClusterIdentifier=db_cluster_id)[
-            "DBClusters"
-        ][0]["Status"]
+        client.describe_db_clusters(DBClusterIdentifier=db_cluster_id)["DBClusters"][0][
+            "Status"
+        ]
         != "available"
         or i == 50
     ):
@@ -167,9 +167,9 @@ def waitter_db_cluster_stopped(region_name, db_cluster_id):
     client = boto3.client("rds", region_name=region_name)
     i = 0
     while (
-        client.describe_db_clusters(DBClusterIdentifier=db_cluster_id)[
-            "DBClusters"
-        ][0]["Status"]
+        client.describe_db_clusters(DBClusterIdentifier=db_cluster_id)["DBClusters"][0][
+            "Status"
+        ]
         != "stopped"
         or i == 50
     ):

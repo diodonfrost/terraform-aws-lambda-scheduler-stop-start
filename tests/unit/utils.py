@@ -34,8 +34,8 @@ def launch_ec2_spot(count, region_name, tag_key, tag_value):
             "MarketType": "spot",
             "SpotOptions": {
                 "SpotInstanceType": "one-time",
-                "InstanceInterruptionBehavior": "terminate"
-            }
+                "InstanceInterruptionBehavior": "terminate",
+            },
         },
         TagSpecifications=[
             {

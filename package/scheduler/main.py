@@ -23,12 +23,14 @@ def lambda_handler(event, context):
 
     Terminate spot instances (spot instance cannot be stopped by a user)
     """
-    _strategy = {}
     # Retrieve variables from aws lambda ENVIRONMENT
     schedule_action = os.getenv("SCHEDULE_ACTION")
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
-    tag_key = os.getenv("TAG_KEY")
-    tag_value = os.getenv("TAG_VALUE")
+    format_tags = [
+        {"Key": os.getenv("TAG_KEY"), "Values": [os.getenv("TAG_VALUE")]}
+    ]
+
+    _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
     _strategy[SpotScheduler] = os.getenv("SPOT_SCHEDULE")
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
@@ -36,8 +38,9 @@ def lambda_handler(event, context):
     _strategy[CloudWatchAlarmScheduler] = os.getenv(
         "CLOUDWATCH_ALARM_SCHEDULE"
     )
+
     for service, to_schedule in _strategy.items():
         if to_schedule == "true":
             for aws_region in aws_regions:
                 strategy = service(aws_region)
-                getattr(strategy, schedule_action)(tag_key, tag_value)
+                getattr(strategy, schedule_action)(aws_tags=format_tags)

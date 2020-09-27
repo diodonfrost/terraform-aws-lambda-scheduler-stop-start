@@ -21,14 +21,14 @@ import pytest
     [
         (
             "eu-west-1",
-            {"key": "tostop-rds-test-1", "value": "true"},
-            {"key": "tostop-rds-test-1", "value": "true"},
+            [{"Key": "tostop-rds-test-1", "Values": ["true"]}],
+            [{"Key": "tostop-rds-test-1", "Values": ["true"]}],
             "stopped",
         ),
         (
             "eu-west-1",
-            {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostop-rds-test-1", "value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "tostop-rds-test-2", "Values": ["true"]}],
             "available",
         ),
     ],
@@ -36,26 +36,24 @@ import pytest
 def test_stop_db_instance(aws_region, db_tag, scheduler_tag, result_count):
     """Verify stop rds db scheduler class method."""
     client = boto3.client("rds", region_name=aws_region)
-    db = launch_rds_instance(aws_region, db_tag["key"], db_tag["value"])
+    tag_key = db_tag[0]["Key"]
+    tag_value = "".join(db_tag[0]["Values"])
+    db = launch_rds_instance(aws_region, tag_key, tag_value)
     db_id = db["DBInstance"]["DBInstanceIdentifier"]
 
     try:
-        client.get_waiter("db_instance_available").wait(
-            DBInstanceIdentifier=db_id
-        )
+        client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
-        rds_scheduler.stop(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostop-rds-test-1" and db_tag["value"] == "true":
+        rds_scheduler.stop(scheduler_tag)
+        if db_tag == scheduler_tag:
             waiter_db_instance_stopped(aws_region, db_id)
 
         db_state = client.describe_db_instances(DBInstanceIdentifier=db_id)
         assert db_state["DBInstances"][0]["DBInstanceStatus"] == result_count
     finally:
         # Clean aws account
-        client.delete_db_instance(
-            DBInstanceIdentifier=db_id, SkipFinalSnapshot=True
-        )
+        client.delete_db_instance(DBInstanceIdentifier=db_id, SkipFinalSnapshot=True)
 
 
 @pytest.mark.parametrize(
@@ -63,14 +61,14 @@ def test_stop_db_instance(aws_region, db_tag, scheduler_tag, result_count):
     [
         (
             "eu-west-1",
-            {"key": "tostop-rds-test-2", "value": "true"},
-            {"key": "tostop-rds-test-2", "value": "true"},
+            [{"Key": "tostop-rds-test-3", "Values": ["true"]}],
+            [{"Key": "tostop-rds-test-3", "Values": ["true"]}],
             "available",
         ),
         (
             "eu-west-1",
-            {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostop-rds-test-2", "value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "tostop-rds-test-4", "Values": ["true"]}],
             "stopped",
         ),
     ],
@@ -78,30 +76,26 @@ def test_stop_db_instance(aws_region, db_tag, scheduler_tag, result_count):
 def test_start_db_instance(aws_region, db_tag, scheduler_tag, result_count):
     """Verify start rds db scheduler class method."""
     client = boto3.client("rds", region_name=aws_region)
-    db = launch_rds_instance(aws_region, db_tag["key"], db_tag["value"])
+    tag_key = db_tag[0]["Key"]
+    tag_value = "".join(db_tag[0]["Values"])
+    db = launch_rds_instance(aws_region, tag_key, tag_value)
     db_id = db["DBInstance"]["DBInstanceIdentifier"]
 
     try:
-        client.get_waiter("db_instance_available").wait(
-            DBInstanceIdentifier=db_id
-        )
+        client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
         client.stop_db_instance(DBInstanceIdentifier=db_id)
         waiter_db_instance_stopped(aws_region, db_id)
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
-        rds_scheduler.start(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostop-rds-test-2" and db_tag["value"] == "true":
-            client.get_waiter("db_instance_available").wait(
-                DBInstanceIdentifier=db_id
-            )
+        rds_scheduler.start(scheduler_tag)
+        if db_tag == scheduler_tag:
+            client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
 
         db_state = client.describe_db_instances(DBInstanceIdentifier=db_id)
         assert db_state["DBInstances"][0]["DBInstanceStatus"] == result_count
     finally:
         # Clean aws account
-        client.delete_db_instance(
-            DBInstanceIdentifier=db_id, SkipFinalSnapshot=True
-        )
+        client.delete_db_instance(DBInstanceIdentifier=db_id, SkipFinalSnapshot=True)
 
 
 @pytest.mark.parametrize(
@@ -109,14 +103,14 @@ def test_start_db_instance(aws_region, db_tag, scheduler_tag, result_count):
     [
         (
             "eu-west-1",
-            {"key": "tostop-rds-test-3", "value": "true"},
-            {"key": "tostop-rds-test-3", "value": "true"},
+            [{"Key": "tostop-rds-test-5", "Values": ["true"]}],
+            [{"Key": "tostop-rds-test-5", "Values": ["true"]}],
             "stopped",
         ),
         (
             "eu-west-1",
-            {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostop-rds-test-3", "value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "tostop-rds-test-6", "Values": ["true"]}],
             "available",
         ),
     ],
@@ -124,50 +118,40 @@ def test_start_db_instance(aws_region, db_tag, scheduler_tag, result_count):
 def test_stop_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
     """Verify stop rds db scheduler class method."""
     client = boto3.client("rds", region_name=aws_region)
-    cluster, db = launch_rds_cluster(
-        aws_region, db_tag["key"], db_tag["value"]
-    )
+    tag_key = db_tag[0]["Key"]
+    tag_value = "".join(db_tag[0]["Values"])
+    cluster, db = launch_rds_cluster(aws_region, tag_key, tag_value)
     cluster_id = cluster["DBCluster"]["DBClusterIdentifier"]
     db_id = db["DBInstance"]["DBInstanceIdentifier"]
 
     try:
-        client.get_waiter("db_instance_available").wait(
-            DBInstanceIdentifier=db_id
-        )
+        client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
         waitter_db_cluster_available(aws_region, cluster_id)
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
-        rds_scheduler.stop(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostop-rds-test-3" and db_tag["value"] == "true":
+        rds_scheduler.stop(scheduler_tag)
+        if db_tag == scheduler_tag:
             waitter_db_cluster_stopped(aws_region, cluster_id)
             waiter_db_instance_stopped(aws_region, db_id)
 
-        cluster_state = client.describe_db_clusters(
-            DBClusterIdentifier=cluster_id
-        )["DBClusters"][0]["Status"]
+        cluster_state = client.describe_db_clusters(DBClusterIdentifier=cluster_id)[
+            "DBClusters"
+        ][0]["Status"]
         assert cluster_state == result_count
     finally:
         # Clean aws account
         if cluster_state == "stopped":
             client.start_db_cluster(DBClusterIdentifier=cluster_id)
             waitter_db_cluster_available(aws_region, cluster_id)
-            client.get_waiter("db_instance_available").wait(
-                DBInstanceIdentifier=db_id
-            )
+            client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
         elif cluster_state == "stopping":
             waitter_db_cluster_stopped(aws_region, cluster_id)
             waiter_db_instance_stopped(aws_region, db_id)
             client.start_db_cluster(DBClusterIdentifier=cluster_id)
             waitter_db_cluster_available(aws_region, cluster_id)
-            client.get_waiter("db_instance_available").wait(
-                DBInstanceIdentifier=db_id
-            )
-        client.delete_db_instance(
-            DBInstanceIdentifier=db_id, SkipFinalSnapshot=True
-        )
-        client.delete_db_cluster(
-            DBClusterIdentifier=cluster_id, SkipFinalSnapshot=True
-        )
+            client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
+        client.delete_db_instance(DBInstanceIdentifier=db_id, SkipFinalSnapshot=True)
+        client.delete_db_cluster(DBClusterIdentifier=cluster_id, SkipFinalSnapshot=True)
 
 
 @pytest.mark.parametrize(
@@ -175,14 +159,14 @@ def test_stop_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
     [
         (
             "eu-west-1",
-            {"key": "tostop-rds-test-4", "value": "true"},
-            {"key": "tostop-rds-test-4", "value": "true"},
+            [{"Key": "tostop-rds-test-7", "Values": ["true"]}],
+            [{"Key": "tostop-rds-test-7", "Values": ["true"]}],
             "available",
         ),
         (
             "eu-west-1",
-            {"key": "badtagkey", "value": "badtagvalue"},
-            {"key": "tostop-rds-test-4", "value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "tostop-rds-test-8", "Values": ["true"]}],
             "stopped",
         ),
     ],
@@ -190,16 +174,14 @@ def test_stop_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
 def test_start_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
     """Verify syaty rds db scheduler class method."""
     client = boto3.client("rds", region_name=aws_region)
-    cluster, db = launch_rds_cluster(
-        aws_region, db_tag["key"], db_tag["value"]
-    )
+    tag_key = db_tag[0]["Key"]
+    tag_value = "".join(db_tag[0]["Values"])
+    cluster, db = launch_rds_cluster(aws_region, tag_key, tag_value)
     cluster_id = cluster["DBCluster"]["DBClusterIdentifier"]
     db_id = db["DBInstance"]["DBInstanceIdentifier"]
 
     try:
-        client.get_waiter("db_instance_available").wait(
-            DBInstanceIdentifier=db_id
-        )
+        client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
         waitter_db_cluster_available(aws_region, cluster_id)
         client.stop_db_cluster(DBClusterIdentifier=cluster_id)
         waitter_db_cluster_stopped(aws_region, cluster_id)
@@ -207,36 +189,26 @@ def test_start_db_cluster(aws_region, db_tag, scheduler_tag, result_count):
 
         rds_scheduler = RdsScheduler(aws_region)
         rds_scheduler.cloudwatch_alarm = CloudWatchAlarmScheduler(aws_region)
-        rds_scheduler.start(scheduler_tag["key"], scheduler_tag["value"])
-        if db_tag["key"] == "tostop-rds-test-4" and db_tag["value"] == "true":
+        rds_scheduler.start(scheduler_tag)
+        if db_tag == scheduler_tag:
             waitter_db_cluster_available(aws_region, cluster_id)
-            client.get_waiter("db_instance_available").wait(
-                DBInstanceIdentifier=db_id
-            )
+            client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
 
-        cluster_state = client.describe_db_clusters(
-            DBClusterIdentifier=cluster_id
-        )["DBClusters"][0]["Status"]
+        cluster_state = client.describe_db_clusters(DBClusterIdentifier=cluster_id)[
+            "DBClusters"
+        ][0]["Status"]
         assert cluster_state == result_count
     finally:
         # Clean aws account
         if cluster_state == "stopped":
             client.start_db_cluster(DBClusterIdentifier=cluster_id)
             waitter_db_cluster_available(aws_region, cluster_id)
-            client.get_waiter("db_instance_available").wait(
-                DBInstanceIdentifier=db_id
-            )
+            client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
         elif cluster_state == "stopping":
             waitter_db_cluster_stopped(aws_region, cluster_id)
             waiter_db_instance_stopped(aws_region, db_id)
             client.start_db_cluster(DBClusterIdentifier=cluster_id)
             waitter_db_cluster_available(aws_region, cluster_id)
-            client.get_waiter("db_instance_available").wait(
-                DBInstanceIdentifier=db_id
-            )
-        client.delete_db_instance(
-            DBInstanceIdentifier=db_id, SkipFinalSnapshot=True
-        )
-        client.delete_db_cluster(
-            DBClusterIdentifier=cluster_id, SkipFinalSnapshot=True
-        )
+            client.get_waiter("db_instance_available").wait(DBInstanceIdentifier=db_id)
+        client.delete_db_instance(DBInstanceIdentifier=db_id, SkipFinalSnapshot=True)
+        client.delete_db_cluster(DBClusterIdentifier=cluster_id, SkipFinalSnapshot=True)

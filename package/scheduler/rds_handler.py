@@ -2,6 +2,8 @@
 
 """rds instances scheduler."""
 
+from typing import Dict, List
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -21,21 +23,24 @@ class RdsScheduler(object):
             self.rds = boto3.client("rds")
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, tag_key: str, tag_value: str) -> None:
+    def stop(self, aws_tags: List[Dict]) -> None:
         """Aws rds cluster and instance stop function.
 
-        Stop rds aurora clusters and rds db instances with defined tag.
+        Stop rds aurora clusters and rds db instances with defined tags.
 
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
+        :param list[map] aws_tags:
+            Aws tags to use for filter resources.
+            For example:
+            [
+                {
+                    'Key': 'string',
+                    'Values': [
+                        'string',
+                    ]
+                }
+            ]
         """
-        format_tag = [{"Key": tag_key, "Values": [tag_value]}]
-
-        for cluster_arn in self.tag_api.get_resources(
-            "rds:cluster", format_tag
-        ):
+        for cluster_arn in self.tag_api.get_resources("rds:cluster", aws_tags):
             cluster_id = cluster_arn.split(":")[-1]
             try:
                 # Identifier must be cluster id, not resource id
@@ -45,7 +50,7 @@ class RdsScheduler(object):
             except ClientError as exc:
                 rds_exception("rds cluster", cluster_id, exc)
 
-        for db_arn in self.tag_api.get_resources("rds:db", format_tag):
+        for db_arn in self.tag_api.get_resources("rds:db", aws_tags):
             db_id = db_arn.split(":")[-1]
             try:
                 self.rds.stop_db_instance(DBInstanceIdentifier=db_id)
@@ -53,21 +58,24 @@ class RdsScheduler(object):
             except ClientError as exc:
                 rds_exception("rds instance", db_id, exc)
 
-    def start(self, tag_key: str, tag_value: str) -> None:
+    def start(self, aws_tags: List[Dict]) -> None:
         """Aws rds cluster start function.
 
-        Start rds aurora clusters and db instances with defined tag.
+        Start rds aurora clusters and db instances with defined tags.
 
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
+        :param list[map] aws_tags:
+            Aws tags to use for filter resources.
+            For example:
+            [
+                {
+                    'Key': 'string',
+                    'Values': [
+                        'string',
+                    ]
+                }
+            ]
         """
-        format_tag = [{"Key": tag_key, "Values": [tag_value]}]
-
-        for cluster_arn in self.tag_api.get_resources(
-            "rds:cluster", format_tag
-        ):
+        for cluster_arn in self.tag_api.get_resources("rds:cluster", aws_tags):
             cluster_id = cluster_arn.split(":")[-1]
             try:
                 # Identifier must be cluster id, not resource id
@@ -77,7 +85,7 @@ class RdsScheduler(object):
             except ClientError as exc:
                 rds_exception("rds cluster", cluster_id, exc)
 
-        for db_arn in self.tag_api.get_resources("rds:db", format_tag):
+        for db_arn in self.tag_api.get_resources("rds:db", aws_tags):
             db_id = db_arn.split(":")[-1]
             try:
                 self.rds.start_db_instance(DBInstanceIdentifier=db_id)

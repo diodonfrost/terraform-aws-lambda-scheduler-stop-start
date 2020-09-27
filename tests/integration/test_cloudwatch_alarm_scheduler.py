@@ -14,26 +14,26 @@ import pytest
     [
         (
             "eu-west-1",
-            {"Key": "cloudwatch-scheduler-test-5", "Value": "true"},
-            {"Key": "cloudwatch-scheduler-test-5", "Value": "true"},
+            [{"Key": "cloudwatch-scheduler-test-5", "Values": ["true"]}],
+            [{"Key": "cloudwatch-scheduler-test-5", "Values": ["true"]}],
             False,
         ),
         (
             "eu-west-1",
-            {"Key": "badtagkey", "Value": "badtagvalue"},
-            {"Key": "cloudwatch-scheduler-test-6", "Value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "cloudwatch-scheduler-test-6", "Values": ["true"]}],
             True,
         ),
         (
             "eu-west-2",
-            {"Key": "cloudwatch-scheduler-test-7", "Value": "true"},
-            {"Key": "cloudwatch-scheduler-test-7", "Value": "true"},
+            [{"Key": "cloudwatch-scheduler-test-7", "Values": ["true"]}],
+            [{"Key": "cloudwatch-scheduler-test-7", "Values": ["true"]}],
             False,
         ),
         (
             "eu-west-2",
-            {"Key": "badtagkey", "Value": "badtagvalue"},
-            {"Key": "cloudwatch-scheduler-test-8", "Value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "cloudwatch-scheduler-test-8", "Values": ["true"]}],
             True,
         ),
     ],
@@ -44,17 +44,19 @@ def test_stop_cloudwatch_alarms(
     """Verify cloudwatch stop scheduler class method."""
     client = boto3.client("cloudwatch", region_name=aws_region)
     fake_tag = {"Key": "faketag", "Value": "true"}
+    alarm_tag = {
+        "Key": cloudwatch_tag[0]["Key"],
+        "Value": "".join(cloudwatch_tag[0]["Values"]),
+    }
     try:
         alarm1 = create_cloudwatch_alarm(aws_region, fake_tag)
-        alarm2 = create_cloudwatch_alarm(aws_region, cloudwatch_tag)
+        alarm2 = create_cloudwatch_alarm(aws_region, alarm_tag)
         cloudwatch_scheduler = CloudWatchAlarmScheduler(aws_region)
-        cloudwatch_scheduler.stop(scheduler_tag["Key"], scheduler_tag["Value"])
+        cloudwatch_scheduler.stop(scheduler_tag)
         alarm1_status = client.describe_alarms(AlarmNames=[alarm1])
         alarm2_status = client.describe_alarms(AlarmNames=[alarm2])
         assert alarm1_status["MetricAlarms"][0]["ActionsEnabled"] == True
-        assert (
-            alarm2_status["MetricAlarms"][0]["ActionsEnabled"] == result_count
-        )
+        assert alarm2_status["MetricAlarms"][0]["ActionsEnabled"] == result_count
     finally:
         client.delete_alarms(AlarmNames=[alarm1, alarm2])
 
@@ -64,26 +66,26 @@ def test_stop_cloudwatch_alarms(
     [
         (
             "eu-west-1",
-            {"Key": "cloudwatch-scheduler-test-9", "Value": "true"},
-            {"Key": "cloudwatch-scheduler-test-9", "Value": "true"},
+            [{"Key": "cloudwatch-scheduler-test-9", "Values": ["true"]}],
+            [{"Key": "cloudwatch-scheduler-test-9", "Values": ["true"]}],
             True,
         ),
         (
             "eu-west-1",
-            {"Key": "badtagkey", "Value": "badtagvalue"},
-            {"Key": "cloudwatch-scheduler-test-10", "Value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "cloudwatch-scheduler-test-10", "Values": ["true"]}],
             False,
         ),
         (
             "eu-west-2",
-            {"Key": "cloudwatch-scheduler-test-11", "Value": "true"},
-            {"Key": "cloudwatch-scheduler-test-11", "Value": "true"},
+            [{"Key": "cloudwatch-scheduler-test-11", "Values": ["true"]}],
+            [{"Key": "cloudwatch-scheduler-test-11", "Values": ["true"]}],
             True,
         ),
         (
             "eu-west-2",
-            {"Key": "badtagkey", "Value": "badtagvalue"},
-            {"Key": "cloudwatch-scheduler-test-12", "Value": "true"},
+            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
+            [{"Key": "cloudwatch-scheduler-test-12", "Values": ["true"]}],
             False,
         ),
     ],
@@ -94,19 +96,19 @@ def test_start_cloudwatch_alarms(
     """Verify cloudwatch start scheduler class method."""
     client = boto3.client("cloudwatch", region_name=aws_region)
     fake_tag = {"Key": "faketag", "Value": "true"}
+    alarm_tag = {
+        "Key": cloudwatch_tag[0]["Key"],
+        "Value": "".join(cloudwatch_tag[0]["Values"]),
+    }
     try:
         alarm1 = create_cloudwatch_alarm(aws_region, fake_tag)
-        alarm2 = create_cloudwatch_alarm(aws_region, cloudwatch_tag)
+        alarm2 = create_cloudwatch_alarm(aws_region, alarm_tag)
         client.disable_alarm_actions(AlarmNames=[alarm1, alarm2])
         cloudwatch_scheduler = CloudWatchAlarmScheduler(aws_region)
-        cloudwatch_scheduler.start(
-            scheduler_tag["Key"], scheduler_tag["Value"]
-        )
+        cloudwatch_scheduler.start(scheduler_tag)
         alarm1_status = client.describe_alarms(AlarmNames=[alarm1])
         alarm2_status = client.describe_alarms(AlarmNames=[alarm2])
         assert alarm1_status["MetricAlarms"][0]["ActionsEnabled"] == False
-        assert (
-            alarm2_status["MetricAlarms"][0]["ActionsEnabled"] == result_count
-        )
+        assert alarm2_status["MetricAlarms"][0]["ActionsEnabled"] == result_count
     finally:
         client.delete_alarms(AlarmNames=[alarm1, alarm2])

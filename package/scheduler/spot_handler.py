@@ -2,7 +2,7 @@
 
 """Spot instances scheduler."""
 
-from typing import Iterator
+from typing import Dict, Iterator, List
 
 import boto3
 
@@ -21,16 +21,25 @@ class SpotScheduler(object):
         else:
             self.ec2 = boto3.client("ec2")
 
-    def terminate(self, tag_key: str, tag_value: str) -> None:
+    def terminate(self, aws_tags: List[Dict]) -> None:
         """Aws spot instance scheduler function.
 
         Terminate spot instances by using the defined tag.
 
-        :param str tag_key:
-            Aws tag key to use for filter resources
-        :param str tag_value:
-            Aws tag value to use for filter resources
+        :param list[map] aws_tags:
+            Aws tags to use for filter resources.
+            For example:
+            [
+                {
+                    'Key': 'string',
+                    'Values': [
+                        'string',
+                    ]
+                }
+            ]
         """
+        tag_key = aws_tags[0]["Key"]
+        tag_value = "".join(aws_tags[0]["Values"])
         for spot_instance in self.list_spot(tag_key, tag_value):
             try:
                 self.ec2.terminate_instances(InstanceIds=[spot_instance])
