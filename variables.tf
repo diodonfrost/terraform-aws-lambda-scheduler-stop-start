@@ -50,32 +50,32 @@ variable "resources_tag" {
 
 variable "autoscaling_schedule" {
   description = "Enable scheduling on autoscaling resources"
-  type        = string
-  default     = "false"
+  type        = any
+  default     = false
 }
 
 variable "spot_schedule" {
   description = "Enable scheduling on spot instance resources"
-  type        = string
-  default     = "false"
+  type        = any
+  default     = false
 }
 
 variable "ec2_schedule" {
   description = "Enable scheduling on ec2 resources"
-  type        = string
-  default     = "false"
+  type        = any
+  default     = false
 }
 
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
-  type        = string
-  default     = "false"
+  type        = any
+  default     = false
 }
 
 variable "cloudwatch_alarm_schedule" {
   description = "Enable scheduleding on cloudwatch alarm resources"
-  type        = string
-  default     = "false"
+  type        = any
+  default     = false
 }
 
 variable "tags" {

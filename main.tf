@@ -255,11 +255,11 @@ resource "aws_lambda_function" "this" {
       SCHEDULE_ACTION           = var.schedule_action
       TAG_KEY                   = var.resources_tag["key"]
       TAG_VALUE                 = var.resources_tag["value"]
-      EC2_SCHEDULE              = var.ec2_schedule
-      RDS_SCHEDULE              = var.rds_schedule
-      AUTOSCALING_SCHEDULE      = var.autoscaling_schedule
-      SPOT_SCHEDULE             = var.spot_schedule
-      CLOUDWATCH_ALARM_SCHEDULE = var.cloudwatch_alarm_schedule
+      EC2_SCHEDULE              = tostring(var.ec2_schedule)
+      RDS_SCHEDULE              = tostring(var.rds_schedule)
+      AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
+      SPOT_SCHEDULE             = tostring(var.spot_schedule)
+      CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)
     }
   }
 

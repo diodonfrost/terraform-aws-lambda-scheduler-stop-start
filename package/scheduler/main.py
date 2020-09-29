@@ -2,6 +2,7 @@
 
 """This script stop and start aws resources."""
 import os
+from distutils.util import strtobool
 
 from scheduler.autoscaling_handler import AutoscalingScheduler
 from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
@@ -36,7 +37,7 @@ def lambda_handler(event, context):
     _strategy[CloudWatchAlarmScheduler] = os.getenv("CLOUDWATCH_ALARM_SCHEDULE")
 
     for service, to_schedule in _strategy.items():
-        if to_schedule == "true":
+        if strtobool(to_schedule):
             for aws_region in aws_regions:
                 strategy = service(aws_region)
                 getattr(strategy, schedule_action)(aws_tags=format_tags)
