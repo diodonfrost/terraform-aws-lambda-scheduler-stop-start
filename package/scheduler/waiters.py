@@ -15,7 +15,7 @@ class AwsWaiters(object):
     """Abstract aws waiter in a class."""
 
     def __init__(self, region_name=None) -> None:
-        """Initialize autoscaling scheduler."""
+        """Initialize aws waiter."""
         if region_name:
             self.ec2 = boto3.client("ec2", region_name=region_name)
         else:

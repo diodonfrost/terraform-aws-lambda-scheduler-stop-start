@@ -12,7 +12,7 @@ from scheduler.exceptions import ec2_exception
 from scheduler.waiters import AwsWaiters
 
 
-class AutoscalingScheduler(AwsWaiters):
+class AutoscalingScheduler(object):
     """Abstract autoscaling scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -23,7 +23,7 @@ class AutoscalingScheduler(AwsWaiters):
         else:
             self.ec2 = boto3.client("ec2")
             self.asg = boto3.client("autoscaling")
-        super().__init__(region_name=region_name)
+        self.waiter = AwsWaiters(region_name=region_name)
 
     def stop(self, aws_tags: List[Dict]) -> None:
         """Aws autoscaling suspend function.
@@ -97,7 +97,7 @@ class AutoscalingScheduler(AwsWaiters):
             else:
                 instance_running_ids.append(ec2_instance)
 
-        self.instance_running(instance_ids=instance_running_ids)
+        self.waiter.instance_running(instance_ids=instance_running_ids)
 
         for asg_name in asg_list:
             try:
