@@ -11,7 +11,7 @@ class FilterByTags(object):
     """Abstract Filter aws resources by tags in a class."""
 
     def __init__(self, region_name=None) -> None:
-        """Initialize autoscaling scheduler."""
+        """Initialize resourcegroupstaggingapi client."""
         if region_name:
             self.rgta = boto3.client(
                 "resourcegroupstaggingapi", region_name=region_name
@@ -20,7 +20,7 @@ class FilterByTags(object):
             self.rgta = boto3.client("resourcegroupstaggingapi")
 
     def get_resources(self, resource_type, aws_tags) -> Iterator[str]:
-        """Filter aws resources using defined tags.
+        """Filter aws resources using resource type and defined tags.
 
         Returns all the tagged defined resources that are located in
         the specified Region for the AWS account.

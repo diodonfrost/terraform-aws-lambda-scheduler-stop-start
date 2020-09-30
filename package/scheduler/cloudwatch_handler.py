@@ -8,8 +8,8 @@ import boto3
 
 from botocore.exceptions import ClientError
 
-from .exceptions import cloudwatch_exception
-from .filter_resources_by_tags import FilterByTags
+from scheduler.exceptions import cloudwatch_exception
+from scheduler.filter_resources_by_tags import FilterByTags
 
 
 class CloudWatchAlarmScheduler(object):
