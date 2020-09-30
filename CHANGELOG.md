@@ -5,6 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.10.0] - 2020-09-30
+### Feature
+- Python/Terraform: use ResourceGroupsTaggingAPI to filter aws resources
+- Terraform: Allow bool type with scheduler variables
+
+### Refactor
+- Python: move waiter in dedicated class
+- Python: changes inheritance by composition in the autoscaling scheduler class
+
+### Style
+- Python : use absolute imports in Python
+
+### Build
+- Python: Freeze Python packages version
+
+## [2.9.1] - 2020-09-04
+### Fix
+- Fix Terraform ouput lambda_iam_role_name
+
+### Changed
+- Format python code with black 20.8b1
+
 ## [2.9.0] - 2020-07-28
 ### Added
 - Terraform variable "tags" for tag lambda function
@@ -230,7 +252,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.10.0...HEAD
+[2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.1...2.10.0
+[2.9.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.0...2.9.1
 [2.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.8.0...2.9.0
 [2.8.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.7.0...2.8.0
 [2.7.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.6.0...2.7.0
