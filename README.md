@@ -12,9 +12,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 
 ## Future version v3.*
 
-*  Multi aws tags support (backward compatibility)
-*  Use bool type for scheduler service variable (backward compatibility)
-*  Terminate action for autoscaling group instance 
+*  Multi aws tags support (breaking change)
 
 ## Features
 
