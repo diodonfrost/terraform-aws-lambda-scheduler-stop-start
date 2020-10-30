@@ -54,12 +54,6 @@ variable "autoscaling_schedule" {
   default     = false
 }
 
-variable "spot_schedule" {
-  description = "Enable scheduling on spot instance resources"
-  type        = any
-  default     = false
-}
-
 variable "ec2_schedule" {
   description = "Enable scheduling on ec2 resources"
   type        = any

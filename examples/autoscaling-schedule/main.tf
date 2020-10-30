@@ -109,7 +109,6 @@ module "autoscaling-start-monday" {
   name                           = "start-autoscaling"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
-  spot_schedule                  = "false"
   ec2_schedule                   = "false"
   rds_schedule                   = "false"
   autoscaling_schedule           = "true"

@@ -8,7 +8,6 @@ from scheduler.autoscaling_handler import AutoscalingScheduler
 from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from scheduler.instance_handler import InstanceScheduler
 from scheduler.rds_handler import RdsScheduler
-from scheduler.spot_handler import SpotScheduler
 
 
 def lambda_handler(event, context):
@@ -31,7 +30,6 @@ def lambda_handler(event, context):
 
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
-    _strategy[SpotScheduler] = os.getenv("SPOT_SCHEDULE")
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
     _strategy[CloudWatchAlarmScheduler] = os.getenv("CLOUDWATCH_ALARM_SCHEDULE")

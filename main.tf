@@ -258,7 +258,6 @@ resource "aws_lambda_function" "this" {
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
-      SPOT_SCHEDULE             = tostring(var.spot_schedule)
       CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)
     }
   }

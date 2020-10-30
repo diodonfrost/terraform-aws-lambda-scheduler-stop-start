@@ -10,23 +10,15 @@ For Terraform 0.12 use version v2.* of this module.
 
 If you are using Terraform 0.11 you can use versions v1.*.
 
-## Future version v3.*
-
-*  Multi aws tags support (breaking change)
-
 ## Features
 
 *  Aws lambda runtine Python 3.7
 *  ec2 instances scheduling
-*  spot instances scheduling
 *  rds clusters scheduling
 *  rds instances scheduling
 *  autoscalings scheduling
 *  cloudwatch alarm scheduling
 *  Aws CloudWatch logs for lambda
-
-### Caveats
-You can't stop and start an [Amazon Spot instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/how-spot-instances-work.html) (only the Spot service can stop and start a Spot Instance), but you can reboot or terminate a Spot Instance. That why this module support only scheduler action `terminate` for spot instance.
 
 ## Usage
 
@@ -37,7 +29,6 @@ module "stop_ec2_instance" {
   cloudwatch_schedule_expression = "cron(0 0 ? * FRI *)"
   schedule_action                = "stop"
   autoscaling_schedule           = "false"
-  spot_schedule                  = "terminate"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   resources_tag                  = {
@@ -52,7 +43,6 @@ module "start_ec2_instance" {
   cloudwatch_schedule_expression = "cron(0 8 ? * MON *)"
   schedule_action                = "start"
   autoscaling_schedule           = "false"
-  spot_schedule                  = "false"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   resources_tag                  = {
@@ -65,7 +55,6 @@ module "start_ec2_instance" {
 ## Examples
 
 *   [Autoscaling scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/autoscaling-schedule) - Create lambda functions to suspend autoscaling group with tag `tostop = true` and terminate its ec2 instances on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
-*   [Spot scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/spot-schedule) - Create lambda functions to stop spot instance with tag `tostop = true` on Friday at 23:00 Gmt
 *   [EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-schedule) - Create lambda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-schedule) - Create lambda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/test_fixture) - Deploy environment for testing module
@@ -82,7 +71,6 @@ module "start_ec2_instance" {
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
 | resources_tag | Set the tag use for identify resources to stop or start | map | { tostop = "true" } | yes |
 | autoscaling_schedule | Enable scheduling on autoscaling resources | string | `"false"` | no |
-| spot_schedule | Enable scheduling on spot instance resources | string | `"false"` | no |
 | ec2_schedule | Enable scheduling on ec2 instance resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
 | cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | string | `"false"` | no |
@@ -123,9 +111,6 @@ python3 -m pip install boto3 pytest pytest-cov pytest-xdist
 # Test python code use by instance scheduler scheduler
 python3 -m pytest -n 4 --cov=package tests/integration/test_instance_scheduler.py
 
-# Test python code use by spot scheduler scheduler
-python3 -m pytest -n 2 --cov=package tests/integration/test_spot_scheduler.py
-
 # Test python code use by autoscaling scheduler
 python3 -m pytest -n 4 --cov=package tests/integration/test_asg_scheduler.py
 
@@ -153,9 +138,6 @@ go get ./...
 ```shell
 # Test instance scheduler
 go test -timeout 900s -v tests/end-to-end/instance_scheduler_test.go
-
-# Test spot scheduler
-go test -timeout 900s -v tests/end-to-end/spot_scheduler_test.go
 
 # Test autoscaling scheduler
 go test -timeout 900s -v tests/end-to-end/autoscaling_scheduler_test.go
