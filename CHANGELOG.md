@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.0.0] - 2020-10-01
+### BREAKING
+
+* **spot-scheduler:** removing spot scheduler ([e52fdbcf](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/e52fdbcf6bfebbc1634f3c1b0cd20dd1547e9491))
+
 ## [2.10.0] - 2020-09-30
 ### Feature
 - Python/Terraform: use ResourceGroupsTaggingAPI to filter aws resources
@@ -252,7 +258,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.10.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.10.0...3.0.0
 [2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.1...2.10.0
 [2.9.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.0...2.9.1
 [2.9.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.8.0...2.9.0
