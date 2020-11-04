@@ -182,37 +182,37 @@ EOF
 
 locals {
   lambda_logging_policy = {
-    "Version": "2012-10-17",
-    "Statement": [
+    Version : "2012-10-17",
+    Statement : [
       {
-        "Action": [
+        Action : [
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource": "${aws_cloudwatch_log_group.this.arn}",
-        "Effect": "Allow"
+        Resource : aws_cloudwatch_log_group.this.arn,
+        Effect : "Allow"
       }
     ]
   }
   lambda_logging_and_kms_policy = {
-    "Version": "2012-10-17",
-    "Statement": [
+    Version : "2012-10-17",
+    Statement : [
       {
-        "Action": [
+        Action : [
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource": "${aws_cloudwatch_log_group.this.arn}",
-        "Effect": "Allow"
+        Resource : aws_cloudwatch_log_group.this.arn,
+        Effect : "Allow"
       },
       {
-        "Action": [
+        Action : [
           "kms:Encrypt",
           "kms:Decrypt",
           "kms:CreateGrant"
         ],
-        "Resource": "${var.kms_key_arn}",
-        "Effect": "Allow"
+        Resource : var.kms_key_arn,
+        Effect : "Allow"
       }
     ]
   }
@@ -253,8 +253,8 @@ resource "aws_lambda_function" "this" {
     variables = {
       AWS_REGIONS               = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
       SCHEDULE_ACTION           = var.schedule_action
-      TAG_KEY                   = var.resources_tag["key"]
-      TAG_VALUE                 = var.resources_tag["value"]
+      TAG_KEY                   = var.resources_tag[ "key" ]
+      TAG_VALUE                 = var.resources_tag[ "value" ]
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
@@ -262,6 +262,13 @@ resource "aws_lambda_function" "this" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [
+      filename,
+      last_modified,
+      source_code_hash,
+    ]
+  }
   tags = var.tags
 }
 
