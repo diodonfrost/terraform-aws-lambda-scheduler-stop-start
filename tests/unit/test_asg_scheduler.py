@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Tests for the autoscaling group scheduler class."""
 
 import boto3

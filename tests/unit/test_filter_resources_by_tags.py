@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Tests for the class FilterByTags class."""
 
 import boto3

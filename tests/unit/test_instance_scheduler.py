@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Tests for the instance scheduler class."""
 
 import boto3

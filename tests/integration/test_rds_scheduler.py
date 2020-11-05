@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Tests for the rds scheduler."""
 
 import boto3
