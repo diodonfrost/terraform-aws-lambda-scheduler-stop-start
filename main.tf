@@ -235,7 +235,7 @@ resource "aws_iam_role_policy" "lambda_logging" {
 data "archive_file" "this" {
   type        = "zip"
   source_dir  = "${path.module}/package/"
-  output_path = "${path.module}/aws-stop-start-resources.zip"
+  output_path = "${path.module}/aws-stop-start-resources-3.0.1.zip"  # The version should match with the latest git tag
 }
 
 # Create Lambda function for stop or start aws resources
