@@ -1,6 +1,5 @@
 # terraform-aws-lambda-scheduler-stop-start
 
-[![Build Status](https://api.travis-ci.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start.svg?branch=master)](https://travis-ci.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start)
 [![CI](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/workflows/CI/badge.svg)](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/actions)
 
 Stop and start instance, rds resources and autoscaling groups with lambda function.
