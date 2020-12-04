@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Install the Latest version of Terraform
 sudo pip install ansible
@@ -8,14 +9,8 @@ terraform -version
 terraform init
 
 # Test Terraform syntax
-terraform validate \
-  -var "region=${AWS_REGION}" \
-  -var "name=stop-aws-resources" \
-  -var "cloudwatch_schedule_expression=cron(0 22 ? * MON-FRI *)" \
-  -var "schedule_action=stop" \
-  -var "ec2_schedule=true" \
-  -var "rds_schedule=true" \
-  -var "autoscaling_schedule=true"
+export AWS_DEFAULT_REGION=eu-west-1
+terraform validate
 
 # Terraform lint
 terraform fmt -check -diff main.tf
