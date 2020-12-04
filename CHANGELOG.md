@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2020-12-04
+### Bug Fixes
+* **lambda:** add git version in the filename used by lambda ([4aa887e](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/4aa887e3f0a377ebc116f0922a655a86c9229844))
+* **lambda:** removing source_code_hash param ([c813a0f](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/c813a0f6c40547ee78e54264da09f04281047976))
+
+### Chore
+* **gitignore:** ignore dependency lockfile ([41ba586](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/41ba586b87a94fac424890dc9d64dc1fdf492976))
+
+### Refactor
+* **python:** add utf-8 header encoding ([4aa887e](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/4aa887e3f0a377ebc116f0922a655a86c9229844))
+* **terraform:** apply terraform fmt ([a51e4d6](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/a51e4d6c3cb1c57c17bec28a76612e9df598e698))
+
+### Tests
+* **pytest:** set python_path directly in pytest.ini ([a2bceb3](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/a2bceb38ff2257622fd713a02e692719284226e6))
+* **sanity:** stop sanity script when error is found ([a22e396](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/a22e39612af1fe2244ad3a72f04ded59c084d947))
+* **pytest:** update python packages requirements ([c9904ca](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/c9904ca2a9cff1273d301a7287f380c15b2b6aa4))
+
+### CI
+* **travis-ci:** removing travis-ci pipeline ([68a2827](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/68a2827d534fc71966ba58f6867ec0824de1bc35))
+* **tflint:** update terraform version ([60eaa5a](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/60eaa5aa8a0379172483043cb3d7c4280655485e))
+* **linting:** sparse github-action steps ([33b746a](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/33b746a5af451faa0ee5df497150692d88e20882))
+
 ## [3.0.0] - 2020-10-01
 ### BREAKING
 
@@ -258,7 +280,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.1...HEAD
+[3.0.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.10.0...3.0.0
 [2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.1...2.10.0
 [2.9.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.0...2.9.1
