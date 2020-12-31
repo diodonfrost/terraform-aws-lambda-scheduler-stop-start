@@ -30,6 +30,7 @@ module "stop_ec2_instance" {
   autoscaling_schedule           = "false"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
+  cloudwatch_alarm_schedule      = "false"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
@@ -44,6 +45,7 @@ module "start_ec2_instance" {
   autoscaling_schedule           = "false"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
+  cloudwatch_alarm_schedule      = "false"
   resources_tag                  = {
     key   = "tostop"
     value = "true"
@@ -53,9 +55,9 @@ module "start_ec2_instance" {
 
 ## Examples
 
-*   [Autoscaling scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/autoscaling-schedule) - Create lambda functions to suspend autoscaling group with tag `tostop = true` and terminate its ec2 instances on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
-*   [EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-schedule) - Create lambda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
-*   [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-schedule) - Create lambda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
+*   [Autoscaling scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/autoscaling-scheduler) - Create lambda functions to suspend autoscaling group with tag `tostop = true` and terminate its ec2 instances on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
+*   [EC2 scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/ec2-scheduler) - Create lambda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
+*   [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-scheduler) - Create lambda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/test_fixture) - Deploy environment for testing module
 
 ## Inputs
@@ -64,6 +66,7 @@ module "start_ec2_instance" {
 |------|-------------|------|---------|----------|
 | name | Define name to use for lambda function, cloudwatch event and iam role | string | n/a | yes |
 | custom_iam_role_arn | Custom IAM role arn for the scheduling lambda | string | null | no |
+| tags | Custom tags on aws resources | map | null | no |
 | kms_key_arn | The ARN for the KMS encryption key. If this configuration is not provided when environment variables are in use, AWS Lambda uses a default service key | string | null | no |
 | aws_regions | A list of one or more aws regions where the lambda will be apply, default use the current region | list | null | no |
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
@@ -103,7 +106,7 @@ Integration tests are realized with python `boto3` and `pytest` modules.
 Install Python dependency:
 
 ```shell
-python3 -m pip install boto3 pytest pytest-cov pytest-xdist
+python3 -m pip install -r requirements-dev.txt
 ```
 
 ```shell

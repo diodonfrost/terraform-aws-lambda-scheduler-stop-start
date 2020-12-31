@@ -73,7 +73,7 @@ variable "cloudwatch_alarm_schedule" {
 }
 
 variable "tags" {
-  description = "Custom tags on lambda"
+  description = "Custom tags on aws resources"
   type        = map(any)
   default     = null
 }
