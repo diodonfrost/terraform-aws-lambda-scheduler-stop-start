@@ -17,169 +17,162 @@ data "aws_region" "current" {}
 ################################################
 
 resource "aws_iam_role" "this" {
-  count       = var.custom_iam_role_arn == null ? 1 : 0
-  name        = "${var.name}-scheduler-lambda"
-  description = "Allows Lambda functions to stop and start ec2 and rds resources"
-
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "sts:AssumeRole",
-            "Principal": {
-                "Service": "lambda.amazonaws.com"
-            },
-            "Effect": "Allow",
-            "Sid": ""
-        }
-    ]
+  count              = var.custom_iam_role_arn == null ? 1 : 0
+  name               = "${var.name}-scheduler-lambda"
+  description        = "Allows Lambda functions to stop and start ec2 and rds resources"
+  assume_role_policy = data.aws_iam_policy_document.this.json
 }
-EOF
+
+data "aws_iam_policy_document" "this" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "schedule_autoscaling" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-autoscaling-custom-policy-scheduler"
-  role  = aws_iam_role.this[0].id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "autoscaling:DescribeScalingProcessTypes",
-                "autoscaling:DescribeAutoScalingGroups",
-                "autoscaling:DescribeTags",
-                "autoscaling:SuspendProcesses",
-                "autoscaling:ResumeProcesses",
-                "autoscaling:UpdateAutoScalingGroup",
-                "autoscaling:DescribeAutoScalingInstances",
-                "autoscaling:TerminateInstanceInAutoScalingGroup",
-                "ec2:TerminateInstances"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        }
-    ]
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-autoscaling-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.schedule_autoscaling.json
 }
-EOF
+
+data "aws_iam_policy_document" "schedule_autoscaling" {
+  statement {
+    actions = [
+      "autoscaling:DescribeScalingProcessTypes",
+      "autoscaling:DescribeAutoScalingGroups",
+      "autoscaling:DescribeTags",
+      "autoscaling:SuspendProcesses",
+      "autoscaling:ResumeProcesses",
+      "autoscaling:UpdateAutoScalingGroup",
+      "autoscaling:DescribeAutoScalingInstances",
+      "autoscaling:TerminateInstanceInAutoScalingGroup",
+      "ec2:TerminateInstances",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "schedule_spot" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-spot-custom-policy-scheduler"
-  role  = aws_iam_role.this[0].id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "ec2:DescribeInstances",
-                "ec2:TerminateSpotInstances"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        }
-    ]
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-spot-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.schedule_spot.json
 }
-EOF
+
+data "aws_iam_policy_document" "schedule_spot" {
+  statement {
+    actions = [
+      "ec2:DescribeInstances",
+      "ec2:TerminateSpotInstances",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "schedule_ec2" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-ec2-custom-policy-scheduler"
-  role  = aws_iam_role.this[0].id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "ec2:StopInstances",
-                "ec2:StartInstances",
-                "autoscaling:DescribeAutoScalingInstances"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        }
-    ]
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-ec2-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.schedule_ec2.json
 }
-EOF
+
+data "aws_iam_policy_document" "schedule_ec2" {
+  statement {
+    actions = [
+      "ec2:StopInstances",
+      "ec2:StartInstances",
+      "autoscaling:DescribeAutoScalingInstances",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "schedule_rds" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-rds-custom-policy-scheduler"
-  role  = aws_iam_role.this[0].id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "rds:StartDBCluster",
-                "rds:StopDBCluster",
-                "rds:StartDBInstance",
-                "rds:StopDBInstance",
-                "rds:DescribeDBClusters"
-            ],
-            "Effect": "Allow",
-            "Resource": "*"
-        }
-    ]
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-rds-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.schedule_rds.json
 }
-EOF
+
+data "aws_iam_policy_document" "schedule_rds" {
+  statement {
+    actions = [
+      "rds:StartDBCluster",
+      "rds:StopDBCluster",
+      "rds:StartDBInstance",
+      "rds:StopDBInstance",
+      "rds:DescribeDBClusters",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "schedule_cloudwatch" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-cloudwatch-custom-policy-scheduler"
-  role  = aws_iam_role.this[0].id
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "cloudwatch:DisableAlarmActions",
-                "cloudwatch:EnableAlarmActions"
-            ],
-            "Effect": "Allow",
-            "Resource": "*"
-        }
-    ]
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-cloudwatch-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.schedule_cloudwatch.json
 }
-EOF
+
+data "aws_iam_policy_document" "schedule_cloudwatch" {
+  statement {
+    actions = [
+      "cloudwatch:DisableAlarmActions",
+      "cloudwatch:EnableAlarmActions",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "resource_groups_tagging_api" {
-  count = var.custom_iam_role_arn == null ? 1 : 0
-  name  = "${var.name}-resource-groups-tagging-api-scheduler"
-  role  = aws_iam_role.this[0].id
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-resource-groups-tagging-api-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.resource_groups_tagging_api.json
+}
 
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "tag:GetResources"
-            ],
-            "Effect": "Allow",
-            "Resource": "*"
-        }
+data "aws_iam_policy_document" "resource_groups_tagging_api" {
+  statement {
+    actions = [
+      "tag:GetResources",
     ]
-}
-EOF
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
+resource "aws_iam_role_policy" "lambda_logging" {
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-lambda-logging"
+  role   = aws_iam_role.this[0].id
+  policy = var.kms_key_arn == null ? jsonencode(local.lambda_logging_policy) : jsonencode(local.lambda_logging_and_kms_policy)
+}
+
+# Local variables are used for make iam policy because
+# resources cannot have a null value in aws_iam_policy_document.
 locals {
   lambda_logging_policy = {
     "Version" : "2012-10-17",
@@ -216,13 +209,6 @@ locals {
       }
     ]
   }
-}
-
-resource "aws_iam_role_policy" "lambda_logging" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
-  name   = "${var.name}-lambda-logging"
-  role   = aws_iam_role.this[0].id
-  policy = var.kms_key_arn == null ? jsonencode(local.lambda_logging_policy) : jsonencode(local.lambda_logging_and_kms_policy)
 }
 
 ################################################
