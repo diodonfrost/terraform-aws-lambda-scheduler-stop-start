@@ -24,7 +24,7 @@ func TestTerraformAwsInstanceScheduler(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
-		TerraformDir: "../../examples/instance-schedule",
+		TerraformDir: "../../examples/instance-scheduler",
 
 		// Variables to pass to our Terraform code using -var options
 		Vars: map[string]interface{}{
