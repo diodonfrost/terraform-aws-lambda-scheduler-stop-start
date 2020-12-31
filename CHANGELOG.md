@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2020-12-31
+### Features
+* **cloudwatch:** add aws tags on cloudwatch resources ([6a579e2](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/6a579e2c59d42ab0b69664f517847e45ec20120d))
+
 ## [3.0.1] - 2020-12-04
 ### Bug Fixes
 * **lambda:** add git version in the filename used by lambda ([4aa887e](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/4aa887e3f0a377ebc116f0922a655a86c9229844))
@@ -280,7 +284,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.1...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.0...HEAD
+[3.1.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.10.0...3.0.0
 [2.10.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.9.1...2.10.0
