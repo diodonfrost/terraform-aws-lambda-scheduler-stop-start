@@ -274,6 +274,7 @@ resource "aws_cloudwatch_event_rule" "this" {
   name                = "trigger-lambda-scheduler-${var.name}"
   description         = "Trigger lambda scheduler"
   schedule_expression = var.cloudwatch_schedule_expression
+  tags                = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "this" {
@@ -297,4 +298,5 @@ resource "aws_lambda_permission" "this" {
 resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
+  tags              = var.tags
 }
