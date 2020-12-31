@@ -34,14 +34,14 @@ data "aws_iam_policy_document" "this" {
   }
 }
 
-resource "aws_iam_role_policy" "schedule_autoscaling" {
+resource "aws_iam_role_policy" "autoscaling_group_scheduler" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-autoscaling-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
-  policy = data.aws_iam_policy_document.schedule_autoscaling.json
+  policy = data.aws_iam_policy_document.autoscaling_group_scheduler.json
 }
 
-data "aws_iam_policy_document" "schedule_autoscaling" {
+data "aws_iam_policy_document" "autoscaling_group_scheduler" {
   statement {
     actions = [
       "autoscaling:DescribeScalingProcessTypes",
@@ -61,14 +61,14 @@ data "aws_iam_policy_document" "schedule_autoscaling" {
   }
 }
 
-resource "aws_iam_role_policy" "schedule_spot" {
+resource "aws_iam_role_policy" "spot_instance_scheduler" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-spot-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
-  policy = data.aws_iam_policy_document.schedule_spot.json
+  policy = data.aws_iam_policy_document.spot_instance_scheduler.json
 }
 
-data "aws_iam_policy_document" "schedule_spot" {
+data "aws_iam_policy_document" "spot_instance_scheduler" {
   statement {
     actions = [
       "ec2:DescribeInstances",
@@ -81,14 +81,14 @@ data "aws_iam_policy_document" "schedule_spot" {
   }
 }
 
-resource "aws_iam_role_policy" "schedule_ec2" {
+resource "aws_iam_role_policy" "instance_scheduler" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-ec2-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
-  policy = data.aws_iam_policy_document.schedule_ec2.json
+  policy = data.aws_iam_policy_document.instance_scheduler.json
 }
 
-data "aws_iam_policy_document" "schedule_ec2" {
+data "aws_iam_policy_document" "instance_scheduler" {
   statement {
     actions = [
       "ec2:StopInstances",
@@ -102,14 +102,14 @@ data "aws_iam_policy_document" "schedule_ec2" {
   }
 }
 
-resource "aws_iam_role_policy" "schedule_rds" {
+resource "aws_iam_role_policy" "rds_scheduler" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-rds-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
-  policy = data.aws_iam_policy_document.schedule_rds.json
+  policy = data.aws_iam_policy_document.rds_scheduler.json
 }
 
-data "aws_iam_policy_document" "schedule_rds" {
+data "aws_iam_policy_document" "rds_scheduler" {
   statement {
     actions = [
       "rds:StartDBCluster",
@@ -125,14 +125,14 @@ data "aws_iam_policy_document" "schedule_rds" {
   }
 }
 
-resource "aws_iam_role_policy" "schedule_cloudwatch" {
+resource "aws_iam_role_policy" "cloudwatch_alarm_scheduler" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-cloudwatch-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
-  policy = data.aws_iam_policy_document.schedule_cloudwatch.json
+  policy = data.aws_iam_policy_document.cloudwatch_alarm_scheduler.json
 }
 
-data "aws_iam_policy_document" "schedule_cloudwatch" {
+data "aws_iam_policy_document" "cloudwatch_alarm_scheduler" {
   statement {
     actions = [
       "cloudwatch:DisableAlarmActions",
