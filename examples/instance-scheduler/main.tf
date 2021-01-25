@@ -47,7 +47,7 @@ module "ec2-stop-friday" {
   autoscaling_schedule           = "false"
   cloudwatch_alarm_schedule      = "true"
 
-  resources_tag = {
+  scheduler_tag = {
     key   = "tostop"
     value = "true"
   }
@@ -63,7 +63,7 @@ module "ec2-start-monday" {
   autoscaling_schedule           = "false"
   cloudwatch_alarm_schedule      = "true"
 
-  resources_tag = {
+  scheduler_tag = {
     key   = "tostop"
     value = "true"
   }

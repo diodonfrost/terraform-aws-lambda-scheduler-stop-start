@@ -15,7 +15,7 @@ module "aws-stop-friday" {
   ec2_schedule                   = "true"
   rds_schedule                   = "true"
 
-  resources_tag = {
+  scheduler_tag = {
     key   = "tostop"
     value = "true"
   }
@@ -30,7 +30,7 @@ module "aws-start-monday" {
   ec2_schedule                   = "true"
   rds_schedule                   = "true"
 
-  resources_tag = {
+  scheduler_tag = {
     key   = "tostop"
     value = "true"
   }

@@ -210,6 +210,8 @@ locals {
       }
     ]
   }
+  # Backwared compatibility with the former terraform variable name.
+  scheduler_tag = var.scheduler_tag == { "key" = "tostop", "value" = "true" } ? var.resources_tag : var.scheduler_tag
 }
 
 ################################################
@@ -239,8 +241,8 @@ resource "aws_lambda_function" "this" {
     variables = {
       AWS_REGIONS               = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
       SCHEDULE_ACTION           = var.schedule_action
-      TAG_KEY                   = var.resources_tag["key"]
-      TAG_VALUE                 = var.resources_tag["value"]
+      TAG_KEY                   = local.scheduler_tag["key"]
+      TAG_VALUE                 = local.scheduler_tag["value"]
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
