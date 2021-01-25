@@ -45,10 +45,10 @@ class AutoscalingScheduler(object):
         """
         tag_key = aws_tags[0]["Key"]
         tag_value = "".join(aws_tags[0]["Values"])
-        asg_list = self.list_groups(tag_key, tag_value)
-        instance_list = self.list_instances(asg_list)
+        asg_name_list = self.list_groups(tag_key, tag_value)
+        instance_id_list = self.list_instances(asg_name_list)
 
-        for asg_name in asg_list:
+        for asg_name in asg_name_list:
             try:
                 self.asg.suspend_processes(AutoScalingGroupName=asg_name)
                 print("Suspend autoscaling group {0}".format(asg_name))
@@ -56,12 +56,12 @@ class AutoscalingScheduler(object):
                 ec2_exception("instance", asg_name, exc)
 
         # Stop autoscaling instance
-        for ec2_instance in instance_list:
+        for instance_id in instance_id_list:
             try:
-                self.ec2.stop_instances(InstanceIds=[ec2_instance])
-                print("Stop autoscaling instances {0}".format(ec2_instance))
+                self.ec2.stop_instances(InstanceIds=[instance_id])
+                print("Stop autoscaling instances {0}".format(instance_id))
             except ClientError as exc:
-                ec2_exception("autoscaling group", ec2_instance, exc)
+                ec2_exception("autoscaling group", instance_id, exc)
 
     def start(self, aws_tags: List[Dict]) -> None:
         """Aws autoscaling resume function.
@@ -83,23 +83,23 @@ class AutoscalingScheduler(object):
         """
         tag_key = aws_tags[0]["Key"]
         tag_value = "".join(aws_tags[0]["Values"])
-        asg_list = self.list_groups(tag_key, tag_value)
-        instance_list = self.list_instances(asg_list)
+        asg_name_list = self.list_groups(tag_key, tag_value)
+        instance_id_list = self.list_instances(asg_name_list)
         instance_running_ids = []
 
         # Start autoscaling instance
-        for ec2_instance in instance_list:
+        for instance_id in instance_id_list:
             try:
-                self.ec2.start_instances(InstanceIds=[ec2_instance])
-                print("Start autoscaling instances {0}".format(ec2_instance))
+                self.ec2.start_instances(InstanceIds=[instance_id])
+                print("Start autoscaling instances {0}".format(instance_id))
             except ClientError as exc:
-                ec2_exception("instance", ec2_instance, exc)
+                ec2_exception("instance", instance_id, exc)
             else:
-                instance_running_ids.append(ec2_instance)
+                instance_running_ids.append(instance_id)
 
         self.waiter.instance_running(instance_ids=instance_running_ids)
 
-        for asg_name in asg_list:
+        for asg_name in asg_name_list:
             try:
                 self.asg.resume_processes(AutoScalingGroupName=asg_name)
                 print("Resume autoscaling group {0}".format(asg_name))
@@ -117,36 +117,36 @@ class AutoscalingScheduler(object):
         :param str tag_value:
             Aws tag value to use for filter resources
 
-        :return list asg_list:
+        :return list asg_name_list:
             The names of the Auto Scaling groups
         """
-        asg_list = []
+        asg_name_list = []
         paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
         for page in paginator.paginate():
             for group in page["AutoScalingGroups"]:
                 for tag in group["Tags"]:
                     if tag["Key"] == tag_key and tag["Value"] == tag_value:
-                        asg_list.append(group["AutoScalingGroupName"])
-        return asg_list
+                        asg_name_list.append(group["AutoScalingGroupName"])
+        return asg_name_list
 
-    def list_instances(self, asg_list: List[str]) -> Iterator[str]:
+    def list_instances(self, asg_name_list: List[str]) -> Iterator[str]:
         """Aws autoscaling instance list function.
 
         List name of all instances in the autoscaling groups
         and return it in list.
 
-        :param list asg_list:
+        :param list asg_name_list:
             The names of the Auto Scaling groups.
 
         :yield Iterator[str]:
             The names of the instances in Auto Scaling groups.
         """
-        if not asg_list:
+        if not asg_name_list:
             return iter([])
         paginator = self.asg.get_paginator("describe_auto_scaling_groups")
 
-        for page in paginator.paginate(AutoScalingGroupNames=asg_list):
+        for page in paginator.paginate(AutoScalingGroupNames=asg_name_list):
             for scalinggroup in page["AutoScalingGroups"]:
                 for instance in scalinggroup["Instances"]:
                     yield instance["InstanceId"]
