@@ -31,7 +31,7 @@ module "stop_ec2_instance" {
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   cloudwatch_alarm_schedule      = "false"
-  resources_tag                  = {
+  scheduler_tag                  = {
     key   = "tostop"
     value = "true"
   }
@@ -46,7 +46,7 @@ module "start_ec2_instance" {
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   cloudwatch_alarm_schedule      = "false"
-  resources_tag                  = {
+  scheduler_tag                  = {
     key   = "tostop"
     value = "true"
   }
