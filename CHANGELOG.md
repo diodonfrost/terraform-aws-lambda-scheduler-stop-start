@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [3.1.1] - 2021-02-25
+### Bug Fixes
+
+* **log:** allow lambda scheduler to write log ([8461925](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/8461925dd1842ebbe643bf33fbc1ae00630b75ba)) issue #15 thanks to @viyullas
+
+
+### Features
+
+* **iam:** add aws tags on iam role resource ([cdf4737](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/cdf473740b6eaa605de2ee535951c48741a97bff))
 
 ## [3.1.0] - 2020-12-31
 ### Features
@@ -284,7 +293,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.1...HEAD
+[3.1.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/2.10.0...3.0.0
