@@ -210,6 +210,8 @@ locals {
       }
     ]
   }
+  # Backward compatibility with the former scheduler variable name.
+  scheduler_tag = var.resources_tag == null ? var.scheduler_tag : var.resources_tag
 }
 
 ################################################
@@ -222,7 +224,7 @@ locals {
 data "archive_file" "this" {
   type        = "zip"
   source_dir  = "${path.module}/package/"
-  output_path = "${path.module}/aws-stop-start-resources-3.1.2.zip" # The version should match with the latest git tag
+  output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip" # The version should match with the latest git tag
 }
 
 # Create Lambda function for stop or start aws resources
@@ -239,8 +241,8 @@ resource "aws_lambda_function" "this" {
     variables = {
       AWS_REGIONS               = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
       SCHEDULE_ACTION           = var.schedule_action
-      TAG_KEY                   = var.resources_tag["key"]
-      TAG_VALUE                 = var.resources_tag["value"]
+      TAG_KEY                   = local.scheduler_tag["key"]
+      TAG_VALUE                 = local.scheduler_tag["value"]
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)

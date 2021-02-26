@@ -39,12 +39,19 @@ variable "schedule_action" {
 }
 
 variable "resources_tag" {
-  description = "Set the tag use for identify resources to stop or start"
+  # This variable has been renamed to "scheduler_tag"
+  description = "DEPRECATED, use scheduler_tag variable instead"
+  type        = map(string)
+  default     = null
+}
+
+variable "scheduler_tag" {
+  description = "Set the tag to use for identify aws resources to stop or start"
   type        = map(string)
 
   default = {
-    key   = "tostop"
-    value = "true"
+    "key"   = "tostop"
+    "value" = "true"
   }
 }
 
