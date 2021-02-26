@@ -98,7 +98,7 @@ module "autoscaling-stop-friday" {
   autoscaling_schedule           = "true"
   cloudwatch_alarm_schedule      = "true"
 
-  scheduler_tag = {
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }
@@ -114,7 +114,7 @@ module "autoscaling-start-monday" {
   autoscaling_schedule           = "true"
   cloudwatch_alarm_schedule      = "true"
 
-  scheduler_tag = {
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }

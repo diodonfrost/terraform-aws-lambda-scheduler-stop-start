@@ -104,7 +104,7 @@ module "rds-stop-friday" {
   autoscaling_schedule           = "false"
   cloudwatch_alarm_schedule      = "true"
 
-  scheduler_tag = {
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }
@@ -120,7 +120,7 @@ module "rds-start-monday" {
   autoscaling_schedule           = "false"
   cloudwatch_alarm_schedule      = "true"
 
-  scheduler_tag = {
+  resources_tag = {
     key   = "tostop"
     value = "true"
   }
