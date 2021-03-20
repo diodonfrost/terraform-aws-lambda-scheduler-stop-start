@@ -35,7 +35,7 @@ idna==2.10
 importlib-metadata==1.7.0
 iniconfig==1.0.1
 isort==5.5.3
-Jinja2==2.11.2
+Jinja2==2.11.3
 jmespath==0.10.0
 jsondiff==1.2.0
 jsonpatch==1.26
