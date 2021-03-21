@@ -3,7 +3,7 @@ set -e
 
 # Install the Latest version of Terraform
 sudo pip install ansible
-sudo ansible-galaxy install diodonfrost.terraform && sudo ln -s ~/.ansible/roles/diodonfrost.terraform ~/.ansible/roles/ansible-role-terraform
+sudo ansible-galaxy install diodonfrost.terraform
 sudo ansible-pull -U https://github.com/diodonfrost/ansible-role-terraform tests/test.yml -e "terraform_version=${terraform_version}"
 terraform -version
 terraform init
