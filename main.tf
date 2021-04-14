@@ -95,6 +95,9 @@ data "aws_iam_policy_document" "instance_scheduler" {
       "ec2:StopInstances",
       "ec2:StartInstances",
       "autoscaling:DescribeAutoScalingInstances",
+      "autoscaling:DescribeAutoScalingGroups",
+      "autoscaling:SuspendProcesses",
+      "autoscaling:ResumeProcesses"
     ]
 
     resources = [
