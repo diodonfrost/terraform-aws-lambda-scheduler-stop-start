@@ -5,7 +5,7 @@
 Stop and start instance, rds resources and autoscaling groups with lambda function.
 
 ## Terraform versions
-For Terraform 0.12 use version v2.* of this module.
+For Terraform 0.15 use version v3.* of this module.
 
 If you are using Terraform 0.11 you can use versions v1.*.
 
