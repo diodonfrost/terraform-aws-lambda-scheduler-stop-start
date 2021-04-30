@@ -78,7 +78,7 @@ PyYAML==5.4
 regex==2020.7.14
 requests==2.24.0
 responses==0.12.0
-rsa==4.6
+rsa==4.7
 s3transfer==0.3.3
 six==1.15.0
 smmap==3.0.4
