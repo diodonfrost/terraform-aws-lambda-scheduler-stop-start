@@ -46,7 +46,7 @@ func TestTerraformAwsInstanceScheduler(t *testing.T) {
 	// Run `terraform output` to get the value of an output variables
 	lambdaStopName := terraform.Output(t, terraformOptions, "lambda_stop_name")
 	lambdaStartName := terraform.Output(t, terraformOptions, "lambda_start_name")
-	
+
 	// Wait for terraform execution
 	time.Sleep(10 * time.Second)
 

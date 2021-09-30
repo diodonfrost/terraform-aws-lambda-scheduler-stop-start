@@ -101,7 +101,7 @@ set the credentials as the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SE
 
 ### Integration tests
 
-Integration tests are realized with python `boto3` and `pytest` modules. 
+Integration tests are realized with python `boto3` and `pytest` modules.
 
 Install Python dependency:
 
