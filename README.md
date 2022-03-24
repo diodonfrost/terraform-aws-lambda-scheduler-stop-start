@@ -47,7 +47,7 @@ module "start_ec2_instance" {
   rds_schedule                   = "false"
   cloudwatch_alarm_schedule      = "false"
   scheduler_tag                  = {
-    key   = "tostop"
+    key   = "tostart"
     value = "true"
   }
 }
