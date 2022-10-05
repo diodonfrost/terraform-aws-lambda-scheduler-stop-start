@@ -6,8 +6,8 @@ from distutils.util import strtobool
 
 from scheduler.autoscaling_handler import AutoscalingScheduler
 from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
-from scheduler.instance_handler import InstanceScheduler
 from scheduler.ecs_handler import EcsScheduler
+from scheduler.instance_handler import InstanceScheduler
 from scheduler.rds_handler import RdsScheduler
 
 
