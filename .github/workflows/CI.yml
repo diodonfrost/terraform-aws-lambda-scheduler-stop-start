@@ -14,14 +14,17 @@ jobs:
       matrix:
         terraform_version:
           - latest
-          - 0.14.0
-          - 0.13.0
+          - 1.2.9
+          - 1.1.9
     steps:
       - uses: actions/checkout@master
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "${{ matrix.terraform_version }}"
 
+      - name: Terraform version
+        id: version
+        run: terraform version
       - name: Terraform fmt
         id: fmt
         run: terraform fmt -check
@@ -40,24 +43,26 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - toxenv: py35
-            python-version: 3.5
-          - toxenv: py36
-            python-version: 3.6
           - toxenv: py37
             python-version: 3.7
           - toxenv: py38
             python-version: 3.8
+          - toxenv: py39
+            python-version: 3.9
+          - toxenv: py310
+            python-version: 3.10
+          - toxenv: py311
+            python-version: 3.11
           - toxenv: flake8
-            python-version: 3.7
+            python-version: 3.8
           - toxenv: pylint
-            python-version: 3.7
+            python-version: 3.8
           - toxenv: black
-            python-version: 3.7
+            python-version: 3.8
           - toxenv: mypy
-            python-version: 3.7
+            python-version: 3.8
           - toxenv: pytest
-            python-version: 3.7
+            python-version: 3.8
 
     steps:
       - name: Checkout repository
