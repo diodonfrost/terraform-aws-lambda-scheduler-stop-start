@@ -18,9 +18,9 @@ class EcsScheduler(object):
     def __init__(self, region_name=None) -> None:
         """Initialize ECS service scheduler."""
         if region_name:
-            self.ec2 = boto3.client("ecs", region_name=region_name)
+            self.ecs = boto3.client("ecs", region_name=region_name)
         else:
-            self.ec2 = boto3.client("ecs")
+            self.ecs = boto3.client("ecs")
         self.tag_api = FilterByTags(region_name=region_name)
 
     def stop(self, aws_tags: List[Dict]) -> None:
