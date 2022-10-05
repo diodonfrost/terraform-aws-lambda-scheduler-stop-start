@@ -12,7 +12,7 @@ from scheduler.exceptions import ecs_exception
 from scheduler.filter_resources_by_tags import FilterByTags
 
 
-class TaskScheduler(object):
+class EcsScheduler(object):
     """Abstract ECS Service scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
@@ -44,9 +44,7 @@ class TaskScheduler(object):
         for service_arn in self.tag_api.get_resources("ecs:service", aws_tags):
             service_name = service_arn.split("/")[-1]
             try:
-                self.ecs.update_service(
-                  service=[service_name],
-                  desiredCount=0)
+                self.ecs.update_service(service=[service_name], desiredCount=0)
                 print("Stop ECS Service {0}".format(service_name))
             except ClientError as exc:
                 ecs_exception("ECS Service", service_name, exc)
@@ -71,9 +69,7 @@ class TaskScheduler(object):
         for service_arn in self.tag_api.get_resources("ecs:service", aws_tags):
             service_name = service_arn.split("/")[-1]
             try:
-                self.ecs.update_service(
-                  service=[service_name],
-                  desiredCount=1)
+                self.ecs.update_service(service=[service_name], desiredCount=1)
                 print("Start ECS Service {0}".format(service_name))
             except ClientError as exc:
                 ecs_exception("ECS Service", service_name, exc)

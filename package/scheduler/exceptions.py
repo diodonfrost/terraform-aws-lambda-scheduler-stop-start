@@ -47,6 +47,7 @@ def ec2_exception(resource_name: str, resource_id: str, exception) -> None:
             exception,
         )
 
+
 def ecs_exception(resource_name: str, resource_id: str, exception) -> None:
     """Exception raised during execution of ecs scheduler.
 
