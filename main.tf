@@ -142,8 +142,15 @@ data "aws_iam_policy_document" "ecs_scheduler" {
     ]
 
     resources = [
-      "*",
+      "arn:aws:ecs:*:*:service/*",
     ]
+    condition {
+      test     = "StringEqual"
+      variable = "aws:ResourceTag/${local.scheduler_tag["key"]}"
+      values = [
+        local.scheduler_tag["value"]
+      ]
+    }
   }
 }
 
