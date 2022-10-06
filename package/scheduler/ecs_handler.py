@@ -45,8 +45,14 @@ class EcsScheduler(object):
             service_name = service_arn.split("/")[-1]
             cluster_name = service_arn.split("/")[-2]
             try:
-                self.ecs.update_service(cluster=cluster_name, service=service_name, desiredCount=0)
-                print("Stop ECS Service {0} on Cluster {1}".format(service_name, cluster_name))
+                self.ecs.update_service(
+                    cluster=cluster_name, service=service_name, desiredCount=0
+                )
+                print(
+                    "Stop ECS Service {0} on Cluster {1}".format(
+                        service_name, cluster_name
+                    )
+                )
             except ClientError as exc:
                 ecs_exception("ECS Service", service_name, exc)
 
@@ -71,7 +77,13 @@ class EcsScheduler(object):
             service_name = service_arn.split("/")[-1]
             cluster_name = service_arn.split("/")[-2]
             try:
-                self.ecs.update_service(cluster=cluster_name, service=service_name, desiredCount=1)
-                print("Start ECS Service {0} on Cluster {1}".format(service_name, cluster_name))
+                self.ecs.update_service(
+                    cluster=cluster_name, service=service_name, desiredCount=1
+                )
+                print(
+                    "Start ECS Service {0} on Cluster {1}".format(
+                        service_name, cluster_name
+                    )
+                )
             except ClientError as exc:
                 ecs_exception("ECS Service", service_name, exc)
