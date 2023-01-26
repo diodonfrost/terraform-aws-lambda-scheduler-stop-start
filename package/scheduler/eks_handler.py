@@ -62,16 +62,16 @@ class EksScheduler(object):
         """
         for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
             cluster_id = cluster_arn.split(":")[-1]
+            list_nodegroups = []
             try:
                 # Identifier must be cluster id, not resource id
                 self.eks.describe_eks_clusters(ClusterIdentifier=cluster_id)
-                list_nodegroups = client.list_nodegroups(
-                    clusterName = cluster_id
-                )        
-                self.eks.update_nodegroup(cluster_name=cluster_id,nodegroup_name=list_nodegroups[0],min_size=eks_config_paused[0],max_size=eks_config_paused[1],desired_size=eks_config_paused[2])
-                print("Scale down EKS cluster {0}".format(cluster_id))
+                list_nodegroups.append(client.list_nodegroups(clusterName = cluster_id)) 
+                for nodegroup in list_nodegroups:
+                   self.eks.update_nodegroup(cluster_name=cluster_id,nodegroup_name=nodegroup,min_size=eks_config_paused[0],max_size=eks_config_paused[1],desired_size=eks_config_paused[2])
+                   print("Scale up NodeGroup {0}".format(nodegroup))
             except ClientError as exc:
-                rds_exception("EKS cluster", cluster_id, exc)
+                eks_exception("EKS cluster", cluster_id, exc)
 
     def start(self, aws_tags: List[Dict]) -> None:
         """Aws eks cluster and instance scale up function.
@@ -92,10 +92,13 @@ class EksScheduler(object):
         """
         for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
             cluster_id = cluster_arn.split(":")[-1]
+            list_nodegroups = []
             try:
                 # Identifier must be cluster id, not resource id
-                self.rds.describe_db_clusters(DBClusterIdentifier=cluster_id)
-                self.eks.update_nodegroup(nodegroup_name=cluster_id,min_size=eks_config_resume[0],max_size=eks_config_resume[1],desired_size=eks_config_resume[2])
-                print("Start rds cluster {0}".format(cluster_id))
+                self.eks.describe_eks_clusters(ClusterIdentifier=cluster_id)
+                list_nodegroups.append(client.list_nodegroups(clusterName = cluster_id)) 
+                for nodegroup in list_nodegroups:
+                  self.eks.update_nodegroup(nodegroup_name=cluster_id,min_size=eks_config_resume[0],max_size=eks_config_resume[1],desired_size=eks_config_resume[2])
+                print("Scale down NodeGroup {0}".format(nodegroup))
             except ClientError as exc:
-                rds_exception("rds cluster", cluster_id, exc)
+                eks_exception("rds cluster", cluster_id, exc)
