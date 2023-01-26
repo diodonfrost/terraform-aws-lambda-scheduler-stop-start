@@ -126,6 +126,27 @@ data "aws_iam_policy_document" "rds_scheduler" {
   }
 }
 
+resource "aws_iam_role_policy" "eks_scheduler" {
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-eks-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.eks_scheduler.json
+}
+
+data "aws_iam_policy_document" "eks_scheduler" {
+  statement {
+    actions = [
+      "eks:ListNodegroups",
+      "eks:UpdateNodegroupConfig"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
+
+
 resource "aws_iam_role_policy" "cloudwatch_alarm_scheduler" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-cloudwatch-custom-policy-scheduler"
@@ -224,7 +245,7 @@ locals {
 data "archive_file" "this" {
   type        = "zip"
   source_dir  = "${path.module}/package/"
-  output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip" # The version should match with the latest git tag
+  output_path = "${path.module}/aws-stop-start-resources-3.1.4.zip" # The version should match with the latest git tag
 }
 
 # Create Lambda function for stop or start aws resources
@@ -244,6 +265,8 @@ resource "aws_lambda_function" "this" {
       TAG_KEY                   = local.scheduler_tag["key"]
       TAG_VALUE                 = local.scheduler_tag["value"]
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
+      EKS_SCHEDULE              = tostring(var.eks_schedule)
+      EKS_CONFIG_SCALE_UP       = var.scaled_up_eks_nodes
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
       CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)
