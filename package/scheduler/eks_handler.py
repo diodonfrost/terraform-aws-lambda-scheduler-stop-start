@@ -12,7 +12,7 @@ from scheduler.exceptions import eks_exception
 from scheduler.filter_resources_by_tags import FilterByTags
 
 
-class eksScheduler(object):
+class EksScheduler(object):
     """Abstract eks Service scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
