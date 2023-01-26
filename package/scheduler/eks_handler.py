@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""rds instances scheduler."""
+"""eks instances scheduler."""
 
 from typing import Dict, List
 
@@ -8,7 +8,7 @@ import boto3
 
 from botocore.exceptions import ClientError
 
-from scheduler.exceptions import rds_exception
+from scheduler.exceptions import eks_exception
 from scheduler.filter_resources_by_tags import FilterByTags
 
 
@@ -38,9 +38,9 @@ class EksScheduler(object):
     def __init__(self, region_name=None) -> None:
         """Initialize eks scheduler."""
         if region_name:
-            self.rds = boto3.client("eks", region_name=region_name)
+            self.eks = boto3.client("eks", region_name=region_name)
         else:
-            self.rds = boto3.client("eks")
+            self.eks = boto3.client("eks")
         self.tag_api = FilterByTags(region_name=region_name)
 
     def stop(self, aws_tags: List[Dict]) -> None:
@@ -101,4 +101,4 @@ class EksScheduler(object):
                   self.eks.update_nodegroup(nodegroup_name=cluster_id,min_size=eks_config_resume[0],max_size=eks_config_resume[1],desired_size=eks_config_resume[2])
                 print("Scale down NodeGroup {0}".format(nodegroup))
             except ClientError as exc:
-                eks_exception("rds cluster", cluster_id, exc)
+                eks_exception("eks cluster", cluster_id, exc)
