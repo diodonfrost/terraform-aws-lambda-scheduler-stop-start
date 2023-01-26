@@ -94,7 +94,7 @@ variable "tags" {
 variable "scaled_up_eks_nodes" {
   description = "Regular configuration of EKS nodes (min, max, desired)"
   type        = list(number)
-  default     = [3,3,6]
+  default     = [3,12,6]
 }
 
 variable "scaled_down_eks_nodes" {
