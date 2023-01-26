@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""eks instances scheduler."""
+"""eks service scheduler."""
 
 from typing import Dict, List
 
@@ -11,23 +11,24 @@ from botocore.exceptions import ClientError
 from scheduler.exceptions import eks_exception
 from scheduler.filter_resources_by_tags import FilterByTags
 
-print("EKS function initialised")
 
-class EksScheduler(object):
+class eksScheduler(object):
+    """Abstract eks Service scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
-        """Initialize eks scheduler."""
+        """Initialize eks service scheduler."""
         if region_name:
             self.eks = boto3.client("eks", region_name=region_name)
         else:
             self.eks = boto3.client("eks")
         self.tag_api = FilterByTags(region_name=region_name)
-        print(f"Got self tag api {self.tag_api}")
 
     def stop(self, aws_tags: List[Dict]) -> None:
-        """Aws eks cluster and instance scale down function.
+        print("Inside the EKS stop")
+        """Aws eks instance stop function.
 
-        Scale down eks clusters with defined tags.
+        Stop eks service with defined tags and disable its Cloudwatch
+        alarms.
 
         :param list[map] aws_tags:
             Aws tags to use for filter resources.
@@ -41,55 +42,40 @@ class EksScheduler(object):
                 }
             ]
         """
-        print("EKScheduler stopping")
-        try:
-            print (self.tag_api_get_resources("eks:cluster", aws_tags))
-            for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
-                print (cluster_arn)
-                print (cluster_id)
-                cluster_id = cluster_arn.split(":")[-1]
-                list_nodegroups = []
-                try:
-                    # Identifier must be cluster id, not resource id
-                    self.eks.describe_eks_cluster(ClusterIdentifier=cluster_id)
-                    list_nodegroups.append(client.list_nodegroups(clusterName = cluster_id)) 
-                    for nodegroup in list_nodegroups:
-                        self.eks.update_nodegroup(cluster_name=cluster_id,nodegroup_name=nodegroup,min_size=eks_config_paused[0],max_size=eks_config_paused[1],desired_size=eks_config_paused[2])
-                        print("Scale up NodeGroup {0}".format(nodegroup))
-                except ClientError as exc:
-                    eks_exception("EKS cluster", cluster_id, exc)
-        except: 
-                print ("Unable to find cluster id")
-
-    """Abstract eks scheduler in a class."""
-    print("EKScheduler class initialised")
-    def update_nodegroup(cluster_name,nodegroup_name,min_size,max_size,desired_size):
-        print("EKScheduler class initialised")
-        update = client.update_nodegroup_config(
-            clusterName = cluster_name,
-            nodegroupName = nodegroup_name,
-            scalingConfig = {
-                'minSize': min_size,
-                'desiredSize': desired_size,
-                'maxSize': max_size
-            }
-        )
-        status_code = update['ResponseMetadata']['HTTPStatusCode']
-
-        if status_code == 200:
-            status = "OK"
-        else: 
-            status = "ERROR"
-
-        return nodegroup_name + ": " + str(status_code) + " (" + status + ")"
-
+        for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
+            print(f"Service ARN is {service_arn}")
+            nodegroup_name = service_arn.split("/")[-1]
+            cluster_name - service_arn.split("/")[-2]
+            print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
+            try:
+                # self.eks.update_service(
+                #     cluster=cluster_name, service=service_name, desiredCount=0
+                # )
+                print ("About to try the update")
+                self.eks.update_nodegroup_config(
+                    clusterName = cluster_name,
+                    nodegroupName = nodegroup_name,
+                    scalingConfig = {
+                        'minSize': min_size,
+                        'desiredSize': desired_size,
+                        'maxSize': max_size
+                    }
+                )
+                print ("Completed the update")
+                print(
+                    "Stop eks Service {0} on Cluster {1}".format(
+                        service_arn, cluster_name
+                    )
+                )
+            except ClientError as exc:
+                eks_exception("eks Service", service_arn, exc)
 
     def start(self, aws_tags: List[Dict]) -> None:
-        """Aws eks cluster and instance scale up function.
+        """Aws ec2 instance start function.
 
-        Scale up eks clusters with defined tags.
+        Start ec2 instances with defined tags.
 
-        :param list[map] aws_tags:
+        Aws tags to use for filter resources
             Aws tags to use for filter resources.
             For example:
             [
@@ -101,16 +87,30 @@ class EksScheduler(object):
                 }
             ]
         """
-        print("EKScheduler starting")
-        for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
-            cluster_id = cluster_arn.split(":")[-1]
-            list_nodegroups = []
+        for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
+            print(f"Service ARN is {service_arn}")
+            nodegroup_name = service_arn.split("/")[-1]
+            cluster_name - service_arn.split("/")[-2]
+            print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
             try:
-                # Identifier must be cluster id, not resource id
-                self.eks.describe_eks_clusters(ClusterIdentifier=cluster_id)
-                list_nodegroups.append(client.list_nodegroups(clusterName = cluster_id)) 
-                for nodegroup in list_nodegroups:
-                  self.eks.update_nodegroup(nodegroup_name=cluster_id,min_size=eks_config_resume[0],max_size=eks_config_resume[1],desired_size=eks_config_resume[2])
-                print("Scale down NodeGroup {0}".format(nodegroup))
+                # self.eks.update_service(
+                #     cluster=cluster_name, service=service_name, desiredCount=0
+                # )
+                print ("About to try the update")
+                self.eks.update_nodegroup_config(
+                    clusterName = cluster_name,
+                    nodegroupName = nodegroup_name,
+                    scalingConfig = {
+                        'minSize': min_size,
+                        'desiredSize': desired_size,
+                        'maxSize': max_size
+                    }
+                )
+                print ("Completed the update")
+                print(
+                    "Stop eks Service {0} on Cluster {1}".format(
+                        service_arn, cluster_name
+                    )
+                )
             except ClientError as exc:
-                eks_exception("eks cluster", cluster_id, exc)
+                eks_exception("eks Service", service_arn, exc)
