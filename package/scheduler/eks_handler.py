@@ -51,7 +51,7 @@ class EksScheduler(object):
             nodegroup_name=service_arn.split("/")[-2]
             cluster_name=service_arn.split("/")[-3]
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
-            minSize, desiredSize, maxSize = os.getenv("EKS_CONFIG_PAUSED").split(',')
+            minSize, desiredSize, maxSize = map(int, os.getenv("EKS_CONFIG_PAUSED").split(','))
             try:
                 # self.eks.update_service(
                 #     cluster=cluster_name, service=service_name, desiredCount=0
@@ -92,7 +92,7 @@ class EksScheduler(object):
             print(f"Service ARN is {service_arn}")
             nodegroup_name = service_arn.split("/")[-1]
             cluster_name = service_arn.split("/")[-2]
-            minSize, desiredSize, maxSize = os.getenv("EKS_CONFIG_RESUME").split(',')
+            minSize, desiredSize, maxSize = map(int, os.getenv("EKS_CONFIG_RESUME").split(','))
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
             try:
                 # self.eks.update_service(
