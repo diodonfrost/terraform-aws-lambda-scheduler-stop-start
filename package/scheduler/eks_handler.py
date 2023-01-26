@@ -47,6 +47,9 @@ class EksScheduler(object):
             nodegroup_name = service_arn.split("/")[-2]
             cluster_name = service_arn.split("/")[-3]
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
+            print(f"EKS_CONFIG_PAUSED is {eks_config_paused}")
+            print(f"EKS_CONFIG_RESUME is {eks_config_resume}")
+            minSize,desiredSize,maxSize = eks_config_paused.split(',')
             try:
                 # self.eks.update_service(
                 #     cluster=cluster_name, service=service_name, desiredCount=0
@@ -56,17 +59,13 @@ class EksScheduler(object):
                     clusterName = cluster_name,
                     nodegroupName = nodegroup_name,
                     scalingConfig = {
-                        'minSize': min_size,
-                        'desiredSize': desired_size,
-                        'maxSize': max_size
+                        'minSize': minSize,
+                        'desiredSize': desiredSize,
+                        'maxSize': maxSize
                     }
                 )
-                print ("Completed the update")
-                print(
-                    "Stop eks Service {0} on Cluster {1}".format(
-                        service_arn, cluster_name
-                    )
-                )
+                print("Completed the update")
+                print(f"Stopped nodegroup {nodegroup_name} on Cluster {cluster_name}")
             except ClientError as exc:
                 eks_exception("eks Service", service_arn, exc)
 
