@@ -91,8 +91,8 @@ class EksScheduler(object):
         """
         for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
             print(f"Service ARN is {service_arn}")
-            nodegroup_name = service_arn.split("/")[-1]
-            cluster_name = service_arn.split("/")[-2]
+            nodegroup_name=service_arn.split("/")[-2]
+            cluster_name=service_arn.split("/")[-3]
             minSize, maxSize, desiredSize  = map(int, os.getenv("EKS_CONFIG_RESUME").split(','))
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
             try:
