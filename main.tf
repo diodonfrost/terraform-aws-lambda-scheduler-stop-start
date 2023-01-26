@@ -266,8 +266,8 @@ resource "aws_lambda_function" "this" {
       TAG_VALUE                 = local.scheduler_tag["value"]
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       EKS_SCHEDULE              = tostring(var.eks_schedule)
-      EKS_CONFIG_RESUME         = tolist(var.scaled_up_eks_nodes)
-      EKS_CONFIG_PAUSED         = tolist(var.scaled_down_eks_nodes)
+      EKS_CONFIG_RESUME         = [var.scaled_up_eks_nodes]
+      EKS_CONFIG_PAUSED         = [var.scaled_down_eks_nodes]
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
       CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)
