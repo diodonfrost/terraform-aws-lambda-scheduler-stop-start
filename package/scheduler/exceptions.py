@@ -95,11 +95,13 @@ def eks_exception(resource_name: str, resource_id: str, exception) -> None:
     :param str exception:
         Human readable string describing the exception
     """
-    info_codes = ["IncorrectInstanceState"]
+    info_codes = []
     warning_codes = [
-        "UnsupportedOperation",
-        "IncorrectInstanceState",
-        "InvalidParameterCombination",
+        "InvalidParameterException",
+        "ClientException",
+        "ServerException",
+        "ServiceUnavailableException",
+        "ResourceNotFoundException"
     ]
 
     if exception.response["Error"]["Code"] in info_codes:

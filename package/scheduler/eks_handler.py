@@ -64,11 +64,12 @@ class EksScheduler(object):
         """
         print("EKScheduler stopping")
         for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
+            print (cluster_id)
             cluster_id = cluster_arn.split(":")[-1]
             list_nodegroups = []
             try:
                 # Identifier must be cluster id, not resource id
-                self.eks.describe_eks_clusters(ClusterIdentifier=cluster_id)
+                self.eks.describe_eks_cluster(ClusterIdentifier=cluster_id)
                 list_nodegroups.append(client.list_nodegroups(clusterName = cluster_id)) 
                 for nodegroup in list_nodegroups:
                    self.eks.update_nodegroup(cluster_name=cluster_id,nodegroup_name=nodegroup,min_size=eks_config_paused[0],max_size=eks_config_paused[1],desired_size=eks_config_paused[2])
