@@ -8,6 +8,7 @@ from scheduler.autoscaling_handler import AutoscalingScheduler
 from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from scheduler.instance_handler import InstanceScheduler
 from scheduler.rds_handler import RdsScheduler
+from scheduler.eks_handler import EksScheduler
 
 
 def lambda_handler(event, context):
@@ -27,11 +28,14 @@ def lambda_handler(event, context):
     schedule_action = os.getenv("SCHEDULE_ACTION")
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
     format_tags = [{"Key": os.getenv("TAG_KEY"), "Values": [os.getenv("TAG_VALUE")]}]
+    eks_config_resume = [3,3,3] # Needs replacing with a split of the os.getenv("EKS_CONFIG_RESUME")
+    eks_config_paused = [0,0,1] # Needs replacing with a split of the os.getenv("EKS_CONFIG_PAUSED")
 
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
+    _strategy[EksScheduler] = os.getenv("EKS_SCHEDULE")
     _strategy[CloudWatchAlarmScheduler] = os.getenv("CLOUDWATCH_ALARM_SCHEDULE")
 
     for service, to_schedule in _strategy.items():
