@@ -30,6 +30,7 @@ module "stop_ec2_instance" {
   autoscaling_schedule           = "false"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
+  eks_schedule                   = "false"
   cloudwatch_alarm_schedule      = "false"
   scheduler_tag                  = {
     key   = "tostop"
@@ -45,6 +46,7 @@ module "start_ec2_instance" {
   autoscaling_schedule           = "false"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
+  eks_schedule                   = "false"
   cloudwatch_alarm_schedule      = "false"
   scheduler_tag                  = {
     key   = "tostop"
