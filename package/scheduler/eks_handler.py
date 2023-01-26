@@ -2,15 +2,19 @@
 
 """eks service scheduler."""
 
-from typing import Dict, List
-
 import boto3, os
+
+from typing import Dict, List
 
 from botocore.exceptions import ClientError
 
 from scheduler.exceptions import eks_exception
 from scheduler.filter_resources_by_tags import FilterByTags
 
+cluster_name=""
+min_size=3
+max_size=3
+desiredSize=3
 
 class EksScheduler(object):
     """Abstract eks Service scheduler in a class."""
@@ -42,11 +46,10 @@ class EksScheduler(object):
                 }
             ]
         """
-        cluster_name = ""
         for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
             print(f"Service ARN is {service_arn}")
-            nodegroup_name = service_arn.split("/")[-2]
-            cluster_name = service_arn.split("/")[-3]
+            nodegroup_name=service_arn.split("/")[-2]
+            cluster_name=service_arn.split("/")[-3]
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
             minSize, desiredSize, maxSize = os.getenv("EKS_CONFIG_PAUSED").split(',')
             try:
@@ -55,8 +58,8 @@ class EksScheduler(object):
                 # )
                 print ("About to try the update")
                 self.eks.update_nodegroup_config(
-                    clusterName = cluster_name,
-                    nodegroupName = nodegroup_name,
+                    clusterName=cluster_name,
+                    nodegroupName=nodegroup_name,
                     scalingConfig = {
                         'minSize': minSize,
                         'desiredSize': desiredSize,
@@ -85,11 +88,10 @@ class EksScheduler(object):
                 }
             ]
         """
-        cluster_name = ""
         for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
             print(f"Service ARN is {service_arn}")
             nodegroup_name = service_arn.split("/")[-1]
-            cluster_name - service_arn.split("/")[-2]
+            cluster_name = service_arn.split("/")[-2]
             minSize, desiredSize, maxSize = os.getenv("EKS_CONFIG_RESUME").split(',')
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
             try:
@@ -101,9 +103,9 @@ class EksScheduler(object):
                     clusterName = cluster_name,
                     nodegroupName = nodegroup_name,
                     scalingConfig = {
-                        'minSize': min_size,
-                        'desiredSize': desired_size,
-                        'maxSize': max_size
+                        'minSize': minSize,
+                        'desiredSize': desiredSize,
+                        'maxSize': maxSize
                     }
                 )
                 print ("Completed the update")
