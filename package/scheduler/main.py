@@ -28,8 +28,7 @@ def lambda_handler(event, context):
     schedule_action = os.getenv("SCHEDULE_ACTION")
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
     format_tags = [{"Key": os.getenv("TAG_KEY"), "Values": [os.getenv("TAG_VALUE")]}]
-    eks_config_resume = os.getenv("EKS_CONFIG_RESUME") # Needs replacing with a split of the os.getenv("EKS_CONFIG_RESUME")
-    eks_config_paused = os.getenv("EKS_CONFIG_PAUSED") # Needs replacing with a split of the os.getenv("EKS_CONFIG_PAUSED")
+
 
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")

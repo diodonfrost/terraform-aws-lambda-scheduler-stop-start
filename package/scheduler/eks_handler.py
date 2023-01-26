@@ -4,7 +4,7 @@
 
 from typing import Dict, List
 
-import boto3
+import boto3, os
 
 from botocore.exceptions import ClientError
 
@@ -42,14 +42,13 @@ class EksScheduler(object):
                 }
             ]
         """
+        cluster_name = ""
         for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
             print(f"Service ARN is {service_arn}")
             nodegroup_name = service_arn.split("/")[-2]
             cluster_name = service_arn.split("/")[-3]
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
-            print(f"EKS_CONFIG_PAUSED is {eks_config_paused}")
-            print(f"EKS_CONFIG_RESUME is {eks_config_resume}")
-            minSize,desiredSize,maxSize = eks_config_paused.split(',')
+            minSize, desiredSize, maxSize = os.getenv("EKS_CONFIG_PAUSED").split(',')
             try:
                 # self.eks.update_service(
                 #     cluster=cluster_name, service=service_name, desiredCount=0
@@ -86,10 +85,12 @@ class EksScheduler(object):
                 }
             ]
         """
+        cluster_name = ""
         for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
             print(f"Service ARN is {service_arn}")
             nodegroup_name = service_arn.split("/")[-1]
             cluster_name - service_arn.split("/")[-2]
+            minSize, desiredSize, maxSize = os.getenv("EKS_CONFIG_RESUME").split(',')
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
             try:
                 # self.eks.update_service(
