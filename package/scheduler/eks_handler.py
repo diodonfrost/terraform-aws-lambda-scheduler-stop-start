@@ -14,28 +14,6 @@ from scheduler.filter_resources_by_tags import FilterByTags
 print("EKS function initialised")
 
 class EksScheduler(object):
-    """Abstract eks scheduler in a class."""
-    print("EKScheduler class initialised")
-    def update_nodegroup(cluster_name,nodegroup_name,min_size,max_size,desired_size):
-        print("EKScheduler class initialised")
-        update = client.update_nodegroup_config(
-            clusterName = cluster_name,
-            nodegroupName = nodegroup_name,
-            scalingConfig = {
-                'minSize': min_size,
-                'desiredSize': desired_size,
-                'maxSize': max_size
-            }
-        )
-        status_code = update['ResponseMetadata']['HTTPStatusCode']
-
-        if status_code == 200:
-            status = "OK"
-        else: 
-            status = "ERROR"
-
-        return nodegroup_name + ": " + str(status_code) + " (" + status + ")"
-
 
     def __init__(self, region_name=None) -> None:
         """Initialize eks scheduler."""
@@ -65,6 +43,7 @@ class EksScheduler(object):
         """
         print("EKScheduler stopping")
         try:
+            print (self.tag_api_get_resources("eks:cluster", aws_tags))
             for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
                 print (cluster_id)
                 cluster_id = cluster_arn.split(":")[-1]
@@ -80,6 +59,29 @@ class EksScheduler(object):
                     eks_exception("EKS cluster", cluster_id, exc)
         except: 
                 print ("Unable to find cluster id")
+
+    """Abstract eks scheduler in a class."""
+    print("EKScheduler class initialised")
+    def update_nodegroup(cluster_name,nodegroup_name,min_size,max_size,desired_size):
+        print("EKScheduler class initialised")
+        update = client.update_nodegroup_config(
+            clusterName = cluster_name,
+            nodegroupName = nodegroup_name,
+            scalingConfig = {
+                'minSize': min_size,
+                'desiredSize': desired_size,
+                'maxSize': max_size
+            }
+        )
+        status_code = update['ResponseMetadata']['HTTPStatusCode']
+
+        if status_code == 200:
+            status = "OK"
+        else: 
+            status = "ERROR"
+
+        return nodegroup_name + ": " + str(status_code) + " (" + status + ")"
+
 
     def start(self, aws_tags: List[Dict]) -> None:
         """Aws eks cluster and instance scale up function.
