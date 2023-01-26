@@ -47,11 +47,11 @@ class EksScheduler(object):
             ]
         """
         for service_arn in self.tag_api.get_resources("eks:nodegroup", aws_tags):
-            print(f"Service ARN is {service_arn}")
             nodegroup_name=service_arn.split("/")[-2]
             cluster_name=service_arn.split("/")[-3]
-            print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
+            print(f"Scaling down {cluster_name}, nodegroup_name {nodegroup_name}")
             minSize, maxSize, desiredSize = map(int, os.getenv("EKS_CONFIG_PAUSED").split(','))
+            print(f"minSize={minSize}, maxSize={maxSize}, desiredSize{desiredSize}")
             try:
                 # self.eks.update_service(
                 #     cluster=cluster_name, service=service_name, desiredCount=0
@@ -68,7 +68,6 @@ class EksScheduler(object):
                     }
                 )
                 print("Completed the update")
-                print(f"Stopped nodegroup {nodegroup_name} on Cluster {cluster_name}")
             except ClientError as exc:
                 eks_exception("eks Service", service_arn, exc)
 
@@ -95,6 +94,7 @@ class EksScheduler(object):
             cluster_name=service_arn.split("/")[-3]
             minSize, maxSize, desiredSize  = map(int, os.getenv("EKS_CONFIG_RESUME").split(','))
             print(f"Cluster name is {cluster_name}, nodegroup_name is {nodegroup_name}")
+            print(f"minSize={minSize}, maxSize={maxSize}, desiredSize{desiredSize}")
             try:
                 # self.eks.update_service(
                 #     cluster=cluster_name, service=service_name, desiredCount=0
@@ -111,10 +111,5 @@ class EksScheduler(object):
                     }
                 )
                 print ("Completed the update")
-                print(
-                    "Stop eks Service {0} on Cluster {1}".format(
-                        service_arn, cluster_name
-                    )
-                )
             except ClientError as exc:
                 eks_exception("eks Service", service_arn, exc)
