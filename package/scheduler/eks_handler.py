@@ -11,11 +11,13 @@ from botocore.exceptions import ClientError
 from scheduler.exceptions import eks_exception
 from scheduler.filter_resources_by_tags import FilterByTags
 
+print("EKS function initialised")
 
 class EksScheduler(object):
     """Abstract eks scheduler in a class."""
-
+    print("EKScheduler class initialised")
     def update_nodegroup(cluster_name,nodegroup_name,min_size,max_size,desired_size):
+        print("EKScheduler class initialised")
         update = client.update_nodegroup_config(
             clusterName = cluster_name,
             nodegroupName = nodegroup_name,
@@ -60,6 +62,7 @@ class EksScheduler(object):
                 }
             ]
         """
+        print("EKScheduler stopping")
         for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
             cluster_id = cluster_arn.split(":")[-1]
             list_nodegroups = []
@@ -90,6 +93,7 @@ class EksScheduler(object):
                 }
             ]
         """
+        print("EKScheduler starting")
         for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
             cluster_id = cluster_arn.split(":")[-1]
             list_nodegroups = []
