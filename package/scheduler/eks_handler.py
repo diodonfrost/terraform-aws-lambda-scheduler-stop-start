@@ -45,6 +45,7 @@ class EksScheduler(object):
         try:
             print (self.tag_api_get_resources("eks:cluster", aws_tags))
             for cluster_arn in self.tag_api.get_resources("eks:cluster", aws_tags):
+                print (cluster_arn)
                 print (cluster_id)
                 cluster_id = cluster_arn.split(":")[-1]
                 list_nodegroups = []
