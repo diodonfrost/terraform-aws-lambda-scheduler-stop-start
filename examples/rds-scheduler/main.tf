@@ -24,9 +24,9 @@ resource "aws_db_subnet_group" "aurora" {
   subnet_ids = [aws_subnet.primary.id, aws_subnet.secondary.id]
 }
 
-# Create rds aurora cluster
 resource "aws_rds_cluster" "aurora_scheduled" {
   cluster_identifier   = "aurora-cluster-with-tag"
+  engine               = "aurora-mysql"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   database_name        = "aurorawithtag"
   master_username      = "foo"
@@ -41,9 +41,11 @@ resource "aws_rds_cluster" "aurora_scheduled" {
 
 resource "aws_rds_cluster_instance" "aurora_scheduled" {
   identifier           = "aurora-cluster-with-tag-writer"
+  engine               = aws_rds_cluster.aurora_scheduled.engine
+  engine_version       = aws_rds_cluster.aurora_scheduled.engine_version
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   cluster_identifier   = aws_rds_cluster.aurora_scheduled.id
-  instance_class       = "db.t2.small"
+  instance_class       = "db.t3.small"
 
   tags = {
     tostop        = "true"
@@ -54,7 +56,7 @@ resource "aws_rds_cluster_instance" "aurora_scheduled" {
 # Create rds mariadb instance with tag
 resource "aws_db_instance" "mariadb_scheduled" {
   identifier           = "mariadb-instance-with-tag"
-  name                 = "mariadbwithtag"
+  db_name              = "mariadbwithtag"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   allocated_storage    = 10
   storage_type         = "gp2"
@@ -74,12 +76,12 @@ resource "aws_db_instance" "mariadb_scheduled" {
 # Create rds mysql instance with tag
 resource "aws_db_instance" "mysql_not_scheduled" {
   identifier           = "mysql-instance-without-tag"
-  name                 = "mysqlwithouttag"
+  db_name              = "mysqlwithouttag"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   allocated_storage    = 10
   storage_type         = "gp2"
   engine               = "mysql"
-  engine_version       = "5.6"
+  engine_version       = "8.0"
   instance_class       = "db.t2.micro"
   username             = "foo"
   password             = "foobarbaz"
