@@ -67,6 +67,13 @@ variable "ec2_schedule" {
   default     = false
 }
 
+variable "ecs_schedule" {
+  description = "Enable scheduling on ecs services"
+  type        = bool
+  default     = false
+}
+
+
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
   type        = any

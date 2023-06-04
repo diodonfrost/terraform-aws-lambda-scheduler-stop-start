@@ -6,6 +6,7 @@ from distutils.util import strtobool
 
 from scheduler.autoscaling_handler import AutoscalingScheduler
 from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
+from scheduler.ecs_handler import EcsScheduler
 from scheduler.instance_handler import InstanceScheduler
 from scheduler.rds_handler import RdsScheduler
 
@@ -17,6 +18,7 @@ def lambda_handler(event, context):
     - rds instances
     - rds aurora clusters
     - instance ec2
+    - ecs services
 
     Suspend and resume AWS resources:
     - ec2 autoscaling groups
@@ -31,6 +33,7 @@ def lambda_handler(event, context):
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
+    _strategy[EcsScheduler] = os.getenv("ECS_SCHEDULE")
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
     _strategy[CloudWatchAlarmScheduler] = os.getenv("CLOUDWATCH_ALARM_SCHEDULE")
 

@@ -126,6 +126,34 @@ data "aws_iam_policy_document" "rds_scheduler" {
   }
 }
 
+resource "aws_iam_role_policy" "ecs_scheduler" {
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-ecs-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.ecs_scheduler.json
+}
+
+## This should be scoped to the tagged resources ##
+data "aws_iam_policy_document" "ecs_scheduler" {
+  statement {
+    actions = [
+      "ecs:UpdateService",
+      "ecs:DescribeService",
+    ]
+
+    resources = [
+      "arn:aws:ecs:*:*:service/*",
+    ]
+    condition {
+      test     = "StringEqual"
+      variable = "aws:ResourceTag/${local.scheduler_tag["key"]}"
+      values = [
+        local.scheduler_tag["value"]
+      ]
+    }
+  }
+}
+
 resource "aws_iam_role_policy" "cloudwatch_alarm_scheduler" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-cloudwatch-custom-policy-scheduler"
@@ -244,6 +272,7 @@ resource "aws_lambda_function" "this" {
       TAG_KEY                   = local.scheduler_tag["key"]
       TAG_VALUE                 = local.scheduler_tag["value"]
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
+      ECS_SCHEDULE              = tostring(var.ecs_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
       CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)

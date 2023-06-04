@@ -13,6 +13,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 
 *  Aws lambda runtine Python 3.7
 *  ec2 instances scheduling
+*  ecs service scheduling
 *  rds clusters scheduling
 *  rds instances scheduling
 *  autoscalings scheduling
@@ -29,6 +30,7 @@ module "stop_ec2_instance" {
   schedule_action                = "stop"
   autoscaling_schedule           = "false"
   ec2_schedule                   = "true"
+  ecs_schedule                   = "false"
   rds_schedule                   = "false"
   cloudwatch_alarm_schedule      = "false"
   scheduler_tag                  = {
@@ -44,6 +46,7 @@ module "start_ec2_instance" {
   schedule_action                = "start"
   autoscaling_schedule           = "false"
   ec2_schedule                   = "true"
+  ecs_schedule                   = "false"
   rds_schedule                   = "false"
   cloudwatch_alarm_schedule      = "false"
   scheduler_tag                  = {
@@ -72,6 +75,7 @@ module "start_ec2_instance" {
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
 | autoscaling_schedule | Enable scheduling on autoscaling resources | string | `"false"` | no |
 | ec2_schedule | Enable scheduling on ec2 instance resources | string | `"false"` | no |
+| ecs_schedule | Enable scheduling on ecs services resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
 | cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | string | `"false"` | no |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
@@ -157,6 +161,7 @@ Apache 2 Licensed. See LICENSE for full details.
 
 *   [cloudwatch schedule expressions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html)
 *   [Python boto3 ec2](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html)
+*   [Python boto3 ecs](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html)
 *   [Python boto3 rds](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html)
 *   [Python boto3 autoscaling](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/autoscaling.html)
 *   [Terratest](https://github.com/gruntwork-io/terratest)
