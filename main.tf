@@ -235,7 +235,7 @@ locals {
 data "archive_file" "this" {
   type        = "zip"
   source_dir  = "${path.module}/package/"
-  output_path = "${path.module}/aws-stop-start-resources-3.1.3.zip" # The version should match with the latest git tag
+  output_path = "${path.module}/aws-stop-start-resources-3.2.0.zip" # The version should match with the latest git tag
 }
 
 # Create Lambda function for stop or start aws resources
