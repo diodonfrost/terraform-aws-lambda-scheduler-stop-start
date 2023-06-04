@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [3.2.0] - 2023-06-04
+### Features
+
+* **terraform:** bump AWS Provider version to 5.0 ([4e87860](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/4e87860abad85d38159da4ef6846c223f9ad5d88))
+* **terraform:** support ECS scheduler ([6935219](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/6935219bc70efc09a607933680e51d240eb7d71a)) thanks to @n3mawashi
+
 ## [3.1.3] - 2021-02-28
 ### Bug Fixes
 
@@ -303,7 +309,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.3...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.2.0...HEAD
+[3.2.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.3...3.2.0
 [3.1.3]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.2...3.1.3
 [3.1.2]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.1...3.1.2
 [3.1.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.0...3.1.1
