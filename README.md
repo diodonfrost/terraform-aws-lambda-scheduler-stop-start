@@ -16,6 +16,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 *  ecs service scheduling
 *  rds clusters scheduling
 *  rds instances scheduling
+*  redshift clusters scheduling
 *  autoscalings scheduling
 *  cloudwatch alarm scheduling
 *  Aws CloudWatch logs for lambda
@@ -32,6 +33,7 @@ module "stop_ec2_instance" {
   ec2_schedule                   = "true"
   ecs_schedule                   = "false"
   rds_schedule                   = "false"
+  redshift_schedule              = "false"
   cloudwatch_alarm_schedule      = "false"
   scheduler_tag                  = {
     key   = "tostop"
@@ -48,6 +50,7 @@ module "start_ec2_instance" {
   ec2_schedule                   = "true"
   ecs_schedule                   = "false"
   rds_schedule                   = "false"
+  redshift_schedule              = "false"
   cloudwatch_alarm_schedule      = "false"
   scheduler_tag                  = {
     key   = "tostop"
@@ -77,6 +80,7 @@ module "start_ec2_instance" {
 | ec2_schedule | Enable scheduling on ec2 instance resources | string | `"false"` | no |
 | ecs_schedule | Enable scheduling on ecs services resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
+| redshift_schedule | Enable scheduling on redshift resources | string | `"false"` | no |
 | cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | string | `"false"` | no |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
 | scheduler_tag | Set the tag to use for identify aws resources to stop or start | map | {"key" = "tostop", "value" = "true"} | yes |
