@@ -9,6 +9,7 @@ from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from scheduler.ecs_handler import EcsScheduler
 from scheduler.instance_handler import InstanceScheduler
 from scheduler.rds_handler import RdsScheduler
+from scheduler.redshift_handler import RedshiftScheduler
 
 
 def lambda_handler(event, context):
@@ -19,6 +20,7 @@ def lambda_handler(event, context):
     - rds aurora clusters
     - instance ec2
     - ecs services
+    - redshift clusters
 
     Suspend and resume AWS resources:
     - ec2 autoscaling groups
@@ -35,6 +37,7 @@ def lambda_handler(event, context):
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
     _strategy[EcsScheduler] = os.getenv("ECS_SCHEDULE")
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
+    _strategy[RedshiftScheduler] = os.getenv("REDSHIFT_SCHEDULE")
     _strategy[CloudWatchAlarmScheduler] = os.getenv("CLOUDWATCH_ALARM_SCHEDULE")
 
     for service, to_schedule in _strategy.items():

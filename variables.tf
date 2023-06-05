@@ -80,6 +80,12 @@ variable "rds_schedule" {
   default     = false
 }
 
+variable "redshift_schedule" {
+  description = "Enable scheduling on redshift resources"
+  type        = any
+  default     = false
+}
+
 variable "cloudwatch_alarm_schedule" {
   description = "Enable scheduleding on cloudwatch alarm resources"
   type        = any

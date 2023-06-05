@@ -123,12 +123,31 @@ resource "aws_iam_role_policy" "ecs_scheduler" {
   policy = data.aws_iam_policy_document.ecs_scheduler.json
 }
 
-## This should be scoped to the tagged resources ##
 data "aws_iam_policy_document" "ecs_scheduler" {
   statement {
     actions = [
       "ecs:UpdateService",
       "ecs:DescribeService",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "redshift_scheduler" {
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-redshift-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.redshift_scheduler.json
+}
+
+data "aws_iam_policy_document" "redshift_scheduler" {
+  statement {
+    actions = [
+      "redshift:ResumeCluster",
+      "redshift:PauseCluster",
     ]
 
     resources = [
@@ -257,6 +276,7 @@ resource "aws_lambda_function" "this" {
       EC2_SCHEDULE              = tostring(var.ec2_schedule)
       ECS_SCHEDULE              = tostring(var.ecs_schedule)
       RDS_SCHEDULE              = tostring(var.rds_schedule)
+      REDSHIFT_SCHEDULE         = tostring(var.redshift_schedule)
       AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
       CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)
     }
