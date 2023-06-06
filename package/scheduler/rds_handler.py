@@ -46,7 +46,7 @@ class RdsScheduler(object):
                 # Identifier must be cluster id, not resource id
                 self.rds.describe_db_clusters(DBClusterIdentifier=cluster_id)
                 self.rds.stop_db_cluster(DBClusterIdentifier=cluster_id)
-                print("Stop rds cluster {0}".format(cluster_id))
+                print(f"Stop rds cluster {cluster_id}")
             except ClientError as exc:
                 rds_exception("rds cluster", cluster_id, exc)
 
@@ -54,7 +54,7 @@ class RdsScheduler(object):
             db_id = db_arn.split(":")[-1]
             try:
                 self.rds.stop_db_instance(DBInstanceIdentifier=db_id)
-                print("Stop rds instance {0}".format(db_id))
+                print(f"Stop rds instance {db_id}")
             except ClientError as exc:
                 rds_exception("rds instance", db_id, exc)
 
@@ -81,7 +81,7 @@ class RdsScheduler(object):
                 # Identifier must be cluster id, not resource id
                 self.rds.describe_db_clusters(DBClusterIdentifier=cluster_id)
                 self.rds.start_db_cluster(DBClusterIdentifier=cluster_id)
-                print("Start rds cluster {0}".format(cluster_id))
+                print(f"Start rds cluster {cluster_id}")
             except ClientError as exc:
                 rds_exception("rds cluster", cluster_id, exc)
 
@@ -89,6 +89,6 @@ class RdsScheduler(object):
             db_id = db_arn.split(":")[-1]
             try:
                 self.rds.start_db_instance(DBInstanceIdentifier=db_id)
-                print("Start rds instance {0}".format(db_id))
+                print(f"Start rds instance {db_id}")
             except ClientError as exc:
                 rds_exception("rds instance", db_id, exc)

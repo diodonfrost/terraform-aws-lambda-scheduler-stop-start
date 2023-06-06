@@ -44,7 +44,7 @@ class RedshiftScheduler(object):
             cluster_id = cluster_arn.split(":")[-1]
             try:
                 self.redshift.pause_cluster(ClusterIdentifier=cluster_id)
-                print("Stop redshift cluster {0}".format(cluster_id))
+                print(f"Stop redshift cluster {cluster_id}")
             except ClientError as exc:
                 redshift_exception("redshift cluster", cluster_id, exc)
 
@@ -69,6 +69,6 @@ class RedshiftScheduler(object):
             cluster_id = cluster_arn.split(":")[-1]
             try:
                 self.redshift.resume_cluster(ClusterIdentifier=cluster_id)
-                print("Start redshift cluster {0}".format(cluster_id))
+                print(f"Start redshift cluster {cluster_id}")
             except ClientError as exc:
                 redshift_exception("redshift cluster", cluster_id, exc)

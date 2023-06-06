@@ -51,7 +51,7 @@ class AutoscalingScheduler(object):
         for asg_name in asg_name_list:
             try:
                 self.asg.suspend_processes(AutoScalingGroupName=asg_name)
-                print("Suspend autoscaling group {0}".format(asg_name))
+                print(f"Suspend autoscaling group {asg_name}")
             except ClientError as exc:
                 ec2_exception("instance", asg_name, exc)
 
@@ -59,7 +59,7 @@ class AutoscalingScheduler(object):
         for instance_id in instance_id_list:
             try:
                 self.ec2.stop_instances(InstanceIds=[instance_id])
-                print("Stop autoscaling instances {0}".format(instance_id))
+                print(f"Stop autoscaling instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("autoscaling group", instance_id, exc)
 
@@ -91,7 +91,7 @@ class AutoscalingScheduler(object):
         for instance_id in instance_id_list:
             try:
                 self.ec2.start_instances(InstanceIds=[instance_id])
-                print("Start autoscaling instances {0}".format(instance_id))
+                print(f"Start autoscaling instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
             else:
@@ -102,7 +102,7 @@ class AutoscalingScheduler(object):
         for asg_name in asg_name_list:
             try:
                 self.asg.resume_processes(AutoScalingGroupName=asg_name)
-                print("Resume autoscaling group {0}".format(asg_name))
+                print(f"Resume autoscaling group {asg_name}")
             except ClientError as exc:
                 ec2_exception("autoscaling group", asg_name, exc)
 

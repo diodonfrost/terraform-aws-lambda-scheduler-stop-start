@@ -44,7 +44,7 @@ class CloudWatchAlarmScheduler(object):
             alarm_name = alarm_arn.split(":")[-1]
             try:
                 self.cloudwatch.disable_alarm_actions(AlarmNames=[alarm_name])
-                print("Disable Cloudwatch alarm {0}".format(alarm_name))
+                print(f"Disable Cloudwatch alarm {alarm_name}")
             except ClientError as exc:
                 cloudwatch_exception("cloudwatch alarm", alarm_name, exc)
 
@@ -69,6 +69,6 @@ class CloudWatchAlarmScheduler(object):
             alarm_name = alarm_arn.split(":")[-1]
             try:
                 self.cloudwatch.enable_alarm_actions(AlarmNames=[alarm_name])
-                print("Enable Cloudwatch alarm {0}".format(alarm_name))
+                print(f"Enable Cloudwatch alarm {alarm_name}")
             except ClientError as exc:
                 cloudwatch_exception("cloudwatch alarm", alarm_name, exc)

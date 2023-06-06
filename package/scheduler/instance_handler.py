@@ -50,7 +50,7 @@ class InstanceScheduler(object):
                     InstanceIds=[instance_id]
                 )["AutoScalingInstances"]:
                     self.ec2.stop_instances(InstanceIds=[instance_id])
-                    print("Stop instances {0}".format(instance_id))
+                    print(f"Stop instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
 
@@ -78,6 +78,6 @@ class InstanceScheduler(object):
                     InstanceIds=[instance_id]
                 )["AutoScalingInstances"]:
                     self.ec2.start_instances(InstanceIds=[instance_id])
-                    print("Start instances {0}".format(instance_id))
+                    print(f"Start instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
