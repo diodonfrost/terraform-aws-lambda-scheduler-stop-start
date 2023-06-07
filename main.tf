@@ -254,18 +254,19 @@ locals {
 data "archive_file" "this" {
   type        = "zip"
   source_dir  = "${path.module}/package/"
-  output_path = "${path.module}/aws-stop-start-resources-3.2.0.zip" # The version should match with the latest git tag
+  output_path = "${path.module}/aws-stop-start-resources.zip"
 }
 
 # Create Lambda function for stop or start aws resources
 resource "aws_lambda_function" "this" {
-  filename      = data.archive_file.this.output_path
-  function_name = var.name
-  role          = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
-  handler       = "scheduler.main.lambda_handler"
-  runtime       = "python3.9"
-  timeout       = "600"
-  kms_key_arn   = var.kms_key_arn == null ? "" : var.kms_key_arn
+  filename         = data.archive_file.this.output_path
+  source_code_hash = filebase64sha256(data.archive_file.this.output_path)
+  function_name    = var.name
+  role             = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
+  handler          = "scheduler.main.lambda_handler"
+  runtime          = "python3.9"
+  timeout          = "600"
+  kms_key_arn      = var.kms_key_arn == null ? "" : var.kms_key_arn
 
   environment {
     variables = {
