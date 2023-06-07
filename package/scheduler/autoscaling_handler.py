@@ -8,8 +8,8 @@ import boto3
 
 from botocore.exceptions import ClientError
 
-from scheduler.exceptions import ec2_exception
-from scheduler.waiters import AwsWaiters
+from .exceptions import ec2_exception
+from .waiters import AwsWaiters
 
 
 class AutoscalingScheduler(object):

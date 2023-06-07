@@ -8,8 +8,8 @@ import boto3
 
 from botocore.exceptions import ClientError
 
-from scheduler.exceptions import redshift_exception
-from scheduler.filter_resources_by_tags import FilterByTags
+from .exceptions import redshift_exception
+from .filter_resources_by_tags import FilterByTags
 
 
 class RedshiftScheduler(object):

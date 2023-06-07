@@ -4,12 +4,12 @@
 import os
 from distutils.util import strtobool
 
-from scheduler.autoscaling_handler import AutoscalingScheduler
-from scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
-from scheduler.ecs_handler import EcsScheduler
-from scheduler.instance_handler import InstanceScheduler
-from scheduler.rds_handler import RdsScheduler
-from scheduler.redshift_handler import RedshiftScheduler
+from .autoscaling_handler import AutoscalingScheduler
+from .cloudwatch_handler import CloudWatchAlarmScheduler
+from .ecs_handler import EcsScheduler
+from .instance_handler import InstanceScheduler
+from .rds_handler import RdsScheduler
+from .redshift_handler import RedshiftScheduler
 
 
 def lambda_handler(event, context):
