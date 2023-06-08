@@ -6,6 +6,7 @@ from distutils.util import strtobool
 
 from .autoscaling_handler import AutoscalingScheduler
 from .cloudwatch_handler import CloudWatchAlarmScheduler
+from .documentdb_handler import DocumentDBScheduler
 from .ecs_handler import EcsScheduler
 from .instance_handler import InstanceScheduler
 from .rds_handler import RdsScheduler
@@ -34,6 +35,7 @@ def lambda_handler(event, context):
 
     _strategy = {}
     _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
+    _strategy[DocumentDBScheduler] = os.getenv("DOCUMENTDB_SCHEDULE")
     _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
     _strategy[EcsScheduler] = os.getenv("ECS_SCHEDULE")
     _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
