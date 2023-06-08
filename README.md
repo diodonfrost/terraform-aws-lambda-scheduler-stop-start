@@ -17,6 +17,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 *  rds clusters scheduling
 *  rds instances scheduling
 *  redshift clusters scheduling
+*  documentdb clusters scheduling
 *  autoscalings scheduling
 *  cloudwatch alarm scheduling
 *  Aws CloudWatch logs for lambda
@@ -30,6 +31,7 @@ module "stop_ec2_instance" {
   cloudwatch_schedule_expression = "cron(0 0 ? * FRI *)"
   schedule_action                = "stop"
   autoscaling_schedule           = "false"
+  documendb_schedule             = "false"
   ec2_schedule                   = "true"
   ecs_schedule                   = "false"
   rds_schedule                   = "false"
@@ -47,6 +49,7 @@ module "start_ec2_instance" {
   cloudwatch_schedule_expression = "cron(0 8 ? * MON *)"
   schedule_action                = "start"
   autoscaling_schedule           = "false"
+  documendb_schedule             = "false"
   ec2_schedule                   = "true"
   ecs_schedule                   = "false"
   rds_schedule                   = "false"
@@ -62,6 +65,7 @@ module "start_ec2_instance" {
 ## Examples
 
 *   [Autoscaling scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/autoscaling-scheduler) - Create lambda functions to suspend autoscaling group with tag `tostop = true` and terminate its ec2 instances on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
+*   [Documentdb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/documentdb-scheduler) - Create lambda functions to stop documentdb cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [Instance scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/instance-scheduler) - Create lambda functions to stop ec2 with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [Rds aurora - mariadb scheduler](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/rds-scheduler) - Create lambda functions to stop rds mariadb and aurora cluster with tag `tostop = true` on Friday at 23:00 Gmt and start them on Monday at 07:00 GMT
 *   [test fixture](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/tree/master/examples/test_fixture) - Deploy environment for testing module
@@ -77,6 +81,7 @@ module "start_ec2_instance" {
 | aws_regions | A list of one or more aws regions where the lambda will be apply, default use the current region | list | null | no |
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
 | autoscaling_schedule | Enable scheduling on autoscaling resources | string | `"false"` | no |
+| documendb_schedule | Enable scheduling on documentdb resources | string | `"false"` | no |
 | ec2_schedule | Enable scheduling on ec2 instance resources | string | `"false"` | no |
 | ecs_schedule | Enable scheduling on ecs services resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
