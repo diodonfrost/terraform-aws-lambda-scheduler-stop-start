@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.3.0] - 2023-06-10
+### Features
+
+* **lambda:** bump python version to 3.9 ([b0eddbb](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/b0eddbbf15f5de6d8cc58811e38870bc502c49e4))
+* **terraform:** add documentdb scheduler ([942f713](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/942f7135c701700bc319673139c536973352a7b0))
+* **terraform:** add redshift scheduler ([68ae759](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/68ae759e3057454daae65fbb00f05d8dd3168790))
+* **terraform:** trigger update each time python code changes ([d2498c6](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/d2498c62f33b8a946aee668534d049cc78d32f12))
+
+
 ## [3.2.0] - 2023-06-04
 ### Features
 
@@ -309,7 +319,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.2.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.3.0...HEAD
+[3.3.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.2.0...3.3.0
 [3.2.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.3...3.2.0
 [3.1.3]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.2...3.1.3
 [3.1.2]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.1...3.1.2
