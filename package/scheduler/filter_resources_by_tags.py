@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Filter aws resouces with tags."""
 
 from typing import Iterator

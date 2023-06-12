@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """ecs service scheduler."""
 
 from typing import Dict, List

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """ec2 instances scheduler."""
 
 from typing import Dict, List

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """rds instances scheduler."""
 
 from typing import Dict, List

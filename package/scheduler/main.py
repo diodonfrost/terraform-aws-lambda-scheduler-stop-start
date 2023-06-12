@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """This script stop and start aws resources."""
 import os
 from distutils.util import strtobool

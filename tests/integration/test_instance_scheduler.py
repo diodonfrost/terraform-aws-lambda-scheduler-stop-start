@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Tests for the ec2 scheduler."""
 
 import boto3

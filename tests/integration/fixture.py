@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Module use by ec2 scheduler unit tests."""
 
 import boto3

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """redshift cluster scheduler."""
 
 from typing import Dict, List

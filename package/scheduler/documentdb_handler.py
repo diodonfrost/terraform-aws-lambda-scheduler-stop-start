@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """documentdb instances scheduler."""
 
 from typing import Dict, List

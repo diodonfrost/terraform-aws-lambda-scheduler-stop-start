@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Exception function for all aws scheduler."""
 
 import logging

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Cloudwatch alarm action scheduler."""
 
 from typing import Dict, List

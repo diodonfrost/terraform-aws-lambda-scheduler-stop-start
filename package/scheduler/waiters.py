@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Autoscaling instances scheduler."""
 
 from typing import List
