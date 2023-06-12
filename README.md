@@ -80,13 +80,14 @@ module "start_ec2_instance" {
 | kms_key_arn | The ARN for the KMS encryption key. If this configuration is not provided when environment variables are in use, AWS Lambda uses a default service key | string | null | no |
 | aws_regions | A list of one or more aws regions where the lambda will be apply, default use the current region | list | null | no |
 | cloudwatch_schedule_expression | The scheduling expression | string | `"cron(0 22 ? * MON-FRI *)"` | yes |
-| autoscaling_schedule | Enable scheduling on autoscaling resources | string | `"false"` | no |
-| documendb_schedule | Enable scheduling on documentdb resources | string | `"false"` | no |
-| ec2_schedule | Enable scheduling on ec2 instance resources | string | `"false"` | no |
-| ecs_schedule | Enable scheduling on ecs services resources | string | `"false"` | no |
-| rds_schedule | Enable scheduling on rds resources | string | `"false"` | no |
-| redshift_schedule | Enable scheduling on redshift resources | string | `"false"` | no |
-| cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | string | `"false"` | no |
+| autoscaling_schedule | Enable scheduling on autoscaling resources | bool | `"false"` | no |
+| autoscaling_terminate_instances | Terminate instances when autoscaling group is scheduled to stop | bool | `"false"` | no |
+| documendb_schedule | Enable scheduling on documentdb resources | bool | `"false"` | no |
+| ec2_schedule | Enable scheduling on ec2 instance resources | bool | `"false"` | no |
+| ecs_schedule | Enable scheduling on ecs services resources | bool | `"false"` | no |
+| rds_schedule | Enable scheduling on rds resources | bool | `"false"` | no |
+| redshift_schedule | Enable scheduling on redshift resources | bool | `"false"` | no |
+| cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | bool | `"false"` | no |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
 | scheduler_tag | Set the tag to use for identify aws resources to stop or start | map | {"key" = "tostop", "value" = "true"} | yes |
 
