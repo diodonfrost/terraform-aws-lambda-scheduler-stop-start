@@ -270,17 +270,18 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      AWS_REGIONS               = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
-      SCHEDULE_ACTION           = var.schedule_action
-      TAG_KEY                   = local.scheduler_tag["key"]
-      TAG_VALUE                 = local.scheduler_tag["value"]
-      DOCUMENTDB_SCHEDULE       = tostring(var.documentdb_schedule)
-      EC2_SCHEDULE              = tostring(var.ec2_schedule)
-      ECS_SCHEDULE              = tostring(var.ecs_schedule)
-      RDS_SCHEDULE              = tostring(var.rds_schedule)
-      REDSHIFT_SCHEDULE         = tostring(var.redshift_schedule)
-      AUTOSCALING_SCHEDULE      = tostring(var.autoscaling_schedule)
-      CLOUDWATCH_ALARM_SCHEDULE = tostring(var.cloudwatch_alarm_schedule)
+      AWS_REGIONS                     = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
+      SCHEDULE_ACTION                 = var.schedule_action
+      TAG_KEY                         = local.scheduler_tag["key"]
+      TAG_VALUE                       = local.scheduler_tag["value"]
+      DOCUMENTDB_SCHEDULE             = tostring(var.documentdb_schedule)
+      EC2_SCHEDULE                    = tostring(var.ec2_schedule)
+      ECS_SCHEDULE                    = tostring(var.ecs_schedule)
+      RDS_SCHEDULE                    = tostring(var.rds_schedule)
+      REDSHIFT_SCHEDULE               = tostring(var.redshift_schedule)
+      AUTOSCALING_SCHEDULE            = tostring(var.autoscaling_schedule)
+      AUTOSCALING_TERMINATE_INSTANCES = tostring(var.autoscaling_terminate_instances)
+      CLOUDWATCH_ALARM_SCHEDULE       = tostring(var.cloudwatch_alarm_schedule)
     }
   }
 

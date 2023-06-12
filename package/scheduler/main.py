@@ -32,18 +32,27 @@ def lambda_handler(event, context):
     schedule_action = os.getenv("SCHEDULE_ACTION")
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
     format_tags = [{"Key": os.getenv("TAG_KEY"), "Values": [os.getenv("TAG_VALUE")]}]
+    autoscaling_terminate_instances = strtobool(
+        os.getenv("AUTOSCALING_TERMINATE_INSTANCES")
+    )
 
-    _strategy = {}
-    _strategy[AutoscalingScheduler] = os.getenv("AUTOSCALING_SCHEDULE")
-    _strategy[DocumentDBScheduler] = os.getenv("DOCUMENTDB_SCHEDULE")
-    _strategy[InstanceScheduler] = os.getenv("EC2_SCHEDULE")
-    _strategy[EcsScheduler] = os.getenv("ECS_SCHEDULE")
-    _strategy[RdsScheduler] = os.getenv("RDS_SCHEDULE")
-    _strategy[RedshiftScheduler] = os.getenv("REDSHIFT_SCHEDULE")
-    _strategy[CloudWatchAlarmScheduler] = os.getenv("CLOUDWATCH_ALARM_SCHEDULE")
+    _strategy = {
+        AutoscalingScheduler: os.getenv("AUTOSCALING_SCHEDULE"),
+        DocumentDBScheduler: os.getenv("DOCUMENTDB_SCHEDULE"),
+        InstanceScheduler: os.getenv("EC2_SCHEDULE"),
+        EcsScheduler: os.getenv("ECS_SCHEDULE"),
+        RdsScheduler: os.getenv("RDS_SCHEDULE"),
+        RedshiftScheduler: os.getenv("REDSHIFT_SCHEDULE"),
+        CloudWatchAlarmScheduler: os.getenv("CLOUDWATCH_ALARM_SCHEDULE"),
+    }
 
     for service, to_schedule in _strategy.items():
         if strtobool(to_schedule):
             for aws_region in aws_regions:
                 strategy = service(aws_region)
-                getattr(strategy, schedule_action)(aws_tags=format_tags)
+                if service == AutoscalingScheduler and autoscaling_terminate_instances:
+                    getattr(strategy, schedule_action)(
+                        aws_tags=format_tags, terminate_instances=True
+                    )
+                else:
+                    getattr(strategy, schedule_action)(aws_tags=format_tags)

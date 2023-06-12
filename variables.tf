@@ -61,6 +61,12 @@ variable "autoscaling_schedule" {
   default     = false
 }
 
+variable "autoscaling_terminate_instances" {
+  description = "Terminate instances when autoscaling group is scheduled to stop"
+  type        = bool
+  default     = false
+}
+
 variable "ec2_schedule" {
   description = "Enable scheduling on ec2 resources"
   type        = any

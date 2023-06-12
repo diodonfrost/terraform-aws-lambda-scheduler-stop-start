@@ -25,8 +25,8 @@ resource "aws_subnet" "this" {
   cidr_block = "10.0.1.0/24"
 }
 
-resource "aws_launch_configuration" "this" {
-  name          = "web_config"
+resource "aws_launch_template" "this" {
+  name_prefix   = "web_config"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
 }
@@ -41,8 +41,19 @@ resource "aws_autoscaling_group" "scheduled" {
   health_check_type         = "EC2"
   desired_capacity          = 1
   force_delete              = true
-  launch_configuration      = aws_launch_configuration.this.name
   vpc_zone_identifier       = [aws_subnet.this.id]
+  mixed_instances_policy {
+    instances_distribution {
+      on_demand_base_capacity                  = 0
+      on_demand_percentage_above_base_capacity = 25
+      spot_allocation_strategy                 = "capacity-optimized"
+    }
+    launch_template {
+      launch_template_specification {
+        launch_template_id = aws_launch_template.this.id
+      }
+    }
+  }
 
   tag {
     key                 = "tostop"
@@ -66,8 +77,19 @@ resource "aws_autoscaling_group" "not_scheduled" {
   health_check_type         = "EC2"
   desired_capacity          = 1
   force_delete              = true
-  launch_configuration      = aws_launch_configuration.this.name
   vpc_zone_identifier       = [aws_subnet.this.id]
+  mixed_instances_policy {
+    instances_distribution {
+      on_demand_base_capacity                  = 0
+      on_demand_percentage_above_base_capacity = 25
+      spot_allocation_strategy                 = "capacity-optimized"
+    }
+    launch_template {
+      launch_template_specification {
+        launch_template_id = aws_launch_template.this.id
+      }
+    }
+  }
 
   tag {
     key                 = "tostop"

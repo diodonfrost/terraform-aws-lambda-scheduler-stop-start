@@ -25,7 +25,7 @@ class AutoscalingScheduler(object):
             self.asg = boto3.client("autoscaling")
         self.waiter = AwsWaiters(region_name=region_name)
 
-    def stop(self, aws_tags: List[Dict]) -> None:
+    def stop(self, aws_tags: List[Dict], terminate_instances=False) -> None:
         """Aws autoscaling suspend function.
 
         Suspend autoscaling group and stop its instances
@@ -42,6 +42,8 @@ class AutoscalingScheduler(object):
                     ]
                 }
             ]
+        :param bool terminate_instances:
+            Terminate autoscaling instances if True
         """
         tag_key = aws_tags[0]["Key"]
         tag_value = "".join(aws_tags[0]["Values"])
@@ -55,11 +57,15 @@ class AutoscalingScheduler(object):
             except ClientError as exc:
                 ec2_exception("instance", asg_name, exc)
 
-        # Stop autoscaling instance
+        # Stop or Terminate autoscaling instances
         for instance_id in instance_id_list:
             try:
-                self.ec2.stop_instances(InstanceIds=[instance_id])
-                print(f"Stop autoscaling instances {instance_id}")
+                if terminate_instances:
+                    self.ec2.terminate_instances(InstanceIds=[instance_id])
+                    print(f"Terminate autoscaling instances {instance_id}")
+                else:
+                    self.ec2.stop_instances(InstanceIds=[instance_id])
+                    print(f"Stop autoscaling instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("autoscaling group", instance_id, exc)
 
