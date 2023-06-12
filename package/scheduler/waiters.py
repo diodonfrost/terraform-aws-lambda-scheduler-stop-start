@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError
 from .exceptions import ec2_exception
 
 
-class AwsWaiters(object):
+class AwsWaiters:
     """Abstract aws waiter in a class."""
 
     def __init__(self, region_name=None) -> None:

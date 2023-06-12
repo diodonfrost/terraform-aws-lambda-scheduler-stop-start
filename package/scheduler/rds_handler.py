@@ -10,7 +10,7 @@ from .exceptions import rds_exception
 from .filter_resources_by_tags import FilterByTags
 
 
-class RdsScheduler(object):
+class RdsScheduler:
     """Abstract rds scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:

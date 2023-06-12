@@ -5,7 +5,7 @@ from typing import Iterator
 import boto3
 
 
-class FilterByTags(object):
+class FilterByTags:
     """Abstract Filter aws resources by tags in a class."""
 
     def __init__(self, region_name=None) -> None:

@@ -10,7 +10,7 @@ from .exceptions import ecs_exception
 from .filter_resources_by_tags import FilterByTags
 
 
-class EcsScheduler(object):
+class EcsScheduler:
     """Abstract ECS Service scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:

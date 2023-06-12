@@ -10,7 +10,7 @@ from .exceptions import ec2_exception
 from .waiters import AwsWaiters
 
 
-class AutoscalingScheduler(object):
+class AutoscalingScheduler:
     """Abstract autoscaling scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:

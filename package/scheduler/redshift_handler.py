@@ -10,7 +10,7 @@ from .exceptions import redshift_exception
 from .filter_resources_by_tags import FilterByTags
 
 
-class RedshiftScheduler(object):
+class RedshiftScheduler:
     """Abstract redshift scheduler in a class."""
 
     def __init__(self, region_name=None) -> None:
