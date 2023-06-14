@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [3.4.0] - 2023-06-14
+### Features
+
+* **autoscaling:** terminate instances instead of stopping them ([1f6f6f6](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/1f6f6f6d6b8a7b869c6b4493ab52de9914fda591))
 
 ## [3.3.0] - 2023-06-10
 ### Features
@@ -319,7 +323,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.3.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.4.0...HEAD
+[3.4.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.3.0...3.4.0
 [3.3.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.2.0...3.3.0
 [3.2.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.3...3.2.0
 [3.1.3]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.2...3.1.3
