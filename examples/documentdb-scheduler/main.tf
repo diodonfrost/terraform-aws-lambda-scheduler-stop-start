@@ -6,11 +6,11 @@ resource "aws_kms_key" "scheduler" {
 }
 
 resource "aws_docdb_cluster" "scheduled" {
-  cluster_identifier      = "docdb-cluster-scheduled"
-  engine                  = "docdb"
-  master_username         = "foo"
-  master_password         = "mustbeeightchars"
-  skip_final_snapshot     = true
+  cluster_identifier  = "docdb-cluster-scheduled"
+  engine              = "docdb"
+  master_username     = "foo"
+  master_password     = "mustbeeightchars"
+  skip_final_snapshot = true
   tags = {
     tostop        = "true"
     terratest_tag = var.random_tag
@@ -28,11 +28,11 @@ resource "aws_docdb_cluster_instance" "scheduled" {
 }
 
 resource "aws_docdb_cluster" "not_scheduled" {
-  cluster_identifier      = "docdb-cluster-not-scheduled"
-  engine                  = "docdb"
-  master_username         = "foo"
-  master_password         = "mustbeeightchars"
-  skip_final_snapshot     = true
+  cluster_identifier  = "docdb-cluster-not-scheduled"
+  engine              = "docdb"
+  master_username     = "foo"
+  master_password     = "mustbeeightchars"
+  skip_final_snapshot = true
   tags = {
     tostop        = "false"
     terratest_tag = var.random_tag

@@ -107,15 +107,15 @@ resource "aws_autoscaling_group" "not_scheduled" {
 ### Terraform modules ###
 
 module "autoscaling-stop-friday" {
-  source                                   = "../../"
-  name                                     = "stop-autoscaling"
-  cloudwatch_schedule_expression           = "cron(0 23 ? * FRI *)"
-  schedule_action                          = "stop"
-  ec2_schedule                             = "false"
-  rds_schedule                             = "false"
-  autoscaling_schedule                     = "true"
-  autoscaling_terminate_instances          = "true"
-  cloudwatch_alarm_schedule                = "true"
+  source                          = "../../"
+  name                            = "stop-autoscaling"
+  cloudwatch_schedule_expression  = "cron(0 23 ? * FRI *)"
+  schedule_action                 = "stop"
+  ec2_schedule                    = "false"
+  rds_schedule                    = "false"
+  autoscaling_schedule            = "true"
+  autoscaling_terminate_instances = "true"
+  cloudwatch_alarm_schedule       = "true"
 
   scheduler_tag = {
     key   = "tostop"
