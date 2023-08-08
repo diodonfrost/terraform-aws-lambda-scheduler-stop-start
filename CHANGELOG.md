@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [3.4.1] - 2023-08-09
+
+### Bug Fixes
+
+* **lambda:** use output_base64sha256 directly instead of function filebase64sha256 ([a7c348f](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/a7c348f36b42473eb3894a3397710df1b607ca14))
+
 ## [3.4.0] - 2023-06-14
 ### Features
 
@@ -323,7 +329,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.4.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.4.1...HEAD
+[3.4.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.4.0...3.4.1
 [3.4.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.3.0...3.4.0
 [3.3.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.2.0...3.3.0
 [3.2.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.1.3...3.2.0
