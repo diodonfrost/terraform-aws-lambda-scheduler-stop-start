@@ -1,7 +1,6 @@
 package test
 
 import (
-	L "./lib"
 	"fmt"
 	"testing"
 	"time"
@@ -67,7 +66,7 @@ func TestTerraformAwsInstanceScheduler(t *testing.T) {
 	InstancesIDsNoStopRunning := aws.GetEc2InstanceIdsByFilters(t, awsRegion, filtersInstancesNoStopRunning)
 
 	// Invoke lambda function to stop all instances with the tag:value `tostop:true`
-	L.RunAwslambda(awsRegion, lambdaStopName)
+	RunAwslambda(awsRegion, lambdaStopName)
 
 	// Wait for scheduler exectuion
 	time.Sleep(180 * time.Second)
@@ -95,7 +94,7 @@ func TestTerraformAwsInstanceScheduler(t *testing.T) {
 	assert.Equal(t, InstancesIDsNoStopRunning, InstancesIDsNoStopStopped)
 
 	// Invoke lambda function to start all instances with the tag:value `tostop:true`
-	L.RunAwslambda(awsRegion, lambdaStartName)
+	RunAwslambda(awsRegion, lambdaStartName)
 
 	// Wait for scheduler exectuion
 	time.Sleep(180 * time.Second)

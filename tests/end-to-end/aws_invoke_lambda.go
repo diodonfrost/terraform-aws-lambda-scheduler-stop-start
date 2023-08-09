@@ -1,4 +1,4 @@
-package lib
+package test
 
 import (
     "github.com/aws/aws-sdk-go/aws"

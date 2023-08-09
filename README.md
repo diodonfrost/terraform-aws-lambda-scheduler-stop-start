@@ -148,15 +148,13 @@ Install Terratest with depedencies:
 
 ```shell
 # Prerequisite: install Go
-go get ./...
-```
+cd tests/end-to-end/ && go get ./...
 
-```shell
 # Test instance scheduler
-go test -timeout 900s -v tests/end-to-end/instance_scheduler_test.go
+go test -timeout 30m -v instance_scheduler_test.go aws_invoke_lambda.go
 
 # Test autoscaling scheduler
-go test -timeout 900s -v tests/end-to-end/autoscaling_scheduler_test.go
+go test -timeout 30m -v autoscaling_scheduler_test.go aws_invoke_lambda.go
 ```
 
 ## Authors
