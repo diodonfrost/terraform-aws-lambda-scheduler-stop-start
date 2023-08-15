@@ -1,5 +1,5 @@
 ansible-base==2.10.8
-Babel==2.8.0
+Babel==2.9.1
 black==23.3.0
 boto3==1.26.148
 botocore==1.29.148
