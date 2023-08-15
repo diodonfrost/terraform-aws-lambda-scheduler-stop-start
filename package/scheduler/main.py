@@ -1,6 +1,5 @@
 """This script stop and start aws resources."""
 import os
-from distutils.util import strtobool
 
 from .autoscaling_handler import AutoscalingScheduler
 from .cloudwatch_handler import CloudWatchAlarmScheduler
@@ -54,3 +53,8 @@ def lambda_handler(event, context):
                     )
                 else:
                     getattr(strategy, schedule_action)(aws_tags=format_tags)
+
+
+def strtobool(value: str) -> bool:
+    """Convert string to boolean."""
+    return value.lower() in ("yes", "true", "t", "1")
