@@ -11,7 +11,7 @@ charset-normalizer==3.2.0
 click==8.1.6
 colorama==0.4.6
 coverage==7.2.7
-cryptography==41.0.3
+cryptography==41.0.4
 distlib==0.3.7
 dnspython==2.1.0
 docker==6.1.3
