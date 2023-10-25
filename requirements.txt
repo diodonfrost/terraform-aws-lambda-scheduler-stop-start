@@ -53,5 +53,5 @@ types-PyYAML==6.0.12.11
 urllib3==1.26.16
 virtualenv==20.24.2
 websocket-client==1.6.1
-Werkzeug==2.3.6
+Werkzeug==3.0.1
 xmltodict==0.13.0
