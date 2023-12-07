@@ -73,6 +73,12 @@ variable "ec2_schedule" {
   default     = false
 }
 
+variable "ec2_schedule_arn_resources" {
+  description = "Instance arn list from ec2 resources"
+  type        = list(string)
+  default     = null
+}
+
 variable "documentdb_schedule" {
   description = "Enable scheduling on documentdb resources"
   type        = bool

@@ -1,4 +1,17 @@
+data "aws_caller_identity" "current" {}
+
 data "aws_region" "current" {}
+
+################################################
+#
+#            Local vars
+#
+################################################
+
+locals {
+  aws_lambda_function_regions = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
+  ec2_schedule_arn_resources  = var.ec2_schedule_arn_resources != null ? join(", ", var.ec2_schedule_arn_resources) : "*"
+}
 
 ################################################
 #
@@ -26,7 +39,7 @@ data "aws_iam_policy_document" "this" {
 }
 
 resource "aws_iam_role_policy" "autoscaling_group_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.autoscaling_schedule ? 1 : 0
   name   = "${var.name}-autoscaling-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.autoscaling_group_scheduler.json
@@ -53,7 +66,7 @@ data "aws_iam_policy_document" "autoscaling_group_scheduler" {
 }
 
 resource "aws_iam_role_policy" "spot_instance_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.ec2_schedule ? 1 : 0
   name   = "${var.name}-spot-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.spot_instance_scheduler.json
@@ -67,13 +80,13 @@ data "aws_iam_policy_document" "spot_instance_scheduler" {
     ]
 
     resources = [
-      "*",
+      "${local.ec2_schedule_arn_resources}",
     ]
   }
 }
 
 resource "aws_iam_role_policy" "instance_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.ec2_schedule ? 1 : 0
   name   = "${var.name}-ec2-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.instance_scheduler.json
@@ -81,9 +94,8 @@ resource "aws_iam_role_policy" "instance_scheduler" {
 
 data "aws_iam_policy_document" "instance_scheduler" {
   statement {
+    effect = "Allow"
     actions = [
-      "ec2:StopInstances",
-      "ec2:StartInstances",
       "autoscaling:DescribeAutoScalingInstances",
     ]
 
@@ -91,10 +103,26 @@ data "aws_iam_policy_document" "instance_scheduler" {
       "*",
     ]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:StopInstances",
+      "ec2:StartInstances",
+    ]
+
+    resources = [
+      "${local.ec2_schedule_arn_resources}",
+    ]
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "aws:ResourceTag/${var.scheduler_tag.key}"
+      values   = ["${var.scheduler_tag.value}"]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "rds_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.rds_schedule ? 1 : 0
   name   = "${var.name}-rds-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.rds_scheduler.json
@@ -117,7 +145,7 @@ data "aws_iam_policy_document" "rds_scheduler" {
 }
 
 resource "aws_iam_role_policy" "ecs_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.ecs_schedule ? 1 : 0
   name   = "${var.name}-ecs-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.ecs_scheduler.json
@@ -137,7 +165,7 @@ data "aws_iam_policy_document" "ecs_scheduler" {
 }
 
 resource "aws_iam_role_policy" "redshift_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.redshift_schedule ? 1 : 0
   name   = "${var.name}-redshift-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.redshift_scheduler.json
@@ -270,7 +298,7 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      AWS_REGIONS                     = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
+      AWS_REGIONS                     = local.aws_lambda_function_regions
       SCHEDULE_ACTION                 = var.schedule_action
       TAG_KEY                         = local.scheduler_tag["key"]
       TAG_VALUE                       = local.scheduler_tag["value"]
