@@ -295,6 +295,8 @@ resource "aws_lambda_function" "this" {
 ################################################
 
 resource "aws_cloudwatch_event_rule" "this" {
+  count               = var.cloudwatch_schedule_expression != "none" ? 1 : 0
+
   name                = "trigger-lambda-scheduler-${var.name}"
   description         = "Trigger lambda scheduler"
   schedule_expression = var.cloudwatch_schedule_expression
@@ -302,16 +304,20 @@ resource "aws_cloudwatch_event_rule" "this" {
 }
 
 resource "aws_cloudwatch_event_target" "this" {
-  arn  = aws_lambda_function.this.arn
-  rule = aws_cloudwatch_event_rule.this.name
+  count = var.cloudwatch_schedule_expression != "none" ? 1 : 0
+
+  arn   = aws_lambda_function.this.arn
+  rule  = aws_cloudwatch_event_rule.this[0].name
 }
 
 resource "aws_lambda_permission" "this" {
+  count         = var.cloudwatch_schedule_expression != "none" ? 1 : 0
+
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   principal     = "events.amazonaws.com"
   function_name = aws_lambda_function.this.function_name
-  source_arn    = aws_cloudwatch_event_rule.this.arn
+  source_arn    = aws_cloudwatch_event_rule.this[0].arn
 }
 
 ################################################
@@ -323,4 +329,15 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
   tags              = var.tags
+}
+
+################################################
+#
+#            HTTP ENDPOINT TO TRIGGER LAMBDA
+#
+################################################
+resource "aws_lambda_function_url" "http_trigger" {
+  count              = var.http_trigger ? 1 : 0
+  function_name      = aws_lambda_function.this.function_name
+  authorization_type = var.http_trigger_authorization_type
 }

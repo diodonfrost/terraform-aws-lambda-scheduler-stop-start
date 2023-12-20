@@ -42,3 +42,8 @@ output "scheduler_log_group_arn" {
   description = "The Amazon Resource Name (ARN) specifying the log group"
   value       = aws_cloudwatch_log_group.this.arn
 }
+
+output "http_trigger" {
+  description = "The http trigger if set"
+  value       = var.http_trigger ? aws_lambda_function_url.http_trigger[0].function_url : "none"
+}
