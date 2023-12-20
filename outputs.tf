@@ -45,5 +45,5 @@ output "scheduler_log_group_arn" {
 
 output "http_trigger" {
   description = "The http trigger if set"
-  value       = var.http_trigger ? aws_lambda_function_url.http_trigger.function_url : 0
+  value       = var.http_trigger ? aws_lambda_function_url.http_trigger[0].function_url : "none"
 }

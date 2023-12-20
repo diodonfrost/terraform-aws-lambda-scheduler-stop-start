@@ -339,5 +339,5 @@ resource "aws_cloudwatch_log_group" "this" {
 resource "aws_lambda_function_url" "http_trigger" {
   count              = var.http_trigger ? 1 : 0
   function_name      = aws_lambda_function.this.function_name
-  authorization_type = "NONE"
+  authorization_type = var.http_trigger_authorization_type
 }

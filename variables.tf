@@ -114,3 +114,9 @@ variable "http_trigger" {
   type        = bool
   default     = false
 }
+
+variable "http_trigger_authorization_type" {
+  description = "Authorization type for the http endpoint to trigger the lambda"
+  type        = string
+  default     = "NONE"
+}
