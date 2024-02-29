@@ -149,7 +149,7 @@ go test -timeout 900s -v tests/end-to-end/autoscaling_scheduler_test.go
 
 ## Authors
 
-Modules managed by [diodonfrost](https://github.com/diodonfrost)
+Modules managed by [diodonfrost](https://github.com/diodonfrost).
 
 ## Licence
 
