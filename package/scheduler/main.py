@@ -41,7 +41,7 @@ def lambda_handler(event, context):
     if schedule_disable_holidays and schedule_holidays_country != "":
         now = datetime.now()
         today = now.strftime("%Y-%m-%d")
-        country_holidays = holidays.country_holidays(country=schedule_holidays_country, years=now.strftime("%Y"))
+        country_holidays = holidays.country_holidays(country=schedule_holidays_country, years=int(now.strftime("%Y")))
         if today in country_holidays:
             print("Stopping now because today ({}) is a holiday: {}".format(today, country_holidays.get(today)))
             exit(0)
