@@ -86,7 +86,7 @@ variable "ecs_schedule" {
 }
 
 variable "ecs_task_desired_count" {
-  description = "Enable scheduling on ecs services"
+  description = "Define desired task count for ecs service"
   type        = number
   default     = 1
 }
