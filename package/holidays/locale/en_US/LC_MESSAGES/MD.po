@@ -1,0 +1,84 @@
+#  holidays
+#  --------
+#  A fast, efficient Python library for generating country, province and state
+#  specific sets of holidays on the fly. It aims to make determining whether a
+#  specific date is a holiday as fast and flexible as possible.
+#
+#  Authors: Vacanza Team and individual contributors (see AUTHORS file)
+#           dr-prodigy <dr.prodigy.github@gmail.com> (c) 2017-2023
+#           ryanss <ryanssdev@icloud.com> (c) 2014-2017
+#  Website: https://github.com/vacanza/python-holidays
+#  License: MIT (see LICENSE file)
+#
+# Moldova holidays en_US localization.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Python Holidays 0.46\n"
+"POT-Creation-Date: 2023-03-22 21:58+0200\n"
+"PO-Revision-Date: 2024-03-20 21:12+0200\n"
+"Last-Translator: ~Jhellico <jhellico@gmail.com>\n"
+"Language-Team: Python Holidays localization team\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 3.4\n"
+
+#. New Year's Day.
+msgid "Anul Nou"
+msgstr "New Year's Day"
+
+#. Christmas Day (by old style).
+msgid "Nașterea lui Iisus Hristos (Crăciunul pe stil vechi)"
+msgstr "Christmas Day (by old style)"
+
+#. Christmas Day.
+msgid "Nașterea lui Iisus Hristos (Crăciunul)"
+msgstr "Christmas Day"
+
+#. International Women's Day.
+msgid "Ziua internatională a femeii"
+msgstr "International Women's Day"
+
+#. Easter.
+msgid "Paștele"
+msgstr "Easter"
+
+#. Day of Rejoicing.
+msgid "Paștele blajinilor"
+msgstr "Day of Rejoicing"
+
+#. International Workers' Solidarity Day.
+msgid "Ziua internaţională a solidarităţii oamenilor muncii"
+msgstr "International Workers' Solidarity Day"
+
+#. Victory Day and Commemoration of the heroes fallen for Independence of
+#. Fatherland.
+msgid ""
+"Ziua Victoriei și a comemorării eroilor căzuţi pentru Independenţa Patriei"
+msgstr ""
+"Victory Day and Commemoration of the heroes fallen for Independence of "
+"Fatherland"
+
+#. Europe Day.
+msgid "Ziua Europei"
+msgstr "Europe Day"
+
+#. International Children's Day.
+msgid "Ziua Ocrotirii Copilului"
+msgstr "International Children's Day"
+
+#. Republic of Moldova Independence Day.
+msgid "Ziua independenţei Republicii Moldova"
+msgstr "Republic of Moldova Independence Day"
+
+#. National Language Day.
+msgid "Limba noastră"
+msgstr "National Language Day"
+
+#. Christmas Day (by new style).
+msgid "Nașterea lui Iisus Hristos (Crăciunul pe stil nou)"
+msgstr "Christmas Day (by new style)"
