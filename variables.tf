@@ -9,6 +9,19 @@ variable "cloudwatch_schedule_expression" {
   default     = "cron(0 22 ? * MON-FRI *)"
 }
 
+variable "schedule_disable_holidays" {
+  description = "Define if the schedule is supposed to be disabled on certain holiday"
+  type        = bool
+  default     = false
+}
+
+# Find available country codes on https://python-holidays.readthedocs.io/en/latest/index.html#available-countries
+variable "schedule_holidays_country" {
+  description = "Define country ISO code for holiday validation"
+  type        = string
+  default     = null
+}
+
 variable "name" {
   description = "Define name to use for lambda function, cloudwatch event and iam role"
   type        = string

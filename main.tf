@@ -282,6 +282,8 @@ resource "aws_lambda_function" "this" {
       AUTOSCALING_SCHEDULE            = tostring(var.autoscaling_schedule)
       AUTOSCALING_TERMINATE_INSTANCES = tostring(var.autoscaling_terminate_instances)
       CLOUDWATCH_ALARM_SCHEDULE       = tostring(var.cloudwatch_alarm_schedule)
+      SCHEDULE_DISABLE_HOLIDAYS       = var.schedule_disable_holidays == true ? "yes" : "no"
+      SCHEDULE_HOLIDAYS_COUNTRY       = var.schedule_holidays_country == null ? "" : tostring(var.schedule_holidays_country)
     }
   }
 
