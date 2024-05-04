@@ -277,6 +277,7 @@ resource "aws_lambda_function" "this" {
       DOCUMENTDB_SCHEDULE             = tostring(var.documentdb_schedule)
       EC2_SCHEDULE                    = tostring(var.ec2_schedule)
       ECS_SCHEDULE                    = tostring(var.ecs_schedule)
+      ECS_TASK_DESIRED_COUNT          = tostring(var.ecs_task_desired_count)
       RDS_SCHEDULE                    = tostring(var.rds_schedule)
       REDSHIFT_SCHEDULE               = tostring(var.redshift_schedule)
       AUTOSCALING_SCHEDULE            = tostring(var.autoscaling_schedule)
