@@ -1,5 +1,6 @@
 """ecs service scheduler."""
 
+from os import getenv
 from typing import Dict, List
 
 import boto3
@@ -20,6 +21,7 @@ class EcsScheduler:
         else:
             self.ecs = boto3.client("ecs")
         self.tag_api = FilterByTags(region_name=region_name)
+        self.ecs_task_desired_count = int(getenv("ECS_TASK_DESIRED_COUNT"))
 
     def stop(self, aws_tags: List[Dict]) -> None:
         """Aws ecs instance stop function.
@@ -72,7 +74,7 @@ class EcsScheduler:
             cluster_name = service_arn.split("/")[-2]
             try:
                 self.ecs.update_service(
-                    cluster=cluster_name, service=service_name, desiredCount=1
+                    cluster=cluster_name, service=service_name, desiredCount=self.ecs_task_desired_count
                 )
                 print(f"Start ECS Service {service_name} on Cluster {cluster_name}")
             except ClientError as exc:
