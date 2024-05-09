@@ -85,6 +85,12 @@ variable "ecs_schedule" {
   default     = false
 }
 
+variable "ecs_task_desired_count" {
+  description = "Define desired task count for ecs service"
+  type        = number
+  default     = 1
+}
+
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
   type        = any
