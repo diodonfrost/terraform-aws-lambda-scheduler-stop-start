@@ -35,7 +35,7 @@ def lambda_handler(event, context):
         os.getenv("AUTOSCALING_TERMINATE_INSTANCES")
     )
 
-    # Optionally stop lambda handler on holidays
+    # Optionally quit here on holidays
     schedule_disable_holidays = strtobool(os.getenv("SCHEDULE_DISABLE_HOLIDAYS"))
     schedule_holidays_country = os.getenv("SCHEDULE_HOLIDAYS_COUNTRY")
     if schedule_disable_holidays and schedule_holidays_country != "":
@@ -43,8 +43,11 @@ def lambda_handler(event, context):
         today = now.strftime("%Y-%m-%d")
         country_holidays = holidays.country_holidays(country=schedule_holidays_country, years=int(now.strftime("%Y")))
         if today in country_holidays:
-            print("Stopping now because today ({}) is a holiday: {}".format(today, country_holidays.get(today)))
-            exit(0)
+            msg = "Stopping gracefully now because today ({}) is a holiday in {}: {}".format(today, 
+                                                                                             schedule_holidays_country, 
+                                                                                             country_holidays.get(today))
+            print(msg)
+            return {'result': msg}
         else:
             print("Today ({}) is no holiday - proceeding...".format(today))
 
