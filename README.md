@@ -94,7 +94,7 @@ module "start_ec2_instance" {
 | cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | bool | `"false"` | no |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
 | schedule_disable_holidays | Define if the schedule is supposed to be disabled on certain holiday | bool | `"false"` | no |
-| schedule_holidays_country | Define country ISO code for holiday validation | string | `""` | no |
+| schedule_holidays_country | Define country ISO code for holiday validation, see [available countries](https://python-holidays.readthedocs.io/en/latest/index.html#available-countries) (currently no sub-divisions supported) | string | `""` | no |
 | scheduler_tag | Set the tag to use for identify aws resources to stop or start | map | {"key" = "tostop", "value" = "true"} | yes |
 
 ## Outputs
