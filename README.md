@@ -52,6 +52,7 @@ module "start_ec2_instance" {
   documendb_schedule             = "false"
   ec2_schedule                   = "true"
   ecs_schedule                   = "false"
+  ecs_task_desired_count         = 1
   rds_schedule                   = "false"
   redshift_schedule              = "false"
   cloudwatch_alarm_schedule      = "false"
@@ -85,6 +86,7 @@ module "start_ec2_instance" {
 | documendb_schedule | Enable scheduling on documentdb resources | bool | `"false"` | no |
 | ec2_schedule | Enable scheduling on ec2 instance resources | bool | `"false"` | no |
 | ecs_schedule | Enable scheduling on ecs services resources | bool | `"false"` | no |
+| ecs_task_desired_count | Number of desired ecs tasks to be launched | number | 1 | no |
 | rds_schedule | Enable scheduling on rds resources | bool | `"false"` | no |
 | redshift_schedule | Enable scheduling on redshift resources | bool | `"false"` | no |
 | cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | bool | `"false"` | no |
