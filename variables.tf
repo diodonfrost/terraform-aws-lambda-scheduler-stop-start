@@ -10,7 +10,7 @@ variable "cloudwatch_schedule_expression" {
 }
 
 variable "schedule_disable_holidays" {
-  description = "Define if the schedule is supposed to be disabled on certain holiday"
+  description = "Define if the schedule is supposed to be disabled on certain holidays"
   type        = bool
   default     = false
 }
