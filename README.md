@@ -28,8 +28,10 @@ If you are using Terraform 0.11 you can use versions v1.*.
 module "stop_ec2_instance" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
   name                           = "ec2_stop"
-  cloudwatch_schedule_expression = "cron(0 0 ? * FRI *)"
+  cloudwatch_schedule_expression = "cron(0 0 ? * FRI *)" 
   schedule_action                = "stop"
+  schedule_disable_holidays      = "true"
+  schedule_holidays_country      = "DE"   
   autoscaling_schedule           = "false"
   documendb_schedule             = "false"
   ec2_schedule                   = "true"
@@ -48,6 +50,8 @@ module "start_ec2_instance" {
   name                           = "ec2_start"
   cloudwatch_schedule_expression = "cron(0 8 ? * MON *)"
   schedule_action                = "start"
+  schedule_disable_holidays      = "true"
+  schedule_holidays_country      = "DE"  
   autoscaling_schedule           = "false"
   documendb_schedule             = "false"
   ec2_schedule                   = "true"
@@ -89,6 +93,8 @@ module "start_ec2_instance" {
 | redshift_schedule | Enable scheduling on redshift resources | bool | `"false"` | no |
 | cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | bool | `"false"` | no |
 | schedule_action | Define schedule action to apply on resources | string | `"stop"` | yes |
+| schedule_disable_holidays | Define if the schedule is supposed to be disabled on certain holiday | bool | `"false"` | no |
+| schedule_holidays_country | Define country ISO code for holiday validation, see [available countries](https://python-holidays.readthedocs.io/en/latest/index.html#available-countries) (currently no sub-divisions supported) | string | `""` | no |
 | scheduler_tag | Set the tag to use for identify aws resources to stop or start | map | {"key" = "tostop", "value" = "true"} | yes |
 
 ## Outputs

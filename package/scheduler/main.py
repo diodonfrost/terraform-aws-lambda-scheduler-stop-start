@@ -1,5 +1,7 @@
 """This script stop and start aws resources."""
 import os
+import holidays
+from datetime import datetime
 
 from .autoscaling_handler import AutoscalingScheduler
 from .cloudwatch_handler import CloudWatchAlarmScheduler
@@ -32,6 +34,22 @@ def lambda_handler(event, context):
     autoscaling_terminate_instances = strtobool(
         os.getenv("AUTOSCALING_TERMINATE_INSTANCES")
     )
+
+    # Optionally quit here on holidays
+    schedule_disable_holidays = strtobool(os.getenv("SCHEDULE_DISABLE_HOLIDAYS"))
+    schedule_holidays_country = os.getenv("SCHEDULE_HOLIDAYS_COUNTRY")
+    if schedule_disable_holidays and schedule_holidays_country != "":
+        now = datetime.now()
+        today = now.strftime("%Y-%m-%d")
+        country_holidays = holidays.country_holidays(country=schedule_holidays_country, years=int(now.strftime("%Y")))
+        if today in country_holidays:
+            msg = "Stopping gracefully now because today ({}) is a holiday in {}: {}".format(today, 
+                                                                                             schedule_holidays_country, 
+                                                                                             country_holidays.get(today))
+            print(msg)
+            return {'result': msg}
+        else:
+            print("Today ({}) is no holiday - proceeding...".format(today))
 
     _strategy = {
         AutoscalingScheduler: os.getenv("AUTOSCALING_SCHEDULE"),
