@@ -1,0 +1,10 @@
+name: Call a reusable workflow
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  call-workflow:
+    uses: wearetechnative/reusable_workflow_terraform/.github/workflows/main.yml@main
+    secrets: inherit

@@ -1,13 +1,6 @@
----
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "v0.16.0"
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-added-large-files
-      - id: check-case-conflict
-      - id: check-merge-conflict
-      - id: fix-encoding-pragma
-      - id: check-builtin-literals
-      - id: check-ast
+      - id: terraform-docs-go
+        args: ["markdown", "table", "-c", ".tfdocs-config.yml", "--output-file",  "README.md", "."]
