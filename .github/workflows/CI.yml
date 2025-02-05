@@ -43,8 +43,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - toxenv: py37
-            python-version: 3.7
           - toxenv: py38
             python-version: 3.8
           - toxenv: py39
