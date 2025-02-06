@@ -53,9 +53,9 @@ class InstanceScheduler:
                 ec2_exception("instance", instance_id, exc)
 
     def hibernate(self, aws_tags: List[Dict]) -> None:
-        """Aws ec2 instance stop function.
+        """Aws ec2 instance hibernate function.
 
-        Stop ec2 instances with defined tags and disable its Cloudwatch
+        Hibernate ec2 instances with defined tags and disable its Cloudwatch
         alarms.
 
         :param list[map] aws_tags:
@@ -77,7 +77,7 @@ class InstanceScheduler:
                     InstanceIds=[instance_id]
                 )["AutoScalingInstances"]:
                     self.ec2.stop_instances(InstanceIds=[instance_id],Hibernate=True)
-                    print(f"Stop instances {instance_id}")
+                    print(f"Hibernate instances {instance_id}")
             except ClientError as exc:
                 ec2_exception("instance", instance_id, exc)
 

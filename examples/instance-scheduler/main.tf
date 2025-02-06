@@ -37,11 +37,27 @@ resource "aws_instance" "not_scheduled" {
 
 ### Terraform modules ###
 
-module "ec2-stop-friday" {
+# module "ec2-stop-friday" {
+#   source                         = "../../"
+#   name                           = "stop-ec2"
+#   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
+#   schedule_action                = "stop"
+#   ec2_schedule                   = "true"
+#   rds_schedule                   = "false"
+#   autoscaling_schedule           = "false"
+#   cloudwatch_alarm_schedule      = "true"
+
+#   scheduler_tag = {
+#     key   = "tostop"
+#     value = "true"
+#   }
+# }
+
+module "ec2-hibernate-friday" {
   source                         = "../../"
   name                           = "stop-ec2"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
-  schedule_action                = "stop"
+  schedule_action                = "hibernate"
   ec2_schedule                   = "true"
   rds_schedule                   = "false"
   autoscaling_schedule           = "false"
