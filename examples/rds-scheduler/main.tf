@@ -41,12 +41,12 @@ resource "aws_rds_cluster" "aurora_scheduled" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_scheduled" {
-  identifier           = "test-to-stop-${random_pet.suffix.id}"
+  identifier           = "test-to-stop-instance-${random_pet.suffix.id}"
   engine               = aws_rds_cluster.aurora_scheduled.engine
   engine_version       = aws_rds_cluster.aurora_scheduled.engine_version
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   cluster_identifier   = aws_rds_cluster.aurora_scheduled.id
-  instance_class       = "db.t3.small"
+  instance_class       = "db.t3.medium"
 
   tags = {
     tostop        = "true"
@@ -62,8 +62,8 @@ resource "aws_db_instance" "mariadb_scheduled" {
   allocated_storage    = 10
   storage_type         = "gp2"
   engine               = "mariadb"
-  engine_version       = "10.3"
-  instance_class       = "db.t2.micro"
+  engine_version       = "11.4.4"
+  instance_class       = "db.t4g.micro"
   username             = "foo"
   password             = "foobarbaz"
   skip_final_snapshot  = "true"
@@ -83,7 +83,7 @@ resource "aws_db_instance" "mysql_not_scheduled" {
   storage_type         = "gp2"
   engine               = "mysql"
   engine_version       = "8.0"
-  instance_class       = "db.t2.micro"
+  instance_class       = "db.t4g.micro"
   username             = "foo"
   password             = "foobarbaz"
   skip_final_snapshot  = "true"

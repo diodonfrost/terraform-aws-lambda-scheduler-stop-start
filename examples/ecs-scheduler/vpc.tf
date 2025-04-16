@@ -64,7 +64,7 @@ resource "aws_internet_gateway" "igw" {
 
 # NAT Gateways
 resource "aws_eip" "nat_gw_eip" {
-  vpc = true
+  domain = "vpc"
   tags = {
     terratest_tag = var.random_tag
   }
