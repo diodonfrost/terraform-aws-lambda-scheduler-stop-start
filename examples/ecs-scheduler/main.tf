@@ -1,4 +1,5 @@
 # Terraform ecs with lambda scheduler
+resource "random_pet" "suffix" {}
 
 # Get aws availability zones
 data "aws_availability_zones" "available" {}
@@ -7,7 +8,7 @@ data "aws_availability_zones" "available" {}
 
 module "ecs-stop-friday" {
   source                         = "../../"
-  name                           = "stop-ecs"
+  name                           = "stop-ecs-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
   ec2_schedule                   = "false"
@@ -24,7 +25,7 @@ module "ecs-stop-friday" {
 
 module "ecs-start-monday" {
   source                         = "../../"
-  name                           = "start-ecs"
+  name                           = "start-ecs-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   ec2_schedule                   = "false"

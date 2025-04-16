@@ -1,4 +1,5 @@
 # Terraform autoscaling group with lambda scheduler
+resource "random_pet" "suffix" {}
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -34,7 +35,7 @@ resource "aws_launch_template" "this" {
 # Create autoscaling group with tag
 resource "aws_autoscaling_group" "scheduled" {
   count                     = 3
-  name                      = "bar-with-tag-${count.index}"
+  name                      = "test-to-stop-${random_pet.suffix.id}-${count.index}"
   max_size                  = 5
   min_size                  = 1
   health_check_grace_period = 300
@@ -70,7 +71,7 @@ resource "aws_autoscaling_group" "scheduled" {
 # Create autoscaling group without tag
 resource "aws_autoscaling_group" "not_scheduled" {
   count                     = 2
-  name                      = "foo-without-tag-${count.index}"
+  name                      = "test-not-to-stop-${random_pet.suffix.id}-${count.index}"
   max_size                  = 5
   min_size                  = 1
   health_check_grace_period = 300
@@ -108,7 +109,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
 
 module "autoscaling-stop-friday" {
   source                          = "../../"
-  name                            = "stop-autoscaling"
+  name                            = "stop-autoscaling-${random_pet.suffix.id}"
   cloudwatch_schedule_expression  = "cron(0 23 ? * FRI *)"
   schedule_action                 = "stop"
   ec2_schedule                    = "false"
@@ -125,7 +126,7 @@ module "autoscaling-stop-friday" {
 
 module "autoscaling-start-monday" {
   source                         = "../../"
-  name                           = "start-autoscaling"
+  name                           = "start-autoscaling-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   ec2_schedule                   = "false"

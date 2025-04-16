@@ -1,4 +1,5 @@
 # Terraform rds with lambda scheduler
+resource "random_pet" "suffix" {}
 
 # Get aws availability zones
 data "aws_availability_zones" "available" {}
@@ -25,7 +26,7 @@ resource "aws_db_subnet_group" "aurora" {
 }
 
 resource "aws_rds_cluster" "aurora_scheduled" {
-  cluster_identifier   = "aurora-cluster-with-tag"
+  cluster_identifier   = "test-to-stop-${random_pet.suffix.id}"
   engine               = "aurora-mysql"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   database_name        = "aurorawithtag"
@@ -40,7 +41,7 @@ resource "aws_rds_cluster" "aurora_scheduled" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_scheduled" {
-  identifier           = "aurora-cluster-with-tag-writer"
+  identifier           = "test-to-stop-${random_pet.suffix.id}"
   engine               = aws_rds_cluster.aurora_scheduled.engine
   engine_version       = aws_rds_cluster.aurora_scheduled.engine_version
   db_subnet_group_name = aws_db_subnet_group.aurora.id
@@ -55,7 +56,7 @@ resource "aws_rds_cluster_instance" "aurora_scheduled" {
 
 # Create rds mariadb instance with tag
 resource "aws_db_instance" "mariadb_scheduled" {
-  identifier           = "mariadb-instance-with-tag"
+  identifier           = "test-to-stop-${random_pet.suffix.id}"
   db_name              = "mariadbwithtag"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   allocated_storage    = 10
@@ -75,7 +76,7 @@ resource "aws_db_instance" "mariadb_scheduled" {
 
 # Create rds mysql instance with tag
 resource "aws_db_instance" "mysql_not_scheduled" {
-  identifier           = "mysql-instance-without-tag"
+  identifier           = "test-not-to-stop-${random_pet.suffix.id}"
   db_name              = "mysqlwithouttag"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   allocated_storage    = 10
@@ -98,7 +99,7 @@ resource "aws_db_instance" "mysql_not_scheduled" {
 
 module "rds-stop-friday" {
   source                         = "../../"
-  name                           = "stop-rds"
+  name                           = "stop-rds-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
   ec2_schedule                   = "false"
@@ -114,7 +115,7 @@ module "rds-stop-friday" {
 
 module "rds-start-monday" {
   source                         = "../../"
-  name                           = "start-rds"
+  name                           = "start-rds-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   ec2_schedule                   = "false"

@@ -1,4 +1,5 @@
 # Deploy two lambda for testing with awspec
+resource "random_pet" "suffix" {}
 
 resource "aws_kms_key" "scheduler" {
   description             = "test kms option on scheduler module"
@@ -6,7 +7,7 @@ resource "aws_kms_key" "scheduler" {
 }
 
 resource "aws_docdb_cluster" "scheduled" {
-  cluster_identifier  = "docdb-cluster-scheduled"
+  cluster_identifier  = "test-to-stop-${random_pet.suffix.id}"
   engine              = "docdb"
   master_username     = "foo"
   master_password     = "mustbeeightchars"
@@ -18,7 +19,7 @@ resource "aws_docdb_cluster" "scheduled" {
 }
 
 resource "aws_docdb_cluster_instance" "scheduled" {
-  identifier         = "docdb-instance-scheduled"
+  identifier         = "test-to-stop-${random_pet.suffix.id}"
   cluster_identifier = aws_docdb_cluster.scheduled.id
   instance_class     = "db.r5.large"
   tags = {
@@ -28,7 +29,7 @@ resource "aws_docdb_cluster_instance" "scheduled" {
 }
 
 resource "aws_docdb_cluster" "not_scheduled" {
-  cluster_identifier  = "docdb-cluster-not-scheduled"
+  cluster_identifier  = "test-not-to-stop-${random_pet.suffix.id}"
   engine              = "docdb"
   master_username     = "foo"
   master_password     = "mustbeeightchars"
@@ -40,7 +41,7 @@ resource "aws_docdb_cluster" "not_scheduled" {
 }
 
 resource "aws_docdb_cluster_instance" "not_scheduled" {
-  identifier         = "docdb-instance-not-scheduled"
+  identifier         = "test-not-to-stop-${random_pet.suffix.id}"
   cluster_identifier = aws_docdb_cluster.not_scheduled.id
   instance_class     = "db.r5.large"
   tags = {
@@ -52,7 +53,7 @@ resource "aws_docdb_cluster_instance" "not_scheduled" {
 
 module "documentdb-stop-friday" {
   source                         = "../.."
-  name                           = "stop-documentdb"
+  name                           = "stop-documentdb-${random_pet.suffix.id}"
   kms_key_arn                    = aws_kms_key.scheduler.arn
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
@@ -66,7 +67,7 @@ module "documentdb-stop-friday" {
 
 module "documentdb-start-monday" {
   source                         = "../.."
-  name                           = "start-documentdb"
+  name                           = "start-documentdb-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   documentdb_schedule            = "true"

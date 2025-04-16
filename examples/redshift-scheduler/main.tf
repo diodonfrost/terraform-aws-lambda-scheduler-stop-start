@@ -1,4 +1,5 @@
 # Deploy two lambda for testing with awspec
+resource "random_pet" "suffix" {}
 
 resource "aws_kms_key" "scheduler" {
   description             = "test kms option on scheduler module"
@@ -6,7 +7,7 @@ resource "aws_kms_key" "scheduler" {
 }
 
 resource "aws_redshift_cluster" "scheduled" {
-  cluster_identifier  = "tf-redshift-cluster-scheduled"
+  cluster_identifier  = "test-to-stop-${random_pet.suffix.id}"
   database_name       = "mydb"
   master_username     = "exampleuser"
   master_password     = "Mustbe8characters"
@@ -22,11 +23,11 @@ resource "aws_redshift_cluster" "scheduled" {
 
 resource "aws_redshift_cluster_snapshot" "scheduled" {
   cluster_identifier  = aws_redshift_cluster.scheduled.id
-  snapshot_identifier = "snapshot-cluster-scheduled"
+  snapshot_identifier = "test-to-stop-${random_pet.suffix.id}"
 }
 
 resource "aws_redshift_cluster" "not_scheduled" {
-  cluster_identifier  = "tf-redshift-cluster-not-scheduled"
+  cluster_identifier  = "test-not-to-stop-${random_pet.suffix.id}"
   database_name       = "mydb"
   master_username     = "exampleuser"
   master_password     = "Mustbe8characters"
@@ -42,13 +43,13 @@ resource "aws_redshift_cluster" "not_scheduled" {
 
 resource "aws_redshift_cluster_snapshot" "not_scheduled" {
   cluster_identifier  = aws_redshift_cluster.not_scheduled.id
-  snapshot_identifier = "snapshot-cluster-not-scheduled"
+  snapshot_identifier = "test-not-to-stop-${random_pet.suffix.id}"
 }
 
 
 module "redshift-stop-friday" {
   source                         = "../.."
-  name                           = "stop-redshift"
+  name                           = "stop-redshift-${random_pet.suffix.id}"
   kms_key_arn                    = aws_kms_key.scheduler.arn
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
@@ -62,7 +63,7 @@ module "redshift-stop-friday" {
 
 module "redshift-start-monday" {
   source                         = "../.."
-  name                           = "start-redshift"
+  name                           = "start-redshift-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   redshift_schedule              = "true"

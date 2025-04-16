@@ -1,4 +1,6 @@
 # Terraform ec2 instance with lambda scheduler
+resource "random_pet" "suffix" {}
+
 data "aws_region" "current" {}
 
 data "aws_ami" "ubuntu" {
@@ -21,6 +23,7 @@ resource "aws_instance" "scheduled" {
   tags = {
     tostop        = "true"
     terratest_tag = var.random_tag
+    Name          = "ec2-to-scheduled-${random_pet.suffix.id}-${count.index}"
   }
 }
 
@@ -31,6 +34,7 @@ resource "aws_instance" "not_scheduled" {
   tags = {
     tostop        = "false"
     terratest_tag = var.random_tag
+    Name          = "ec2-not-to-scheduled-${random_pet.suffix.id}-${count.index}"
   }
 }
 
@@ -39,7 +43,7 @@ resource "aws_instance" "not_scheduled" {
 
 module "ec2-stop-friday" {
   source                         = "../../"
-  name                           = "stop-ec2"
+  name                           = "stop-ec2-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
   schedule_action                = "stop"
   ec2_schedule                   = "true"
@@ -55,7 +59,7 @@ module "ec2-stop-friday" {
 
 module "ec2-start-monday" {
   source                         = "../../"
-  name                           = "start-ec2"
+  name                           = "start-ec2-${random_pet.suffix.id}"
   cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
   schedule_action                = "start"
   ec2_schedule                   = "true"
