@@ -142,19 +142,14 @@ python3 -m pytest -n 30 --cov=package tests/integration/
 
 ### End-to-end tests
 
-This module has been packaged with [Terratest](https://github.com/gruntwork-io/terratest) to tests this Terraform module.
-
-Install Terratest with depedencies:
-
 ```shell
-# Prerequisite: install Go
-cd tests/end-to-end/ && go get ./...
+# Test basic terraform deployment
+cd examples/instance-scheduler
+terraform test -verbose
 
-# Test instance scheduler
-go test -timeout 30m -v instance_scheduler_test.go aws_invoke_lambda.go
-
-# Test autoscaling scheduler
-go test -timeout 30m -v autoscaling_scheduler_test.go aws_invoke_lambda.go
+# Test rds scheduler
+cd examples/rds-scheduler
+terraform test -verbose
 ```
 
 ## Authors
@@ -172,4 +167,3 @@ Apache 2 Licensed. See LICENSE for full details.
 *   [Python boto3 ecs](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html)
 *   [Python boto3 rds](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html)
 *   [Python boto3 autoscaling](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/autoscaling.html)
-*   [Terratest](https://github.com/gruntwork-io/terratest)

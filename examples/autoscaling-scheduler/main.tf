@@ -54,11 +54,6 @@ resource "aws_autoscaling_group" "scheduled" {
     value               = "true"
     propagate_at_launch = true
   }
-  tag {
-    key                 = "terratest_tag"
-    value               = var.random_tag
-    propagate_at_launch = true
-  }
 }
 
 # Create autoscaling group without tag
@@ -81,11 +76,6 @@ resource "aws_autoscaling_group" "not_scheduled" {
   tag {
     key                 = "tostop"
     value               = "false"
-    propagate_at_launch = true
-  }
-  tag {
-    key                 = "terratest_tag"
-    value               = var.random_tag
     propagate_at_launch = true
   }
 }

@@ -13,8 +13,7 @@ resource "aws_docdb_cluster" "scheduled" {
   master_password     = "mustbeeightchars"
   skip_final_snapshot = true
   tags = {
-    tostop        = "true"
-    terratest_tag = var.random_tag
+    tostop = "true"
   }
 }
 
@@ -23,8 +22,7 @@ resource "aws_docdb_cluster_instance" "scheduled" {
   cluster_identifier = aws_docdb_cluster.scheduled.id
   instance_class     = "db.r5.large"
   tags = {
-    tostop        = "true"
-    terratest_tag = var.random_tag
+    tostop = "true"
   }
 }
 
@@ -35,8 +33,7 @@ resource "aws_docdb_cluster" "not_scheduled" {
   master_password     = "mustbeeightchars"
   skip_final_snapshot = true
   tags = {
-    tostop        = "false"
-    terratest_tag = var.random_tag
+    tostop = "false"
   }
 }
 
@@ -45,8 +42,7 @@ resource "aws_docdb_cluster_instance" "not_scheduled" {
   cluster_identifier = aws_docdb_cluster.not_scheduled.id
   instance_class     = "db.r5.large"
   tags = {
-    tostop        = "false"
-    terratest_tag = var.random_tag
+    tostop = "false"
   }
 }
 

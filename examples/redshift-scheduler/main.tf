@@ -16,8 +16,7 @@ resource "aws_redshift_cluster" "scheduled" {
   skip_final_snapshot = true
 
   tags = {
-    tostop        = "true"
-    terratest_tag = var.random_tag
+    tostop = "true"
   }
 }
 
@@ -36,8 +35,7 @@ resource "aws_redshift_cluster" "not_scheduled" {
   skip_final_snapshot = true
 
   tags = {
-    tostop        = "false"
-    terratest_tag = var.random_tag
+    tostop = "false"
   }
 }
 

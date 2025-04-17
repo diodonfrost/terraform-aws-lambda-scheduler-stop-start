@@ -21,9 +21,8 @@ resource "aws_instance" "scheduled" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   tags = {
-    tostop        = "true"
-    terratest_tag = var.random_tag
-    Name          = "ec2-to-scheduled-${random_pet.suffix.id}-${count.index}"
+    tostop = "true"
+    Name   = "ec2-to-scheduled-${random_pet.suffix.id}-${count.index}"
   }
 }
 
@@ -32,9 +31,8 @@ resource "aws_instance" "not_scheduled" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   tags = {
-    tostop        = "false"
-    terratest_tag = var.random_tag
-    Name          = "ec2-not-to-scheduled-${random_pet.suffix.id}-${count.index}"
+    tostop = "false"
+    Name   = "ec2-not-to-scheduled-${random_pet.suffix.id}-${count.index}"
   }
 }
 
