@@ -114,3 +114,11 @@ module "autoscaling-start-monday" {
     value = "true"
   }
 }
+
+module "test-execution" {
+  source = "./test-execution"
+
+  lambda_stop_name       = module.autoscaling-stop-friday.scheduler_lambda_name
+  asg_scheduled_name     = aws_autoscaling_group.scheduled[0].name
+  asg_not_scheduled_name = aws_autoscaling_group.not_scheduled[0].name
+}
