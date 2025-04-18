@@ -70,3 +70,14 @@ module "ec2-start-monday" {
     value = "true"
   }
 }
+
+module "test-execution" {
+  source = "./test-execution"
+
+  lambda_stop_name               = module.ec2-stop-friday.scheduler_lambda_name
+  instance_1_to_scheduled_id     = aws_instance.scheduled[0].id
+  instance_2_to_scheduled_id     = aws_instance.scheduled[1].id
+  instance_3_to_scheduled_id     = aws_instance.scheduled[2].id
+  instance_1_not_to_scheduled_id = aws_instance.not_scheduled[0].id
+  instance_2_not_to_scheduled_id = aws_instance.not_scheduled[1].id
+}
