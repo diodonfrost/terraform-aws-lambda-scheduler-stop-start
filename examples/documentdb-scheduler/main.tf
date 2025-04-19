@@ -1,6 +1,12 @@
 # Deploy two lambda for testing with awspec
 resource "random_pet" "suffix" {}
 
+variable "cleanup_mode" {
+  description = "Whether to run in cleanup mode"
+  type        = bool
+  default     = false
+}
+
 resource "aws_kms_key" "scheduler" {
   description             = "test kms option on scheduler module"
   deletion_window_in_days = 7
@@ -72,4 +78,18 @@ module "documentdb-start-monday" {
     key   = "tostop"
     value = "true"
   }
+}
+
+module "test-execution" {
+  count  = var.test_mode ? 1 : 0
+  source = "./test-execution"
+
+  lambda_stop_name                 = module.documentdb-stop-friday.scheduler_lambda_name
+  docdb_cluster_to_scheduled_name  = aws_docdb_cluster.scheduled.cluster_identifier
+  docdb_cluster_not_scheduled_name = aws_docdb_cluster.not_scheduled.cluster_identifier
+
+  depends_on = [
+    aws_docdb_cluster_instance.scheduled,
+    aws_docdb_cluster_instance.not_scheduled
+  ]
 }
