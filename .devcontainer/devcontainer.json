@@ -11,10 +11,7 @@
         "redhat.vscode-yaml",
         "vscode-icons-team.vscode-icons",
         "isudox.vscode-jetbrains-keybindings",
-        "GitHub.vscode-github-actions",
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "GitHub.copilot-labs"
+        "GitHub.vscode-github-actions"
       ],
       "settings": {
         // Fonts MesLGS NF should be install: https://github.com/romkatv/powerlevel10k-media/blob/master/MesloLGS%20NF%20Regular.ttf
