@@ -19,7 +19,8 @@
         "redhat.telemetry.enabled": false,
         "aws.telemetry": false,
         "workbench.iconTheme": "vscode-icons",
-        "vsicons.dontShowNewVersionMessage": true
+        "vsicons.dontShowNewVersionMessage": true,
+        "editor.rulers": [88,120]
       }
     }
   },
@@ -29,8 +30,7 @@
       "installTFsec": true,
       "installTerraformDocs": true
     },
-    "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers/features/go:1": {}
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
   },
   "postStartCommand": "pip install -r requirements.txt",
   "remoteEnv": { "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin" },
