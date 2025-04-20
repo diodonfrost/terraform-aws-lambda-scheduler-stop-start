@@ -21,12 +21,12 @@ resource "aws_subnet" "secondary" {
 }
 
 resource "aws_db_subnet_group" "aurora" {
-  name       = "aurora-subnet"
+  name       = "aurora-subnet-${random_pet.suffix.id}"
   subnet_ids = [aws_subnet.primary.id, aws_subnet.secondary.id]
 }
 
 resource "aws_rds_cluster" "aurora_scheduled" {
-  cluster_identifier   = "test-to-stop-${random_pet.suffix.id}"
+  cluster_identifier   = "test-to-stop-aurora-cluster-${random_pet.suffix.id}"
   engine               = "aurora-mysql"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   database_name        = "aurorawithtag"
@@ -40,7 +40,7 @@ resource "aws_rds_cluster" "aurora_scheduled" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_scheduled" {
-  identifier           = "test-to-stop-instance-${random_pet.suffix.id}"
+  identifier           = "test-to-stop-aurora-instance-${random_pet.suffix.id}"
   engine               = aws_rds_cluster.aurora_scheduled.engine
   engine_version       = aws_rds_cluster.aurora_scheduled.engine_version
   db_subnet_group_name = aws_db_subnet_group.aurora.id
@@ -52,9 +52,8 @@ resource "aws_rds_cluster_instance" "aurora_scheduled" {
   }
 }
 
-# Create rds mariadb instance with tag
 resource "aws_db_instance" "mariadb_scheduled" {
-  identifier           = "test-to-stop-${random_pet.suffix.id}"
+  identifier           = "test-to-stop-mariadb-instance-${random_pet.suffix.id}"
   db_name              = "mariadbwithtag"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   allocated_storage    = 10
@@ -71,9 +70,8 @@ resource "aws_db_instance" "mariadb_scheduled" {
   }
 }
 
-# Create rds mysql instance with tag
 resource "aws_db_instance" "mysql_not_scheduled" {
-  identifier           = "test-not-to-stop-${random_pet.suffix.id}"
+  identifier           = "test-not-to-stop-mysql-instance-${random_pet.suffix.id}"
   db_name              = "mysqlwithouttag"
   db_subnet_group_name = aws_db_subnet_group.aurora.id
   allocated_storage    = 10
@@ -123,4 +121,18 @@ module "rds-start-monday" {
     key   = "tostop"
     value = "true"
   }
+}
+
+module "test-execution" {
+  count  = var.test_mode ? 1 : 0
+  source = "./test-execution"
+
+  lambda_stop_name                         = module.rds-stop-friday.scheduler_lambda_name
+  rds_aurora_cluster_to_scheduled_name     = aws_rds_cluster.aurora_scheduled.cluster_identifier
+  rds_mariadb_instance_to_scheduled_name   = aws_db_instance.mariadb_scheduled.identifier
+  rds_mysql_instance_to_not_scheduled_name = aws_db_instance.mysql_not_scheduled.identifier
+
+  depends_on = [
+    aws_rds_cluster_instance.aurora_scheduled
+  ]
 }
