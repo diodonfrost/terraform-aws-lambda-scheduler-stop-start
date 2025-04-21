@@ -4,7 +4,7 @@
 # trigger lambda functuon every night at 22h00 from Monday to Friday
 # cf doc : https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
 variable "cloudwatch_schedule_expression" {
-  description = "Define the aws cloudwatch event rule schedule expression"
+  description = "Define the aws cloudwatch event rule schedule expression ('none' for no schedule)"
   type        = string
   default     = "cron(0 22 ? * MON-FRI *)"
 }
@@ -113,4 +113,16 @@ variable "tags" {
   description = "Custom tags on aws resources"
   type        = map(any)
   default     = null
+}
+
+variable "http_trigger" {
+  description = "Create an http endpoint to trigger the lambda"
+  type        = bool
+  default     = false
+}
+
+variable "http_trigger_authorization_type" {
+  description = "Authorization type for the http endpoint to trigger the lambda"
+  type        = string
+  default     = "NONE"
 }
