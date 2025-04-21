@@ -9,7 +9,7 @@ resource "aws_cloudwatch_metric_alarm" "service_count" {
   threshold           = "2"
   alarm_description   = "Less than 2 Running Service on cluster"
   dimensions = {
-    ClusterName = aws_ecs_cluster.hello.id
+    ClusterName = aws_ecs_cluster.this.id
   }
 
   tags = {

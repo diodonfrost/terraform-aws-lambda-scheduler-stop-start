@@ -17,9 +17,11 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "scheduled" {
-  count         = "3"
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  count                  = "3"
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.instance.id]
   tags = {
     tostop = "true"
     Name   = "ec2-to-scheduled-${random_pet.suffix.id}-${count.index}"
@@ -27,9 +29,11 @@ resource "aws_instance" "scheduled" {
 }
 
 resource "aws_instance" "not_scheduled" {
-  count         = "2"
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  count                  = "2"
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.instance.id]
   tags = {
     tostop = "false"
     Name   = "ec2-not-to-scheduled-${random_pet.suffix.id}-${count.index}"

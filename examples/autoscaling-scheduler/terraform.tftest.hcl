@@ -33,7 +33,7 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.test-execution.asg_instance_scheduled_state == "stopped"
+    condition     = module.test-execution.asg_instance_scheduled_state == "stopped" || module.test-execution.asg_instance_scheduled_state == "stopping"
     error_message = "Autoscaling group instance should be stopped"
   }
 

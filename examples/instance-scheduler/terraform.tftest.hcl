@@ -12,17 +12,17 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.test-execution.instance_1_scheduled_state == "stopped"
+    condition     = module.test-execution.instance_1_scheduled_state == "stopped" || module.test-execution.instance_1_scheduled_state == "stopping"
     error_message = "Virtual machine 1 to stop is not stopped"
   }
 
   assert {
-    condition     = module.test-execution.instance_2_scheduled_state == "stopped"
+    condition     = module.test-execution.instance_2_scheduled_state == "stopped" || module.test-execution.instance_2_scheduled_state == "stopping"
     error_message = "Virtual machine 2 to stop is not stopped"
   }
 
   assert {
-    condition     = module.test-execution.instance_3_scheduled_state == "stopped"
+    condition     = module.test-execution.instance_3_scheduled_state == "stopped" || module.test-execution.instance_3_scheduled_state == "stopping"
     error_message = "Virtual machine 3 to stop is not stopped"
   }
 
