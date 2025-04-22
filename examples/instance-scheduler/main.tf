@@ -23,7 +23,7 @@ resource "aws_instance" "scheduled" {
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.instance.id]
   tags = {
-    tostop = "true"
+    tostop = "true-${random_pet.suffix.id}"
     Name   = "ec2-to-scheduled-${random_pet.suffix.id}-${count.index}"
   }
 }
@@ -55,7 +55,7 @@ module "ec2-stop-friday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -71,11 +71,12 @@ module "ec2-start-monday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
 module "test-execution" {
+  count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
   lambda_stop_name               = module.ec2-stop-friday.scheduler_lambda_name

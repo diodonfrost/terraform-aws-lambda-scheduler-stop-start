@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "scheduled" {
 
   tag {
     key                 = "tostop"
-    value               = "true"
+    value               = "true-${random_pet.suffix.id}"
     propagate_at_launch = true
   }
 }
@@ -86,7 +86,7 @@ module "autoscaling-stop-friday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -102,11 +102,12 @@ module "autoscaling-start-monday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
 module "test-execution" {
+  count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
   lambda_stop_name       = module.autoscaling-stop-friday.scheduler_lambda_name
