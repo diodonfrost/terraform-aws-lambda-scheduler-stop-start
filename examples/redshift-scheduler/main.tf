@@ -19,7 +19,7 @@ resource "aws_redshift_cluster" "scheduled" {
   vpc_security_group_ids    = [aws_security_group.redshift_sg.id]
 
   tags = {
-    tostop = "true"
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -61,7 +61,7 @@ module "redshift-stop-friday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -74,7 +74,7 @@ module "redshift-start-monday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 

@@ -18,7 +18,7 @@ module "aws-stop-friday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -33,6 +33,6 @@ module "aws-start-monday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }

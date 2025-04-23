@@ -19,7 +19,7 @@ resource "aws_docdb_cluster" "scheduled" {
   master_password     = "mustbeeightchars"
   skip_final_snapshot = true
   tags = {
-    tostop = "true"
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -28,7 +28,7 @@ resource "aws_docdb_cluster_instance" "scheduled" {
   cluster_identifier = aws_docdb_cluster.scheduled.id
   instance_class     = "db.r5.large"
   tags = {
-    tostop = "true"
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -63,7 +63,7 @@ module "documentdb-stop-friday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -76,7 +76,7 @@ module "documentdb-start-monday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 

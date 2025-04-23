@@ -11,7 +11,7 @@ resource "aws_rds_cluster" "aurora_scheduled" {
   skip_final_snapshot  = "true"
 
   tags = {
-    tostop = "true"
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -24,7 +24,7 @@ resource "aws_rds_cluster_instance" "aurora_scheduled" {
   instance_class       = "db.t3.medium"
 
   tags = {
-    tostop = "true"
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -42,7 +42,7 @@ resource "aws_db_instance" "mariadb_scheduled" {
   skip_final_snapshot  = "true"
 
   tags = {
-    tostop = "true"
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -79,7 +79,7 @@ module "rds-stop-friday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
@@ -95,7 +95,7 @@ module "rds-start-monday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
