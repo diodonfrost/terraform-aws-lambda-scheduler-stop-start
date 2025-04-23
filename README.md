@@ -167,33 +167,6 @@ In order to run tests that access your AWS account, you will need to configure y
 credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html). For example, you could
 set the credentials as the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
-### Integration tests
-
-Integration tests are realized with python `boto3` and `pytest` modules.
-
-Install Python dependency:
-
-```shell
-python3 -m pip install -r requirements-dev.txt
-```
-
-```shell
-# Test python code use by instance scheduler scheduler
-python3 -m pytest -n 4 --cov=package tests/integration/test_instance_scheduler.py
-
-# Test python code use by autoscaling scheduler
-python3 -m pytest -n 4 --cov=package tests/integration/test_asg_scheduler.py
-
-# Test python code use by rds scheduler
-python3 -m pytest -n 8 --cov=package tests/integration/test_rds_scheduler.py
-
-# Test pythn code use by cloudwatch alarm scheduler
-python3 -m pytest -n 12 --cov=package tests/integration/test_cloudwatch_alarm_scheduler.py
-
-# Test all python code
-python3 -m pytest -n 30 --cov=package tests/integration/
-```
-
 ### End-to-end tests
 
 ```shell
