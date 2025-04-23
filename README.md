@@ -139,7 +139,7 @@ No modules.
 | <a name="input_rds_schedule"></a> [rds\_schedule](#input\_rds\_schedule) | Enable scheduling on rds resources | `any` | `false` | no |
 | <a name="input_redshift_schedule"></a> [redshift\_schedule](#input\_redshift\_schedule) | Enable scheduling on redshift resources | `any` | `false` | no |
 | <a name="input_resources_tag"></a> [resources\_tag](#input\_resources\_tag) | DEPRECATED, use scheduler\_tag variable instead | `map(string)` | `null` | no |
-| <a name="input_runtime"></a> [runtime](#input\_runtime) | The runtime environment for the Lambda function that you are uploading. For example, python3.8 | `string` | `"python3.10"` | no |
+| <a name="input_runtime"></a> [runtime](#input\_runtime) | The runtime environment for the Lambda function that you are uploading | `string` | `"python3.13"` | no |
 | <a name="input_schedule_action"></a> [schedule\_action](#input\_schedule\_action) | Define schedule action to apply on resources, accepted value are 'stop or 'start | `string` | `"stop"` | no |
 | <a name="input_scheduler_tag"></a> [scheduler\_tag](#input\_scheduler\_tag) | Set the tag to use for identify aws resources to stop or start | `map(string)` | <pre>{<br/>  "key": "tostop",<br/>  "value": "true"<br/>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Custom tags on aws resources | `map(any)` | `null` | no |

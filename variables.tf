@@ -33,9 +33,9 @@ variable "aws_regions" {
 }
 
 variable "runtime" {
-  description = "The runtime environment for the Lambda function that you are uploading. For example, python3.8"
+  description = "The runtime environment for the Lambda function that you are uploading"
   type        = string
-  default     = "python3.10"
+  default     = "python3.13"
 }
 
 variable "schedule_action" {
