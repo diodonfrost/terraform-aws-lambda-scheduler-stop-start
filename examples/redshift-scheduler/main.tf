@@ -15,8 +15,7 @@ resource "aws_redshift_cluster" "scheduled" {
   cluster_type              = "single-node"
   publicly_accessible       = false
   skip_final_snapshot       = true
-  cluster_subnet_group_name = aws_redshift_subnet_group.redshift_subnet_group.name
-  vpc_security_group_ids    = [aws_security_group.redshift_sg.id]
+  cluster_subnet_group_name = aws_redshift_subnet_group.redshif.name
 
   tags = {
     tostop = "true-${random_pet.suffix.id}"
@@ -37,8 +36,7 @@ resource "aws_redshift_cluster" "not_scheduled" {
   cluster_type              = "single-node"
   publicly_accessible       = false
   skip_final_snapshot       = true
-  cluster_subnet_group_name = aws_redshift_subnet_group.redshift_subnet_group.name
-  vpc_security_group_ids    = [aws_security_group.redshift_sg.id]
+  cluster_subnet_group_name = aws_redshift_subnet_group.redshif.name
 
   tags = {
     tostop = "false"
