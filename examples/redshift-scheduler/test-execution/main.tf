@@ -1,5 +1,11 @@
-resource "time_sleep" "before_stop_wait_240_seconds" {
-  create_duration = "240s"
+resource "null_resource" "wait_redshift_cluster_available_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_redshift_status.py Available \
+        ${var.redshift_cluster_to_scheduled_name} \
+        ${var.redshift_cluster_not_scheduled_name}
+    EOT
+  }
 }
 
 resource "aws_lambda_invocation" "stop_redshift" {
@@ -10,13 +16,16 @@ resource "aws_lambda_invocation" "stop_redshift" {
     key2 = "value2"
   })
 
-  depends_on = [time_sleep.before_stop_wait_240_seconds]
+  depends_on = [null_resource.wait_redshift_cluster_available_state]
 }
 
-resource "time_sleep" "after_stop_wait_60_seconds" {
-  create_duration = "60s"
-
-  depends_on = [aws_lambda_invocation.stop_redshift]
+resource "null_resource" "wait_redshift_cluster_paused_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_redshift_status.py Paused \
+        ${var.redshift_cluster_to_scheduled_name} \
+    EOT
+  }
 }
 
 resource "null_resource" "redshift_cluster_to_scheduled" {
@@ -29,7 +38,7 @@ resource "null_resource" "redshift_cluster_to_scheduled" {
     EOT
   }
 
-  depends_on = [time_sleep.after_stop_wait_60_seconds]
+  depends_on = [null_resource.wait_redshift_cluster_paused_state]
 }
 
 data "local_file" "redshift_cluster_to_scheduled" {
@@ -48,7 +57,7 @@ resource "null_resource" "redshift_cluster_not_scheduled" {
     EOT
   }
 
-  depends_on = [time_sleep.after_stop_wait_60_seconds]
+  depends_on = [null_resource.wait_redshift_cluster_paused_state]
 }
 
 data "local_file" "redshift_cluster_not_scheduled" {

@@ -16,26 +16,12 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.test-execution[0].redshift_cluster_to_scheduled_state == "pausing\n"
+    condition     = module.test-execution[0].redshift_cluster_to_scheduled_state == "paused\n"
     error_message = "Invalid Redshift cluster state"
   }
 
   assert {
     condition     = module.test-execution[0].redshift_cluster_not_scheduled_state == "available\n"
     error_message = "Invalid Redshift cluster state"
-  }
-}
-
-# Add this cleanup step to restore the cluster to 'available' state before destruction
-run "cleanup_test_resources" {
-  command = apply
-
-  variables {
-    redshift_cluster_name = run.create_test_infrastructure.redshift_cluster_scheduled_identifier
-  }
-
-  # This will start the stopped cluster to ensure proper deletion
-  module {
-    source = "./test-cleanup"
   }
 }
