@@ -1,5 +1,20 @@
-resource "time_sleep" "before_stop_wait_60_seconds" {
-  create_duration = "60s"
+resource "null_resource" "wait_rds_instance_running_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_rds_instance.py available \
+        ${var.rds_mariadb_instance_to_scheduled_name} \
+        ${var.rds_mysql_instance_to_not_scheduled_name}
+    EOT
+  }
+}
+
+resource "null_resource" "wait_rds_cluster_running_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_rds_cluster.py available \
+        ${var.rds_aurora_cluster_to_scheduled_name}
+    EOT
+  }
 }
 
 resource "aws_lambda_invocation" "this" {
@@ -10,13 +25,32 @@ resource "aws_lambda_invocation" "this" {
     key2 = "value2"
   })
 
-  depends_on = [time_sleep.before_stop_wait_60_seconds]
+  depends_on = [
+    null_resource.wait_rds_instance_running_state,
+    null_resource.wait_rds_cluster_running_state,
+  ]
 }
 
-resource "time_sleep" "after_stop_wait_60_seconds" {
-  create_duration = "60s"
+resource "null_resource" "wait_rds_instance_stopped_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_rds_instance.py stopped \
+        ${var.rds_mariadb_instance_to_scheduled_name}
+    EOT
+  }
 
   depends_on = [aws_lambda_invocation.this]
+}
+
+resource "null_resource" "wait_rds_cluster_stopped_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_rds_cluster.py stopped \
+        ${var.rds_aurora_cluster_to_scheduled_name}
+    EOT
+  }
+
+  depends_on = [null_resource.wait_rds_instance_stopped_state]
 }
 
 resource "null_resource" "rds_aurora_cluster_to_scheduled" {
@@ -29,7 +63,7 @@ resource "null_resource" "rds_aurora_cluster_to_scheduled" {
     EOT
   }
 
-  depends_on = [time_sleep.after_stop_wait_60_seconds]
+  depends_on = [null_resource.wait_rds_cluster_stopped_state]
 }
 
 data "local_file" "rds_aurora_cluster_to_scheduled" {
@@ -48,7 +82,7 @@ resource "null_resource" "rds_mariadb_instance_to_scheduled" {
     EOT
   }
 
-  depends_on = [time_sleep.after_stop_wait_60_seconds]
+  depends_on = [null_resource.wait_rds_instance_stopped_state]
 }
 
 data "local_file" "rds_mariadb_instance_to_scheduled" {
@@ -67,7 +101,7 @@ resource "null_resource" "rds_mysql_instance_to_not_scheduled" {
     EOT
   }
 
-  depends_on = [time_sleep.after_stop_wait_60_seconds]
+  depends_on = [null_resource.wait_rds_instance_stopped_state]
 }
 
 data "local_file" "rds_mysql_instance_to_not_scheduled" {

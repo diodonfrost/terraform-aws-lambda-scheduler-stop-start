@@ -16,12 +16,12 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.test-execution[0].rds_aurora_cluster_to_scheduled == "stopping\n"
+    condition     = module.test-execution[0].rds_aurora_cluster_to_scheduled == "stopped\n"
     error_message = "Invalid RDS cluster instance state"
   }
 
   assert {
-    condition     = module.test-execution[0].rds_mariadb_instance_to_scheduled == "stopping\n"
+    condition     = module.test-execution[0].rds_mariadb_instance_to_scheduled == "stopped\n"
     error_message = "Invalid RDS instance state"
   }
 
