@@ -13,11 +13,12 @@ resource "aws_kms_key" "scheduler" {
 }
 
 resource "aws_docdb_cluster" "scheduled" {
-  cluster_identifier  = "test-to-stop-${random_pet.suffix.id}"
-  engine              = "docdb"
-  master_username     = "foo"
-  master_password     = "mustbeeightchars"
-  skip_final_snapshot = true
+  cluster_identifier   = "test-to-stop-${random_pet.suffix.id}"
+  engine               = "docdb"
+  master_username      = "foo"
+  master_password      = "mustbeeightchars"
+  skip_final_snapshot  = true
+  db_subnet_group_name = aws_docdb_subnet_group.documentdb.name
   tags = {
     tostop = "true-${random_pet.suffix.id}"
   }
@@ -33,11 +34,12 @@ resource "aws_docdb_cluster_instance" "scheduled" {
 }
 
 resource "aws_docdb_cluster" "not_scheduled" {
-  cluster_identifier  = "test-not-to-stop-${random_pet.suffix.id}"
-  engine              = "docdb"
-  master_username     = "foo"
-  master_password     = "mustbeeightchars"
-  skip_final_snapshot = true
+  cluster_identifier   = "test-not-to-stop-${random_pet.suffix.id}"
+  engine               = "docdb"
+  master_username      = "foo"
+  master_password      = "mustbeeightchars"
+  skip_final_snapshot  = true
+  db_subnet_group_name = aws_docdb_subnet_group.documentdb.name
   tags = {
     tostop = "false"
   }

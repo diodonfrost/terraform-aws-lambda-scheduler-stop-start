@@ -1,5 +1,11 @@
-resource "time_sleep" "before_stop_wait_30_seconds" {
-  create_duration = "30s"
+resource "null_resource" "wait_documentdb_cluster_available_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_documentdb_status.py available \
+        ${var.docdb_cluster_to_scheduled_name} \
+        ${var.docdb_cluster_not_scheduled_name}
+    EOT
+  }
 }
 
 resource "aws_lambda_invocation" "stop_documentdb" {
@@ -10,13 +16,16 @@ resource "aws_lambda_invocation" "stop_documentdb" {
     key2 = "value2"
   })
 
-  depends_on = [time_sleep.before_stop_wait_30_seconds]
+  depends_on = [null_resource.wait_documentdb_cluster_available_state]
 }
 
-resource "time_sleep" "after_stop_wait_60_seconds" {
-  create_duration = "60s"
-
-  depends_on = [aws_lambda_invocation.stop_documentdb]
+resource "null_resource" "wait_documentdb_cluster_stopped_state" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      python3 ${path.module}/wait_documentdb_status.py stopped \
+        ${var.docdb_cluster_to_scheduled_name} \
+    EOT
+  }
 }
 
 resource "null_resource" "docdb_cluster_to_scheduled" {
@@ -29,7 +38,7 @@ resource "null_resource" "docdb_cluster_to_scheduled" {
     EOT
   }
 
-  depends_on = [time_sleep.after_stop_wait_60_seconds]
+  depends_on = [null_resource.wait_documentdb_cluster_stopped_state]
 }
 
 data "local_file" "docdb_cluster_to_scheduled" {
@@ -48,7 +57,7 @@ resource "null_resource" "docdb_cluster_not_scheduled" {
     EOT
   }
 
-  depends_on = [time_sleep.after_stop_wait_60_seconds]
+  depends_on = [null_resource.wait_documentdb_cluster_stopped_state]
 }
 
 data "local_file" "docdb_cluster_not_scheduled" {
