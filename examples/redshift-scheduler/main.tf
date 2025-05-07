@@ -50,12 +50,12 @@ resource "aws_redshift_cluster_snapshot" "not_scheduled" {
 
 
 module "redshift-stop-friday" {
-  source                         = "../.."
-  name                           = "stop-redshift-${random_pet.suffix.id}"
-  kms_key_arn                    = aws_kms_key.scheduler.arn
-  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
-  schedule_action                = "stop"
-  redshift_schedule              = "true"
+  source              = "../.."
+  name                = "stop-redshift-${random_pet.suffix.id}"
+  kms_key_arn         = aws_kms_key.scheduler.arn
+  schedule_expression = "cron(0 23 ? * FRI *)"
+  schedule_action     = "stop"
+  redshift_schedule   = "true"
 
   scheduler_tag = {
     key   = "tostop"
@@ -64,11 +64,11 @@ module "redshift-stop-friday" {
 }
 
 module "redshift-start-monday" {
-  source                         = "../.."
-  name                           = "start-redshift-${random_pet.suffix.id}"
-  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
-  schedule_action                = "start"
-  redshift_schedule              = "true"
+  source              = "../.."
+  name                = "start-redshift-${random_pet.suffix.id}"
+  schedule_expression = "cron(0 07 ? * MON *)"
+  schedule_action     = "start"
+  redshift_schedule   = "true"
 
   scheduler_tag = {
     key   = "tostop"

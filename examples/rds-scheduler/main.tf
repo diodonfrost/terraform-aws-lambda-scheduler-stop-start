@@ -68,14 +68,14 @@ resource "aws_db_instance" "mysql_not_scheduled" {
 ### Terraform modules ###
 
 module "rds-stop-friday" {
-  source                         = "../../"
-  name                           = "stop-rds-${random_pet.suffix.id}"
-  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
-  schedule_action                = "stop"
-  ec2_schedule                   = "false"
-  rds_schedule                   = "true"
-  autoscaling_schedule           = "false"
-  cloudwatch_alarm_schedule      = "true"
+  source                    = "../../"
+  name                      = "stop-rds-${random_pet.suffix.id}"
+  schedule_expression       = "cron(0 23 ? * FRI *)"
+  schedule_action           = "stop"
+  ec2_schedule              = "false"
+  rds_schedule              = "true"
+  autoscaling_schedule      = "false"
+  cloudwatch_alarm_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"
@@ -84,14 +84,14 @@ module "rds-stop-friday" {
 }
 
 module "rds-start-monday" {
-  source                         = "../../"
-  name                           = "start-rds-${random_pet.suffix.id}"
-  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
-  schedule_action                = "start"
-  ec2_schedule                   = "false"
-  rds_schedule                   = "true"
-  autoscaling_schedule           = "false"
-  cloudwatch_alarm_schedule      = "true"
+  source                    = "../../"
+  name                      = "start-rds-${random_pet.suffix.id}"
+  schedule_expression       = "cron(0 07 ? * MON *)"
+  schedule_action           = "start"
+  ec2_schedule              = "false"
+  rds_schedule              = "true"
+  autoscaling_schedule      = "false"
+  cloudwatch_alarm_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"

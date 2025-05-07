@@ -7,14 +7,14 @@ resource "aws_kms_key" "scheduler" {
 }
 
 module "aws-stop-friday" {
-  source                         = "../.."
-  name                           = "stop-aws-${random_pet.suffix.id}"
-  kms_key_arn                    = aws_kms_key.scheduler.arn
-  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
-  schedule_action                = "stop"
-  autoscaling_schedule           = "true"
-  ec2_schedule                   = "true"
-  rds_schedule                   = "true"
+  source               = "../.."
+  name                 = "stop-aws-${random_pet.suffix.id}"
+  kms_key_arn          = aws_kms_key.scheduler.arn
+  schedule_expression  = "cron(0 23 ? * FRI *)"
+  schedule_action      = "stop"
+  autoscaling_schedule = "true"
+  ec2_schedule         = "true"
+  rds_schedule         = "true"
 
   scheduler_tag = {
     key   = "tostop"
@@ -23,13 +23,13 @@ module "aws-stop-friday" {
 }
 
 module "aws-start-monday" {
-  source                         = "../.."
-  name                           = "start-aws-${random_pet.suffix.id}"
-  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
-  schedule_action                = "start"
-  autoscaling_schedule           = "true"
-  ec2_schedule                   = "true"
-  rds_schedule                   = "true"
+  source               = "../.."
+  name                 = "start-aws-${random_pet.suffix.id}"
+  schedule_expression  = "cron(0 07 ? * MON *)"
+  schedule_action      = "start"
+  autoscaling_schedule = "true"
+  ec2_schedule         = "true"
+  rds_schedule         = "true"
 
   scheduler_tag = {
     key   = "tostop"

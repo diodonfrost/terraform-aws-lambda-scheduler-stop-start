@@ -91,7 +91,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
 module "autoscaling-stop-friday" {
   source                          = "../../"
   name                            = "stop-autoscaling-${random_pet.suffix.id}"
-  cloudwatch_schedule_expression  = "cron(0 23 ? * FRI *)"
+  schedule_expression             = "cron(0 23 ? * FRI *)"
   schedule_action                 = "stop"
   ec2_schedule                    = "false"
   rds_schedule                    = "false"
@@ -106,14 +106,14 @@ module "autoscaling-stop-friday" {
 }
 
 module "autoscaling-start-monday" {
-  source                         = "../../"
-  name                           = "start-autoscaling-${random_pet.suffix.id}"
-  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
-  schedule_action                = "start"
-  ec2_schedule                   = "false"
-  rds_schedule                   = "false"
-  autoscaling_schedule           = "true"
-  cloudwatch_alarm_schedule      = "true"
+  source                    = "../../"
+  name                      = "start-autoscaling-${random_pet.suffix.id}"
+  schedule_expression       = "cron(0 07 ? * MON *)"
+  schedule_action           = "start"
+  ec2_schedule              = "false"
+  rds_schedule              = "false"
+  autoscaling_schedule      = "true"
+  cloudwatch_alarm_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"

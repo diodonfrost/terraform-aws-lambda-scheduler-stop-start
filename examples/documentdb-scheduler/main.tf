@@ -56,12 +56,12 @@ resource "aws_docdb_cluster_instance" "not_scheduled" {
 
 
 module "documentdb-stop-friday" {
-  source                         = "../.."
-  name                           = "stop-documentdb-${random_pet.suffix.id}"
-  kms_key_arn                    = aws_kms_key.scheduler.arn
-  cloudwatch_schedule_expression = "cron(0 23 ? * FRI *)"
-  schedule_action                = "stop"
-  documentdb_schedule            = "true"
+  source              = "../.."
+  name                = "stop-documentdb-${random_pet.suffix.id}"
+  kms_key_arn         = aws_kms_key.scheduler.arn
+  schedule_expression = "cron(0 23 ? * FRI *)"
+  schedule_action     = "stop"
+  documentdb_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"
@@ -70,11 +70,11 @@ module "documentdb-stop-friday" {
 }
 
 module "documentdb-start-monday" {
-  source                         = "../.."
-  name                           = "start-documentdb-${random_pet.suffix.id}"
-  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
-  schedule_action                = "start"
-  documentdb_schedule            = "true"
+  source              = "../.."
+  name                = "start-documentdb-${random_pet.suffix.id}"
+  schedule_expression = "cron(0 07 ? * MON *)"
+  schedule_action     = "start"
+  documentdb_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"
