@@ -235,3 +235,43 @@ locals {
   # Backward compatibility with the former scheduler variable name.
   scheduler_tag = var.resources_tag == null ? var.scheduler_tag : var.resources_tag
 }
+
+resource "aws_iam_role" "scheduler_lambda" {
+  name               = "${var.name}-scheduler-lambda-role"
+  description        = "Allows Lambda functions to stop and start aws resources"
+  assume_role_policy = data.aws_iam_policy_document.scheduler_assume_role_policy.json
+  tags               = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "scheduler_lambda" {
+  role       = aws_iam_role.scheduler_lambda.name
+  policy_arn = aws_iam_policy.scheduler_lambda.arn
+}
+
+data "aws_iam_policy_document" "scheduler_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["scheduler.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "scheduler_lambda" {
+  name = "${var.name}-Scheduler-Lambda-Policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Action" : [
+          "lambda:InvokeFunction"
+        ],
+        Effect   = "Allow"
+        Resource = aws_lambda_function.this.arn
+      },
+    ]
+  })
+}

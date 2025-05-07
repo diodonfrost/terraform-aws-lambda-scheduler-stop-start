@@ -28,7 +28,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 module "stop_ec2_instance" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
   name                           = "ec2_stop"
-  cloudwatch_schedule_expression = "cron(0 0 ? * FRI *)"
+  schedule_expression = "cron(0 0 ? * FRI *)"
   schedule_action                = "stop"
   autoscaling_schedule           = "false"
   documendb_schedule             = "false"
@@ -46,7 +46,7 @@ module "stop_ec2_instance" {
 module "start_ec2_instance" {
   source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
   name                           = "ec2_start"
-  cloudwatch_schedule_expression = "cron(0 8 ? * MON *)"
+  schedule_expression = "cron(0 8 ? * MON *)"
   schedule_action                = "start"
   autoscaling_schedule           = "false"
   documendb_schedule             = "false"
@@ -94,9 +94,9 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_cloudwatch_event_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
-| [aws_cloudwatch_event_target.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_cloudwatch_log_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_iam_policy.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_role.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.autoscaling_group_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.cloudwatch_alarm_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
@@ -107,8 +107,9 @@ No modules.
 | [aws_iam_role_policy.redshift_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.resource_groups_tagging_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.spot_instance_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy_attachment.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
-| [aws_lambda_permission.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [aws_scheduler_schedule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
 | [archive_file.this](https://registry.terraform.io/providers/hashicorp/archive/2.3.0/docs/data-sources/file) | data source |
 | [aws_iam_policy_document.autoscaling_group_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.cloudwatch_alarm_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -117,6 +118,7 @@ No modules.
 | [aws_iam_policy_document.rds_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.redshift_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.resource_groups_tagging_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.scheduler_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.spot_instance_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
@@ -129,7 +131,6 @@ No modules.
 | <a name="input_autoscaling_terminate_instances"></a> [autoscaling\_terminate\_instances](#input\_autoscaling\_terminate\_instances) | Terminate instances when autoscaling group is scheduled to stop | `bool` | `false` | no |
 | <a name="input_aws_regions"></a> [aws\_regions](#input\_aws\_regions) | A list of one or more aws regions where the lambda will be apply, default use the current region | `list(string)` | `null` | no |
 | <a name="input_cloudwatch_alarm_schedule"></a> [cloudwatch\_alarm\_schedule](#input\_cloudwatch\_alarm\_schedule) | Enable scheduleding on cloudwatch alarm resources | `bool` | `false` | no |
-| <a name="input_cloudwatch_schedule_expression"></a> [cloudwatch\_schedule\_expression](#input\_cloudwatch\_schedule\_expression) | Define the aws cloudwatch event rule schedule expression | `string` | `"cron(0 22 ? * MON-FRI *)"` | no |
 | <a name="input_custom_iam_role_arn"></a> [custom\_iam\_role\_arn](#input\_custom\_iam\_role\_arn) | Custom IAM role arn for the scheduling lambda | `string` | `null` | no |
 | <a name="input_documentdb_schedule"></a> [documentdb\_schedule](#input\_documentdb\_schedule) | Enable scheduling on documentdb resources | `bool` | `false` | no |
 | <a name="input_ec2_schedule"></a> [ec2\_schedule](#input\_ec2\_schedule) | Enable scheduling on ec2 resources | `bool` | `false` | no |
@@ -141,7 +142,9 @@ No modules.
 | <a name="input_resources_tag"></a> [resources\_tag](#input\_resources\_tag) | DEPRECATED, use scheduler\_tag variable instead | `map(string)` | `null` | no |
 | <a name="input_runtime"></a> [runtime](#input\_runtime) | The runtime environment for the Lambda function that you are uploading | `string` | `"python3.13"` | no |
 | <a name="input_schedule_action"></a> [schedule\_action](#input\_schedule\_action) | Define schedule action to apply on resources, accepted value are 'stop or 'start | `string` | `"stop"` | no |
-| <a name="input_scheduler_tag"></a> [scheduler\_tag](#input\_scheduler\_tag) | Set the tag to use for identify aws resources to stop or start | `map(string)` | <pre>{<br>  "key": "tostop",<br>  "value": "true"<br>}</pre> | no |
+| <a name="input_schedule_expression"></a> [schedule\_expression](#input\_schedule\_expression) | Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html | `string` | `"cron(0 22 ? * MON-FRI *)"` | no |
+| <a name="input_schedule_expression_timezone"></a> [schedule\_expression\_timezone](#input\_schedule\_expression\_timezone) | Timezone in which the scheduling expression is evaluated. Example : 'America/New\_York', 'Europe/Paris' | `string` | `"UTC"` | no |
+| <a name="input_scheduler_tag"></a> [scheduler\_tag](#input\_scheduler\_tag) | Set the tag to use for identify aws resources to stop or start | `map(string)` | <pre>{<br/>  "key": "tostop",<br/>  "value": "true"<br/>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Custom tags on aws resources | `map(any)` | `null` | no |
 
 ## Outputs
@@ -150,6 +153,7 @@ No modules.
 |------|-------------|
 | <a name="output_lambda_iam_role_arn"></a> [lambda\_iam\_role\_arn](#output\_lambda\_iam\_role\_arn) | The ARN of the IAM role used by Lambda function |
 | <a name="output_lambda_iam_role_name"></a> [lambda\_iam\_role\_name](#output\_lambda\_iam\_role\_name) | The name of the IAM role used by Lambda function |
+| <a name="output_scheduler_expression"></a> [scheduler\_expression](#output\_scheduler\_expression) | The expression of the scheduler |
 | <a name="output_scheduler_lambda_arn"></a> [scheduler\_lambda\_arn](#output\_scheduler\_lambda\_arn) | The ARN of the Lambda function |
 | <a name="output_scheduler_lambda_function_last_modified"></a> [scheduler\_lambda\_function\_last\_modified](#output\_scheduler\_lambda\_function\_last\_modified) | The date Lambda function was last modified |
 | <a name="output_scheduler_lambda_function_version"></a> [scheduler\_lambda\_function\_version](#output\_scheduler\_lambda\_function\_version) | Latest published version of your Lambda function |
@@ -157,6 +161,7 @@ No modules.
 | <a name="output_scheduler_lambda_name"></a> [scheduler\_lambda\_name](#output\_scheduler\_lambda\_name) | The name of the Lambda function |
 | <a name="output_scheduler_log_group_arn"></a> [scheduler\_log\_group\_arn](#output\_scheduler\_log\_group\_arn) | The Amazon Resource Name (ARN) specifying the log group |
 | <a name="output_scheduler_log_group_name"></a> [scheduler\_log\_group\_name](#output\_scheduler\_log\_group\_name) | The name of the scheduler log group |
+| <a name="output_scheduler_timezone"></a> [scheduler\_timezone](#output\_scheduler\_timezone) | The timezone of the scheduler |
 <!-- END_TF_DOCS -->
 
 ## Tests

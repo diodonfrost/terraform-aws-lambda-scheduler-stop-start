@@ -1,12 +1,15 @@
 # Terraform variables file
 
-# Set cloudwatch events for shutingdown instances
-# trigger lambda functuon every night at 22h00 from Monday to Friday
-# cf doc : https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
-variable "cloudwatch_schedule_expression" {
-  description = "Define the aws cloudwatch event rule schedule expression"
+variable "schedule_expression" {
+  description = "Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html"
   type        = string
   default     = "cron(0 22 ? * MON-FRI *)"
+}
+
+variable "schedule_expression_timezone" {
+  description = "Timezone in which the scheduling expression is evaluated. Example : 'America/New_York', 'Europe/Paris'"
+  type        = string
+  default     = "UTC"
 }
 
 variable "name" {

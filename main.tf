@@ -37,3 +37,19 @@ resource "aws_lambda_function" "this" {
 
   tags = var.tags
 }
+
+resource "aws_scheduler_schedule" "this" {
+  name                         = "trigger-lambda-scheduler-${var.name}"
+  description                  = "Trigger lambda scheduler"
+  schedule_expression          = var.schedule_expression
+  schedule_expression_timezone = var.schedule_expression_timezone
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  target {
+    arn      = aws_lambda_function.this.arn
+    role_arn = aws_iam_role.scheduler_lambda.arn
+  }
+}
