@@ -1,12 +1,15 @@
 # Terraform variables file
 
-# Set cloudwatch events for shutingdown instances
-# trigger lambda functuon every night at 22h00 from Monday to Friday
-# cf doc : https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
-variable "cloudwatch_schedule_expression" {
-  description = "Define the aws cloudwatch event rule schedule expression"
+variable "schedule_expression" {
+  description = "Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html"
   type        = string
   default     = "cron(0 22 ? * MON-FRI *)"
+}
+
+variable "schedule_expression_timezone" {
+  description = "Timezone in which the scheduling expression is evaluated. Example : 'America/New_York', 'Europe/Paris'"
+  type        = string
+  default     = "UTC"
 }
 
 variable "name" {
@@ -30,6 +33,12 @@ variable "aws_regions" {
   description = "A list of one or more aws regions where the lambda will be apply, default use the current region"
   type        = list(string)
   default     = null
+}
+
+variable "runtime" {
+  description = "The runtime environment for the Lambda function that you are uploading"
+  type        = string
+  default     = "python3.13"
 }
 
 variable "schedule_action" {
@@ -57,7 +66,7 @@ variable "scheduler_tag" {
 
 variable "autoscaling_schedule" {
   description = "Enable scheduling on autoscaling resources"
-  type        = any
+  type        = bool
   default     = false
 }
 
@@ -69,7 +78,7 @@ variable "autoscaling_terminate_instances" {
 
 variable "ec2_schedule" {
   description = "Enable scheduling on ec2 resources"
-  type        = any
+  type        = bool
   default     = false
 }
 
@@ -87,19 +96,19 @@ variable "ecs_schedule" {
 
 variable "rds_schedule" {
   description = "Enable scheduling on rds resources"
-  type        = any
+  type        = bool
   default     = false
 }
 
 variable "redshift_schedule" {
   description = "Enable scheduling on redshift resources"
-  type        = any
+  type        = bool
   default     = false
 }
 
 variable "cloudwatch_alarm_schedule" {
   description = "Enable scheduleding on cloudwatch alarm resources"
-  type        = any
+  type        = bool
   default     = false
 }
 

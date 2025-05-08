@@ -15,3 +15,11 @@ output "lambda_start_name" {
 output "lambda_start_arn" {
   value = module.redshift-start-monday.scheduler_lambda_arn
 }
+
+output "redshift_cluster_scheduled_identifier" {
+  value = aws_redshift_cluster.scheduled.cluster_identifier
+}
+
+output "redshift_cluster_not_scheduled_identifier" {
+  value = aws_redshift_cluster.not_scheduled.cluster_identifier
+}

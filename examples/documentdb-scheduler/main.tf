@@ -1,4 +1,11 @@
 # Deploy two lambda for testing with awspec
+resource "random_pet" "suffix" {}
+
+variable "cleanup_mode" {
+  description = "Whether to run in cleanup mode"
+  type        = bool
+  default     = false
+}
 
 resource "aws_kms_key" "scheduler" {
   description             = "test kms option on scheduler module"
@@ -6,74 +13,85 @@ resource "aws_kms_key" "scheduler" {
 }
 
 resource "aws_docdb_cluster" "scheduled" {
-  cluster_identifier  = "docdb-cluster-scheduled"
-  engine              = "docdb"
-  master_username     = "foo"
-  master_password     = "mustbeeightchars"
-  skip_final_snapshot = true
+  cluster_identifier   = "test-to-stop-${random_pet.suffix.id}"
+  engine               = "docdb"
+  master_username      = "foo"
+  master_password      = "mustbeeightchars"
+  skip_final_snapshot  = true
+  db_subnet_group_name = aws_docdb_subnet_group.documentdb.name
   tags = {
-    tostop        = "true"
-    terratest_tag = var.random_tag
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
 resource "aws_docdb_cluster_instance" "scheduled" {
-  identifier         = "docdb-instance-scheduled"
+  identifier         = "test-to-stop-${random_pet.suffix.id}"
   cluster_identifier = aws_docdb_cluster.scheduled.id
   instance_class     = "db.r5.large"
   tags = {
-    tostop        = "true"
-    terratest_tag = var.random_tag
+    tostop = "true-${random_pet.suffix.id}"
   }
 }
 
 resource "aws_docdb_cluster" "not_scheduled" {
-  cluster_identifier  = "docdb-cluster-not-scheduled"
-  engine              = "docdb"
-  master_username     = "foo"
-  master_password     = "mustbeeightchars"
-  skip_final_snapshot = true
+  cluster_identifier   = "test-not-to-stop-${random_pet.suffix.id}"
+  engine               = "docdb"
+  master_username      = "foo"
+  master_password      = "mustbeeightchars"
+  skip_final_snapshot  = true
+  db_subnet_group_name = aws_docdb_subnet_group.documentdb.name
   tags = {
-    tostop        = "false"
-    terratest_tag = var.random_tag
+    tostop = "false"
   }
 }
 
 resource "aws_docdb_cluster_instance" "not_scheduled" {
-  identifier         = "docdb-instance-not-scheduled"
+  identifier         = "test-not-to-stop-${random_pet.suffix.id}"
   cluster_identifier = aws_docdb_cluster.not_scheduled.id
   instance_class     = "db.r5.large"
   tags = {
-    tostop        = "false"
-    terratest_tag = var.random_tag
+    tostop = "false"
   }
 }
 
 
 module "documentdb-stop-friday" {
-  source                         = "../.."
-  name                           = "stop-documentdb"
-  kms_key_arn                    = aws_kms_key.scheduler.arn
-  schedule_expression            = "cron(45 21 * * ? *)"
-  schedule_expression_timezone   = "Europe/Berlin"
-  schedule_action                = "stop"
-  documentdb_schedule            = "true"
+  source              = "../.."
+  name                = "stop-documentdb-${random_pet.suffix.id}"
+  kms_key_arn         = aws_kms_key.scheduler.arn
+  schedule_expression = "cron(0 23 ? * FRI *)"
+  schedule_action     = "stop"
+  documentdb_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
 module "documentdb-start-monday" {
-  source                         = "../.."
-  name                           = "start-documentdb"
-  cloudwatch_schedule_expression = "cron(0 07 ? * MON *)"
-  schedule_action                = "start"
-  documentdb_schedule            = "true"
+  source              = "../.."
+  name                = "start-documentdb-${random_pet.suffix.id}"
+  schedule_expression = "cron(0 07 ? * MON *)"
+  schedule_action     = "start"
+  documentdb_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
+}
+
+module "test-execution" {
+  count  = var.test_mode ? 1 : 0
+  source = "./test-execution"
+
+  lambda_stop_name                 = module.documentdb-stop-friday.scheduler_lambda_name
+  docdb_cluster_to_scheduled_name  = aws_docdb_cluster.scheduled.cluster_identifier
+  docdb_cluster_not_scheduled_name = aws_docdb_cluster.not_scheduled.cluster_identifier
+
+  depends_on = [
+    aws_docdb_cluster_instance.scheduled,
+    aws_docdb_cluster_instance.not_scheduled
+  ]
 }

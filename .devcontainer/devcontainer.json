@@ -11,10 +11,7 @@
         "redhat.vscode-yaml",
         "vscode-icons-team.vscode-icons",
         "isudox.vscode-jetbrains-keybindings",
-        "GitHub.vscode-github-actions",
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "GitHub.copilot-labs"
+        "GitHub.vscode-github-actions"
       ],
       "settings": {
         // Fonts MesLGS NF should be install: https://github.com/romkatv/powerlevel10k-media/blob/master/MesloLGS%20NF%20Regular.ttf
@@ -22,7 +19,8 @@
         "redhat.telemetry.enabled": false,
         "aws.telemetry": false,
         "workbench.iconTheme": "vscode-icons",
-        "vsicons.dontShowNewVersionMessage": true
+        "vsicons.dontShowNewVersionMessage": true,
+        "editor.rulers": [88,120]
       }
     }
   },
@@ -32,10 +30,9 @@
       "installTFsec": true,
       "installTerraformDocs": true
     },
-    "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers/features/go:1": {}
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
   },
-  "postStartCommand": "cd tests/end-to-end && go get ./...",
+  "postStartCommand": "pip install -r requirements.txt",
   "remoteEnv": { "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin" },
   "remoteUser": "vscode"
 }

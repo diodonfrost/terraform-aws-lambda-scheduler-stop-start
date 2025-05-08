@@ -4,6 +4,7 @@
 *.tfstate*
 *.zip
 terraform.tfstate.d
+*.state
 
 # Python files
 .tox

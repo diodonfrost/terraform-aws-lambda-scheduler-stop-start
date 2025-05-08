@@ -1,5 +1,5 @@
-resource "aws_ecs_cluster" "hello" {
-  name = "ecs-scheduler-test-cluster"
+resource "aws_ecs_cluster" "this" {
+  name = "test-ecs-cluster-${random_pet.suffix.id}"
 
   setting {
     name  = "containerInsights"
@@ -7,10 +7,10 @@ resource "aws_ecs_cluster" "hello" {
   }
 }
 
-resource "aws_ecs_service" "hello" {
-  name            = "ecs-scheduler-test-service"
-  cluster         = aws_ecs_cluster.hello.id
-  task_definition = aws_ecs_task_definition.hello.arn
+resource "aws_ecs_service" "to_scheduled" {
+  name            = "test-to-stop-${random_pet.suffix.id}"
+  cluster         = aws_ecs_cluster.this.id
+  task_definition = aws_ecs_task_definition.this.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -19,8 +19,7 @@ resource "aws_ecs_service" "hello" {
   }
 
   tags = {
-    tostop        = "true",
-    terratest_tag = var.random_tag
+    tostop = "true",
   }
   lifecycle {
     ignore_changes = [
@@ -30,10 +29,10 @@ resource "aws_ecs_service" "hello" {
   }
 }
 
-resource "aws_ecs_service" "hello-false" {
-  name            = "ecs-scheduler-test-false-service"
-  cluster         = aws_ecs_cluster.hello.id
-  task_definition = aws_ecs_task_definition.hello.arn
+resource "aws_ecs_service" "not_to_scheduled" {
+  name            = "test-not-to-stop-${random_pet.suffix.id}"
+  cluster         = aws_ecs_cluster.this.id
+  task_definition = aws_ecs_task_definition.this.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -42,8 +41,7 @@ resource "aws_ecs_service" "hello-false" {
   }
 
   tags = {
-    tostop        = "false",
-    terratest_tag = var.random_tag
+    tostop = "false",
   }
   lifecycle {
     ignore_changes = [
@@ -53,8 +51,8 @@ resource "aws_ecs_service" "hello-false" {
   }
 }
 
-resource "aws_ecs_task_definition" "hello" {
-  family = "hello-world-1"
+resource "aws_ecs_task_definition" "this" {
+  family = "test-${random_pet.suffix.id}"
 
   # Refer to https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
   # for cpu and memory values
@@ -70,12 +68,17 @@ resource "aws_ecs_task_definition" "hello" {
   container_definitions = jsonencode([
     {
       name      = "hello-world-rest"
-      image     = "public.ecr.aws/docker/library/busybox:latest"
+      image     = "docker.io/library/nginx:alpine"
+      cpu       = 10
+      memory    = 128
       essential = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort      = 80
+          protocol      = "tcp"
+        }
+      ]
     }
   ])
-
-  tags = {
-    terratest_tag = var.random_tag
-  }
 }

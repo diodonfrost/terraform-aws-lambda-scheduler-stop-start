@@ -1,4 +1,5 @@
 """This script stop and start aws resources."""
+
 import os
 
 from .autoscaling_handler import AutoscalingScheduler

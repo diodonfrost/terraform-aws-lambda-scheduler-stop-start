@@ -1,19 +1,12 @@
 """Tests for the class FilterByTags class."""
 
-import boto3
-
-from moto import (
-    mock_ec2,
-    mock_resourcegroupstaggingapi,
-)
+from moto import mock_aws
 
 from package.scheduler.filter_resources_by_tags import FilterByTags
-from package.scheduler.instance_handler import InstanceScheduler
 
 from .utils import launch_ec2_instances
 
 import pytest
-
 
 @pytest.mark.parametrize(
     "aws_region, instance_tag, scheduler_tag, result_count",
@@ -32,14 +25,13 @@ import pytest
         ),
     ],
 )
-@mock_ec2
-@mock_resourcegroupstaggingapi
+@mock_aws
 def test_filter_instances(aws_region, instance_tag, scheduler_tag, result_count):
     """Filter instances class method."""
     tag_key = instance_tag[0]["Key"]
     tag_value = "".join(instance_tag[0]["Values"])
-    instances_correct_tags = launch_ec2_instances(2, aws_region, tag_key, tag_value)
-    instances_bad_tags = launch_ec2_instances(3, aws_region, "wrongkey", "wrongvalue")
+    launch_ec2_instances(2, aws_region, tag_key, tag_value)
+    launch_ec2_instances(3, aws_region, "wrongkey", "wrongvalue")
 
     tag_api = FilterByTags(region_name=aws_region)
     instance_arns = tag_api.get_resources("ec2:instance", scheduler_tag)

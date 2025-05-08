@@ -42,3 +42,13 @@ output "scheduler_log_group_arn" {
   description = "The Amazon Resource Name (ARN) specifying the log group"
   value       = aws_cloudwatch_log_group.this.arn
 }
+
+output "scheduler_expression" {
+  description = "The expression of the scheduler"
+  value       = aws_scheduler_schedule.this.schedule_expression
+}
+
+output "scheduler_timezone" {
+  description = "The timezone of the scheduler"
+  value       = aws_scheduler_schedule.this.schedule_expression_timezone
+}

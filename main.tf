@@ -301,7 +301,7 @@ resource "aws_lambda_function" "this" {
   function_name    = var.name
   role             = var.custom_iam_role_arn == null ? aws_iam_role.this[0].arn : var.custom_iam_role_arn
   handler          = "scheduler.main.lambda_handler"
-  runtime          = "python3.10"
+  runtime          = var.runtime
   timeout          = "600"
   kms_key_arn      = var.kms_key_arn == null ? "" : var.kms_key_arn
 
@@ -325,17 +325,21 @@ resource "aws_lambda_function" "this" {
   tags = var.tags
 }
 
+<<<<<<< HEAD
 ################################################
 #
 #            SCHEDULER EVENT
 #
 ################################################
 
+=======
+>>>>>>> upstream/master
 resource "aws_scheduler_schedule" "this" {
   name                         = "trigger-lambda-scheduler-${var.name}"
   description                  = "Trigger lambda scheduler"
   schedule_expression          = var.schedule_expression
   schedule_expression_timezone = var.schedule_expression_timezone
+<<<<<<< HEAD
   
       flexible_time_window {
         mode = "OFF"
@@ -356,4 +360,15 @@ resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${var.name}"
   retention_in_days = 14
   tags              = var.tags
+=======
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  target {
+    arn      = aws_lambda_function.this.arn
+    role_arn = aws_iam_role.scheduler_lambda.arn
+  }
+>>>>>>> upstream/master
 }

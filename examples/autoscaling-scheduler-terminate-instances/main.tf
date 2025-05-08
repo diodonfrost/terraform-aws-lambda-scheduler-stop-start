@@ -1,4 +1,5 @@
 # Terraform autoscaling group with lambda scheduler
+resource "random_pet" "suffix" {}
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -16,15 +17,6 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_vpc" "this" {
-  cidr_block = "10.0.0.0/16"
-}
-
-resource "aws_subnet" "this" {
-  vpc_id     = aws_vpc.this.id
-  cidr_block = "10.0.1.0/24"
-}
-
 resource "aws_launch_template" "this" {
   name_prefix   = "web_config"
   image_id      = data.aws_ami.ubuntu.id
@@ -34,7 +26,7 @@ resource "aws_launch_template" "this" {
 # Create autoscaling group with tag
 resource "aws_autoscaling_group" "scheduled" {
   count                     = 3
-  name                      = "bar-with-tag-${count.index}"
+  name                      = "test-to-stop-${random_pet.suffix.id}-${count.index}"
   max_size                  = 5
   min_size                  = 1
   health_check_grace_period = 300
@@ -57,12 +49,7 @@ resource "aws_autoscaling_group" "scheduled" {
 
   tag {
     key                 = "tostop"
-    value               = "true"
-    propagate_at_launch = true
-  }
-  tag {
-    key                 = "terratest_tag"
-    value               = var.random_tag
+    value               = "true-${random_pet.suffix.id}"
     propagate_at_launch = true
   }
 }
@@ -70,7 +57,7 @@ resource "aws_autoscaling_group" "scheduled" {
 # Create autoscaling group without tag
 resource "aws_autoscaling_group" "not_scheduled" {
   count                     = 2
-  name                      = "foo-without-tag-${count.index}"
+  name                      = "test-not-to-stop-${random_pet.suffix.id}-${count.index}"
   max_size                  = 5
   min_size                  = 1
   health_check_grace_period = 300
@@ -96,11 +83,6 @@ resource "aws_autoscaling_group" "not_scheduled" {
     value               = "false"
     propagate_at_launch = true
   }
-  tag {
-    key                 = "terratest_tag"
-    value               = var.random_tag
-    propagate_at_launch = true
-  }
 }
 
 
@@ -108,9 +90,8 @@ resource "aws_autoscaling_group" "not_scheduled" {
 
 module "autoscaling-stop-friday" {
   source                          = "../../"
-  name                            = "stop-autoscaling"
-  schedule_expression            = "cron(45 21 * * ? *)"
-  schedule_expression_timezone   = "Europe/Berlin"
+  name                            = "stop-autoscaling-${random_pet.suffix.id}"
+  schedule_expression             = "cron(0 23 ? * FRI *)"
   schedule_action                 = "stop"
   ec2_schedule                    = "false"
   rds_schedule                    = "false"
@@ -120,23 +101,22 @@ module "autoscaling-stop-friday" {
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }
 
 module "autoscaling-start-monday" {
-  source                         = "../../"
-  name                           = "start-autoscaling"
-  schedule_expression            = "cron(45 21 * * ? *)"
-  schedule_expression_timezone   = "Europe/Berlin"
-  schedule_action                = "start"
-  ec2_schedule                   = "false"
-  rds_schedule                   = "false"
-  autoscaling_schedule           = "true"
-  cloudwatch_alarm_schedule      = "true"
+  source                    = "../../"
+  name                      = "start-autoscaling-${random_pet.suffix.id}"
+  schedule_expression       = "cron(0 07 ? * MON *)"
+  schedule_action           = "start"
+  ec2_schedule              = "false"
+  rds_schedule              = "false"
+  autoscaling_schedule      = "true"
+  cloudwatch_alarm_schedule = "true"
 
   scheduler_tag = {
     key   = "tostop"
-    value = "true"
+    value = "true-${random_pet.suffix.id}"
   }
 }

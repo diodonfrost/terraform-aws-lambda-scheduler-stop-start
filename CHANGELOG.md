@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [4.0.0] - 2025-05-08
+### Features
+
+* **lambda:** parameterize Lambda runtime ([22d9a21](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/22d9a216ec2ff03ba448fd14fe643da50a88ac21))
+* **terraform:** add timezone support for scheduler ([63cca94](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/63cca949c35e1c2504eb2c40f60bdc788587ad47)) Thanks to @nazanalbuz
+* **terraform:** bump python lambda runtime to 3.13 ([ff53a14](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/ff53a145b96b9e6f153ac32d8db36bdeec6c760b))
+* **terraform:** update provider requirements ([7e78cf0](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/7e78cf0ab6da8d269355f7d2010eec847c13321c))
+
 ## [3.5.0] - 2023-08-23
 ### Features
 
