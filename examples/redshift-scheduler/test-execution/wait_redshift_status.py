@@ -23,7 +23,7 @@ def wait_for_redshift_cluster_status(
 
     redshift = boto3.client("redshift")
     start_time = time.time()
-    timeout = 900  # 15 minutes timeout
+    timeout = 1800  # 30 minutes timeout
 
     while True:
         try:

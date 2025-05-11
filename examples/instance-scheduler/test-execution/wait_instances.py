@@ -24,7 +24,7 @@ def wait_for_instances_status(
 
     ec2 = boto3.client("ec2", region_name=region) if region else boto3.client("ec2")
     start_time = time.time()
-    timeout = 300  # 5 minutes timeout
+    timeout = 600  # 10 minutes timeout
 
     while True:
         try:

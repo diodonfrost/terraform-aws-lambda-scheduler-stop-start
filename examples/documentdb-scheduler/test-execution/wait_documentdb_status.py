@@ -23,7 +23,7 @@ def wait_for_documentdb_cluster_status(
 
     documentdb = boto3.client("docdb")
     start_time = time.time()
-    timeout = 900  # 15 minutes timeout
+    timeout = 1800  # 30 minutes timeout
 
     while True:
         try:

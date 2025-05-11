@@ -23,7 +23,7 @@ def wait_for_rds_cluster_status(
 
     rds = boto3.client("rds")
     start_time = time.time()
-    timeout = 900  # 15 minutes timeout
+    timeout = 1800  # 30 minutes timeout
 
     while True:
         try:
