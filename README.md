@@ -21,6 +21,7 @@ If you are using Terraform 0.11 you can use versions v1.*.
 *  autoscalings scheduling
 *  cloudwatch alarm scheduling
 *  Aws CloudWatch logs for lambda
+*  Aws Transfer scheduling
 
 ## Usage
 
@@ -107,6 +108,7 @@ No modules.
 | [aws_iam_role_policy.redshift_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.resource_groups_tagging_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.spot_instance_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.transfer_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_scheduler_schedule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
@@ -121,6 +123,7 @@ No modules.
 | [aws_iam_policy_document.scheduler_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.spot_instance_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.transfer_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
@@ -146,6 +149,7 @@ No modules.
 | <a name="input_schedule_expression_timezone"></a> [schedule\_expression\_timezone](#input\_schedule\_expression\_timezone) | Timezone in which the scheduling expression is evaluated. Example : 'America/New\_York', 'Europe/Paris' | `string` | `"UTC"` | no |
 | <a name="input_scheduler_tag"></a> [scheduler\_tag](#input\_scheduler\_tag) | Set the tag to use for identify aws resources to stop or start | `map(string)` | <pre>{<br/>  "key": "tostop",<br/>  "value": "true"<br/>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Custom tags on aws resources | `map(any)` | `null` | no |
+| <a name="input_transfer_schedule"></a> [transfer\_schedule](#input\_transfer\_schedule) | Enable scheduling on AWS Transfer (SFTP) servers | `bool` | `false` | no |
 
 ## Outputs
 
