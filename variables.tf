@@ -112,6 +112,12 @@ variable "cloudwatch_alarm_schedule" {
   default     = false
 }
 
+variable "transfer_schedule" {
+  description = "Enable scheduling on AWS Transfer (SFTP) servers"
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "Custom tags on aws resources"
   type        = map(any)

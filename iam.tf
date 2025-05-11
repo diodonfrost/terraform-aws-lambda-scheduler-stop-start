@@ -275,3 +275,25 @@ resource "aws_iam_policy" "scheduler_lambda" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "transfer_scheduler" {
+  count  = var.custom_iam_role_arn == null ? 1 : 0
+  name   = "${var.name}-transfer-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.transfer_scheduler.json
+}
+
+data "aws_iam_policy_document" "transfer_scheduler" {
+  statement {
+    actions = [
+      "transfer:StartServer",
+      "transfer:StopServer",
+      "transfer:ListServers",
+      "transfer:DescribeServer"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}

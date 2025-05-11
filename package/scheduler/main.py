@@ -9,6 +9,7 @@ from .ecs_handler import EcsScheduler
 from .instance_handler import InstanceScheduler
 from .rds_handler import RdsScheduler
 from .redshift_handler import RedshiftScheduler
+from .transfer_handler import TransferScheduler
 
 
 def lambda_handler(event, context):
@@ -20,6 +21,7 @@ def lambda_handler(event, context):
     - instance ec2
     - ecs services
     - redshift clusters
+    - transfer servers
 
     Suspend and resume AWS resources:
     - ec2 autoscaling groups
@@ -42,6 +44,7 @@ def lambda_handler(event, context):
         RdsScheduler: os.getenv("RDS_SCHEDULE"),
         RedshiftScheduler: os.getenv("REDSHIFT_SCHEDULE"),
         CloudWatchAlarmScheduler: os.getenv("CLOUDWATCH_ALARM_SCHEDULE"),
+        TransferScheduler: os.getenv("TRANSFER_SCHEDULE"),
     }
 
     for service, to_schedule in _strategy.items():
