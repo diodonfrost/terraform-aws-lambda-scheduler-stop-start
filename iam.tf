@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "this" {
 }
 
 resource "aws_iam_role_policy" "autoscaling_group_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && (var.autoscaling_schedule == true || var.autoscaling_terminate_instances == true) ? 1 : 0
   name   = "${var.name}-autoscaling-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.autoscaling_group_scheduler.json
@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "autoscaling_group_scheduler" {
 }
 
 resource "aws_iam_role_policy" "spot_instance_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.ec2_schedule == true ? 1 : 0
   name   = "${var.name}-spot-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.spot_instance_scheduler.json
@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "spot_instance_scheduler" {
 }
 
 resource "aws_iam_role_policy" "instance_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.ec2_schedule == true ? 1 : 0
   name   = "${var.name}-ec2-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.instance_scheduler.json
@@ -86,7 +86,7 @@ data "aws_iam_policy_document" "instance_scheduler" {
 }
 
 resource "aws_iam_role_policy" "rds_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.rds_schedule == true ? 1 : 0
   name   = "${var.name}-rds-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.rds_scheduler.json
@@ -109,7 +109,7 @@ data "aws_iam_policy_document" "rds_scheduler" {
 }
 
 resource "aws_iam_role_policy" "ecs_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.ecs_schedule == true ? 1 : 0
   name   = "${var.name}-ecs-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.ecs_scheduler.json
@@ -129,7 +129,7 @@ data "aws_iam_policy_document" "ecs_scheduler" {
 }
 
 resource "aws_iam_role_policy" "redshift_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.redshift_schedule == true ? 1 : 0
   name   = "${var.name}-redshift-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.redshift_scheduler.json
@@ -149,7 +149,7 @@ data "aws_iam_policy_document" "redshift_scheduler" {
 }
 
 resource "aws_iam_role_policy" "cloudwatch_alarm_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.cloudwatch_alarm_schedule == true ? 1 : 0
   name   = "${var.name}-cloudwatch-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.cloudwatch_alarm_scheduler.json
@@ -191,54 +191,43 @@ resource "aws_iam_role_policy" "lambda_logging" {
   count  = var.custom_iam_role_arn == null ? 1 : 0
   name   = "${var.name}-lambda-logging"
   role   = aws_iam_role.this[0].id
-  policy = var.kms_key_arn == null ? jsonencode(local.lambda_logging_policy) : jsonencode(local.lambda_logging_and_kms_policy)
+  policy = data.aws_iam_policy_document.lambda_logging_policy.json
 }
 
-# Local variables are used for make iam policy because
-# resources cannot have a null value in aws_iam_policy_document.
+data "aws_iam_policy_document" "lambda_logging_policy" {
+  statement {
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = [
+      "${aws_cloudwatch_log_group.this.arn}:*"
+    ]
+    effect = "Allow"
+  }
+
+  dynamic "statement" {
+    for_each = var.kms_key_arn == null ? [] : [var.kms_key_arn]
+    content {
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:CreateGrant"
+      ]
+      resources = [statement.value]
+      effect    = "Allow"
+    }
+  }
+}
+
 locals {
-  lambda_logging_policy = {
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Action" : [
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        "Resource" : "${aws_cloudwatch_log_group.this.arn}:*",
-        "Effect" : "Allow"
-      }
-    ]
-  }
-  lambda_logging_and_kms_policy = {
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Action" : [
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        "Resource" : "${aws_cloudwatch_log_group.this.arn}:*",
-        "Effect" : "Allow"
-      },
-      {
-        "Action" : [
-          "kms:Encrypt",
-          "kms:Decrypt",
-          "kms:CreateGrant"
-        ],
-        "Resource" : var.kms_key_arn,
-        "Effect" : "Allow"
-      }
-    ]
-  }
   # Backward compatibility with the former scheduler variable name.
   scheduler_tag = var.resources_tag == null ? var.scheduler_tag : var.resources_tag
 }
 
 resource "aws_iam_role" "scheduler_lambda" {
   name               = "${var.name}-scheduler-lambda-role"
-  description        = "Allows Lambda functions to stop and start aws resources"
+  description        = "Allows Lambda functions to invoke ${var.name} lambda function"
   assume_role_policy = data.aws_iam_policy_document.scheduler_assume_role_policy.json
   tags               = var.tags
 }
@@ -277,7 +266,7 @@ resource "aws_iam_policy" "scheduler_lambda" {
 }
 
 resource "aws_iam_role_policy" "transfer_scheduler" {
-  count  = var.custom_iam_role_arn == null ? 1 : 0
+  count  = var.custom_iam_role_arn == null && var.transfer_schedule == true ? 1 : 0
   name   = "${var.name}-transfer-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.transfer_scheduler.json
