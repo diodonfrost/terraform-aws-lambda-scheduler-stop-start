@@ -227,7 +227,7 @@ locals {
 
 resource "aws_iam_role" "scheduler_lambda" {
   name               = "${var.name}-scheduler-lambda-role"
-  description        = "Allows Lambda functions to invoke ${var.name} lambda function"
+  description        = "Allows scheduler to invoke ${var.name} lambda function"
   assume_role_policy = data.aws_iam_policy_document.scheduler_assume_role_policy.json
   tags               = var.tags
 }
