@@ -1,6 +1,12 @@
 # Terraform variables file
 
-variable "schedule_expression" {
+variable "start_schedule_expression" {
+  description = "Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html"
+  type        = string
+  default     = "cron(0 7 ? * MON-FRI *)"
+}
+
+variable "stop_schedule_expression" {
   description = "Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html"
   type        = string
   default     = "cron(0 22 ? * MON-FRI *)"

@@ -26,37 +26,19 @@ If you are using Terraform 0.11 you can use versions v1.*.
 ## Usage
 
 ```hcl
-module "stop_ec2_instance" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
-  name                           = "ec2_stop"
-  schedule_expression = "cron(0 0 ? * FRI *)"
-  schedule_action                = "stop"
-  autoscaling_schedule           = "false"
-  documendb_schedule             = "false"
-  ec2_schedule                   = "true"
-  ecs_schedule                   = "false"
-  rds_schedule                   = "false"
-  redshift_schedule              = "false"
-  cloudwatch_alarm_schedule      = "false"
-  scheduler_tag                  = {
-    key   = "tostop"
-    value = "true"
-  }
-}
-
-module "start_ec2_instance" {
-  source                         = "diodonfrost/lambda-scheduler-stop-start/aws"
-  name                           = "ec2_start"
-  schedule_expression = "cron(0 8 ? * MON *)"
-  schedule_action                = "start"
-  autoscaling_schedule           = "false"
-  documendb_schedule             = "false"
-  ec2_schedule                   = "true"
-  ecs_schedule                   = "false"
-  rds_schedule                   = "false"
-  redshift_schedule              = "false"
-  cloudwatch_alarm_schedule      = "false"
-  scheduler_tag                  = {
+module "instance-start-stop-scheduler" {
+  source                    = "diodonfrost/lambda-scheduler-stop-start/aws"
+  name                      = "instance-scheduler"
+  start_schedule_expression = "cron(0 0 ? * MON *)"
+  stop_schedule_expression  = "cron(0 0 ? * FRI *)"
+  autoscaling_schedule      = "false"
+  documendb_schedule        = "false"
+  ec2_schedule              = "true"
+  ecs_schedule              = "false"
+  rds_schedule              = "false"
+  redshift_schedule         = "false"
+  cloudwatch_alarm_schedule = "false"
+  scheduler_tag             = {
     key   = "tostop"
     value = "true"
   }
@@ -111,12 +93,14 @@ No modules.
 | [aws_iam_role_policy.transfer_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
-| [aws_scheduler_schedule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
+| [aws_scheduler_schedule.start](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
+| [aws_scheduler_schedule.stop](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
 | [archive_file.this](https://registry.terraform.io/providers/hashicorp/archive/2.3.0/docs/data-sources/file) | data source |
 | [aws_iam_policy_document.autoscaling_group_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.cloudwatch_alarm_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecs_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.instance_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.lambda_logging_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.rds_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.redshift_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.resource_groups_tagging_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -145,9 +129,10 @@ No modules.
 | <a name="input_resources_tag"></a> [resources\_tag](#input\_resources\_tag) | DEPRECATED, use scheduler\_tag variable instead | `map(string)` | `null` | no |
 | <a name="input_runtime"></a> [runtime](#input\_runtime) | The runtime environment for the Lambda function that you are uploading | `string` | `"python3.13"` | no |
 | <a name="input_schedule_action"></a> [schedule\_action](#input\_schedule\_action) | Define schedule action to apply on resources, accepted value are 'stop or 'start | `string` | `"stop"` | no |
-| <a name="input_schedule_expression"></a> [schedule\_expression](#input\_schedule\_expression) | Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html | `string` | `"cron(0 22 ? * MON-FRI *)"` | no |
 | <a name="input_schedule_expression_timezone"></a> [schedule\_expression\_timezone](#input\_schedule\_expression\_timezone) | Timezone in which the scheduling expression is evaluated. Example : 'America/New\_York', 'Europe/Paris' | `string` | `"UTC"` | no |
 | <a name="input_scheduler_tag"></a> [scheduler\_tag](#input\_scheduler\_tag) | Set the tag to use for identify aws resources to stop or start | `map(string)` | <pre>{<br/>  "key": "tostop",<br/>  "value": "true"<br/>}</pre> | no |
+| <a name="input_start_schedule_expression"></a> [start\_schedule\_expression](#input\_start\_schedule\_expression) | Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html | `string` | `"cron(0 7 ? * MON-FRI *)"` | no |
+| <a name="input_stop_schedule_expression"></a> [stop\_schedule\_expression](#input\_stop\_schedule\_expression) | Define the aws event rule schedule expression, https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html | `string` | `"cron(0 22 ? * MON-FRI *)"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Custom tags on aws resources | `map(any)` | `null` | no |
 | <a name="input_transfer_schedule"></a> [transfer\_schedule](#input\_transfer\_schedule) | Enable scheduling on AWS Transfer (SFTP) servers | `bool` | `false` | no |
 

@@ -21,7 +21,6 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = {
       AWS_REGIONS                     = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
-      SCHEDULE_ACTION                 = var.schedule_action
       TAG_KEY                         = local.scheduler_tag["key"]
       TAG_VALUE                       = local.scheduler_tag["value"]
       DOCUMENTDB_SCHEDULE             = tostring(var.documentdb_schedule)
@@ -39,10 +38,10 @@ resource "aws_lambda_function" "this" {
   tags = var.tags
 }
 
-resource "aws_scheduler_schedule" "this" {
-  name                         = "trigger-lambda-scheduler-${var.name}"
-  description                  = "Trigger lambda scheduler"
-  schedule_expression          = var.schedule_expression
+resource "aws_scheduler_schedule" "start" {
+  name                         = "trigger-lambda-scheduler-start-${var.name}"
+  description                  = "Trigger lambda scheduler to START instances"
+  schedule_expression          = var.start_schedule_expression
   schedule_expression_timezone = var.schedule_expression_timezone
 
   flexible_time_window {
@@ -52,5 +51,23 @@ resource "aws_scheduler_schedule" "this" {
   target {
     arn      = aws_lambda_function.this.arn
     role_arn = aws_iam_role.scheduler_lambda.arn
+    input    = jsonencode({ SCHEDULE_ACTION = "start" })
+  }
+}
+
+resource "aws_scheduler_schedule" "stop" {
+  name                         = "trigger-lambda-scheduler-stop-${var.name}"
+  description                  = "Trigger lambda scheduler to STOP instances"
+  schedule_expression          = var.stop_schedule_expression
+  schedule_expression_timezone = var.schedule_expression_timezone
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  target {
+    arn      = aws_lambda_function.this.arn
+    role_arn = aws_iam_role.scheduler_lambda.arn
+    input    = jsonencode({ SCHEDULE_ACTION = "stop" })
   }
 }
