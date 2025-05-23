@@ -29,7 +29,7 @@ def lambda_handler(event, context):
     Terminate spot instances (spot instance cannot be stopped by a user)
     """
     # Retrieve variables from aws lambda ENVIRONMENT
-    schedule_action = event.get("SCHEDULE_ACTION") or os.getenv("SCHEDULE_ACTION")
+    schedule_action = event.get("SCHEDULE_ACTION")
     if not schedule_action:
         return {"status": "error", "reason": "SCHEDULE_ACTION not provided"} 
     aws_regions = os.getenv("AWS_REGIONS").replace(" ", "").split(",")
