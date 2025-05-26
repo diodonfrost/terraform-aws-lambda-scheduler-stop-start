@@ -35,6 +35,8 @@ data "aws_iam_policy_document" "autoscaling_group_scheduler" {
       "autoscaling:UpdateAutoScalingGroup",
       "autoscaling:DescribeAutoScalingInstances",
       "autoscaling:TerminateInstanceInAutoScalingGroup",
+      "ec2:StopInstances",  
+      "ec2:StartInstances",  
       "ec2:TerminateInstances",
     ]
 
