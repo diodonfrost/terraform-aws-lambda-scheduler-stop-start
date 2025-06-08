@@ -35,8 +35,8 @@ data "aws_iam_policy_document" "autoscaling_group_scheduler" {
       "autoscaling:UpdateAutoScalingGroup",
       "autoscaling:DescribeAutoScalingInstances",
       "autoscaling:TerminateInstanceInAutoScalingGroup",
-      "ec2:StopInstances",  
-      "ec2:StartInstances",  
+      "ec2:StopInstances",
+      "ec2:StartInstances",
       "ec2:TerminateInstances",
     ]
 
@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "instance_scheduler" {
 }
 
 resource "aws_iam_role_policy" "rds_scheduler" {
-  count = var.custom_iam_role_arn == null && (var.rds_schedule == true || var.documentdb_schedule == true) ? 1 : 0
+  count  = var.custom_iam_role_arn == null && (var.rds_schedule == true || var.documentdb_schedule == true) ? 1 : 0
   name   = "${var.name}-rds-custom-policy-scheduler"
   role   = aws_iam_role.this[0].id
   policy = data.aws_iam_policy_document.rds_scheduler.json
