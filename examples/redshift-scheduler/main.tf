@@ -11,7 +11,7 @@ resource "aws_redshift_cluster" "scheduled" {
   database_name             = "mydb"
   master_username           = "exampleuser"
   master_password           = "Mustbe8characters"
-  node_type                 = "dc2.large"
+  node_type                 = "ra3.large"
   cluster_type              = "single-node"
   publicly_accessible       = false
   skip_final_snapshot       = true
@@ -32,7 +32,7 @@ resource "aws_redshift_cluster" "not_scheduled" {
   database_name             = "mydb"
   master_username           = "exampleuser"
   master_password           = "Mustbe8characters"
-  node_type                 = "dc2.large"
+  node_type                 = "ra3.large"
   cluster_type              = "single-node"
   publicly_accessible       = false
   skip_final_snapshot       = true
