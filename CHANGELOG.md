@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [4.1.0] - 2025-06-10
+### Features
+
+* **iam:** IAM role policies now conditionally enable based on schedule variables, providing more granular control over
+  permissions  ([pull/68](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/pull/68)) thanks to @kuthyaron
+* **terraform:** add AWS Transfer server scheduling functionality ([10b2e4e](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/10b2e4e))
+
 ## [4.0.0] - 2025-05-08
 ### Features
 
