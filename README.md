@@ -4,6 +4,8 @@
 
 Stop and start instance, rds resources and autoscaling groups with lambda function.
 
+**Note:** To deploy multiple schedulers at once, you can use this wrapper module [lambda-multi-schedulers-stop-start](https://registry.terraform.io/modules/diodonfrost/lambda-multi-schedulers-stop-start/aws/latest) which simplifies the management of multiple schedules.
+
 ## Terraform versions
 For Terraform 0.15 use version v3.* of this module.
 
