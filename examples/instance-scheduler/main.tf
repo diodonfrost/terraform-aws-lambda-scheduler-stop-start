@@ -42,6 +42,17 @@ resource "aws_instance" "not_scheduled" {
 ### Terraform modules ###
 
 module "ec2-stop-friday" {
+<<<<<<< HEAD
+  source                         = "../../"
+  name                           = "stop-ec2"
+  schedule_expression            = "cron(45 21 * * ? *)"
+  schedule_expression_timezone   = "Europe/Berlin"
+  schedule_action                = "stop"
+  ec2_schedule                   = "true"
+  rds_schedule                   = "false"
+  autoscaling_schedule           = "false"
+  cloudwatch_alarm_schedule      = "true"
+=======
   source                    = "../../"
   name                      = "stop-ec2-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 23 ? * FRI *)"
@@ -50,6 +61,7 @@ module "ec2-stop-friday" {
   rds_schedule              = "false"
   autoscaling_schedule      = "false"
   cloudwatch_alarm_schedule = "true"
+>>>>>>> upstream/master
 
   scheduler_tag = {
     key   = "tostop"
@@ -58,6 +70,17 @@ module "ec2-stop-friday" {
 }
 
 module "ec2-start-monday" {
+<<<<<<< HEAD
+  source                         = "../../"
+  name                           = "start-ec2"
+  schedule_expression            = "cron(45 21 * * ? *)"
+  schedule_expression_timezone   = "Europe/Berlin"
+  schedule_action                = "start"
+  ec2_schedule                   = "true"
+  rds_schedule                   = "false"
+  autoscaling_schedule           = "false"
+  cloudwatch_alarm_schedule      = "true"
+=======
   source                    = "../../"
   name                      = "start-ec2-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 07 ? * MON *)"
@@ -66,6 +89,7 @@ module "ec2-start-monday" {
   rds_schedule              = "false"
   autoscaling_schedule      = "false"
   cloudwatch_alarm_schedule = "true"
+>>>>>>> upstream/master
 
   scheduler_tag = {
     key   = "tostop"

@@ -68,6 +68,17 @@ resource "aws_db_instance" "mysql_not_scheduled" {
 ### Terraform modules ###
 
 module "rds-stop-friday" {
+<<<<<<< HEAD
+  source                         = "../../"
+  name                           = "stop-rds"
+  schedule_expression            = "cron(45 21 * * ? *)"
+  schedule_expression_timezone   = "Europe/Berlin"
+  schedule_action                = "stop"
+  ec2_schedule                   = "false"
+  rds_schedule                   = "true"
+  autoscaling_schedule           = "false"
+  cloudwatch_alarm_schedule      = "true"
+=======
   source                    = "../../"
   name                      = "stop-rds-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 23 ? * FRI *)"
@@ -76,6 +87,7 @@ module "rds-stop-friday" {
   rds_schedule              = "true"
   autoscaling_schedule      = "false"
   cloudwatch_alarm_schedule = "true"
+>>>>>>> upstream/master
 
   scheduler_tag = {
     key   = "tostop"
