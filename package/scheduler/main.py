@@ -1,6 +1,9 @@
 """This script stop and start aws resources."""
 
+import json
+import logging
 import os
+from datetime import datetime
 
 from .autoscaling_handler import AutoscalingScheduler
 from .cloudwatch_handler import CloudWatchAlarmScheduler
@@ -35,6 +38,10 @@ def lambda_handler(event, context):
     autoscaling_terminate_instances = strtobool(
         os.getenv("AUTOSCALING_TERMINATE_INSTANCES")
     )
+    excluded_dates = json.loads(os.environ.get("SCHEDULER_EXCLUDED_DATES", "[]"))
+
+    if is_date_excluded(excluded_dates):
+        return
 
     _strategy = {
         AutoscalingScheduler: os.getenv("AUTOSCALING_SCHEDULE"),
@@ -62,3 +69,29 @@ def lambda_handler(event, context):
 def strtobool(value: str) -> bool:
     """Convert string to boolean."""
     return value.lower() in ("yes", "true", "t", "1")
+
+
+def is_date_excluded(excluded_dates: list[str]) -> bool:
+    """Check if the current date should be excluded from scheduling.
+
+    Args:
+        excluded_dates: List of dates in MM-DD format to exclude
+
+    Returns:
+        True if current date should be excluded, False otherwise
+    """
+    if not excluded_dates:
+        return False
+
+    current_date = datetime.now()
+    current_date_str = current_date.strftime("%m-%d")
+
+    if current_date_str in excluded_dates:
+        logging.info(
+            "Skipping execution - current date (%s) is in excluded dates: %s",
+            current_date_str,
+            excluded_dates,
+        )
+        return True
+
+    return False

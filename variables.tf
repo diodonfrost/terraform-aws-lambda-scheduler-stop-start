@@ -12,6 +12,19 @@ variable "schedule_expression_timezone" {
   default     = "UTC"
 }
 
+variable "scheduler_excluded_dates" {
+  description = "List of specific dates to exclude from scheduling in MM-DD format (e.g., ['12-25', '01-01'])"
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for date in var.scheduler_excluded_dates : can(regex("^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$", date))
+    ])
+    error_message = "Excluded dates must be in MM-DD format (e.g., '12-25', '01-01')."
+  }
+}
+
 variable "name" {
   description = "Define name to use for lambda function, cloudwatch event and iam role"
   type        = string
