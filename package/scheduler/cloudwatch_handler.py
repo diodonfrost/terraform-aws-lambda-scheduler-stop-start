@@ -3,7 +3,6 @@
 from typing import Dict, List
 
 import boto3
-
 from botocore.exceptions import ClientError
 
 from .exceptions import cloudwatch_exception

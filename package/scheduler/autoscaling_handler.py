@@ -1,7 +1,7 @@
 """Autoscaling instances scheduler."""
 
 import logging
-from typing import Dict, Iterator, List, Optional, Union, Set
+from typing import Dict, Iterator, List, Optional
 
 import boto3
 from botocore.exceptions import ClientError
