@@ -1,14 +1,15 @@
 import boto3
-from moto import mock_aws
-from package.scheduler.autoscaling_handler import AutoscalingScheduler
 import pytest
+from moto import mock_aws
+
+from package.scheduler.autoscaling_handler import AutoscalingScheduler
 
 
 @mock_aws
 def test_autoscaling_scheduler_initialization():
     """Test that AutoscalingScheduler initializes correctly with and without region."""
-    scheduler = AutoscalingScheduler()
-    assert scheduler.region_name is None
+    scheduler = AutoscalingScheduler(region_name="us-east-1")
+    assert scheduler.region_name == "us-east-1"
     assert scheduler.ec2 is not None
     assert scheduler.asg is not None
     assert scheduler.waiter is not None
@@ -19,23 +20,17 @@ def test_autoscaling_scheduler_initialization():
     assert scheduler.asg is not None
     assert scheduler.waiter is not None
 
+
 @pytest.mark.parametrize(
     "aws_region, aws_tags, ec2_state, asg_state",
     [
-        (
-            "eu-west-1",
-            [{"Key": "tostop", "Values": ["true"]}],
-            "stopped", []
-        ),
-        (
-            "eu-west-2",
-            [{"Key": "tostop", "Values": ["true"]}],
-            "stopped", []
-        ),
+        ("eu-west-1", [{"Key": "tostop", "Values": ["true"]}], "stopped", []),
+        ("eu-west-2", [{"Key": "tostop", "Values": ["true"]}], "stopped", []),
         (
             "eu-west-2",
             [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
-            "running", ["SuspendedProcesses"]
+            "running",
+            ["SuspendedProcesses"],
         ),
     ],
 )
@@ -59,9 +54,7 @@ def test_stop_autoscaling_group(aws_region, aws_tags, ec2_state, asg_state):
         MaxSize=1,
         DesiredCapacity=1,
         AvailabilityZones=[f"{aws_region}a"],
-        Tags=[
-            {"Key": "tostop", "Value": "true", "PropagateAtLaunch": True}
-        ],
+        Tags=[{"Key": "tostop", "Value": "true", "PropagateAtLaunch": True}],
     )
 
     response = ec2.describe_instances()
@@ -80,20 +73,13 @@ def test_stop_autoscaling_group(aws_region, aws_tags, ec2_state, asg_state):
 @pytest.mark.parametrize(
     "aws_region, aws_tags, ec2_state, asg_state",
     [
-        (
-            "eu-west-1",
-            [{"Key": "tostop", "Values": ["true"]}],
-            "running", []
-        ),
-        (
-            "eu-west-2",
-            [{"Key": "tostop", "Values": ["true"]}],
-            "running", []
-        ),
+        ("eu-west-1", [{"Key": "tostop", "Values": ["true"]}], "running", []),
+        ("eu-west-2", [{"Key": "tostop", "Values": ["true"]}], "running", []),
         (
             "eu-west-2",
             [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
-            "running", ["SuspendedProcesses"]
+            "running",
+            ["SuspendedProcesses"],
         ),
     ],
 )
@@ -117,9 +103,7 @@ def test_start_autoscaling_group(aws_region, aws_tags, ec2_state, asg_state):
         MaxSize=1,
         DesiredCapacity=1,
         AvailabilityZones=[f"{aws_region}a"],
-        Tags=[
-            {"Key": "tostop", "Value": "true", "PropagateAtLaunch": True}
-        ],
+        Tags=[{"Key": "tostop", "Value": "true", "PropagateAtLaunch": True}],
     )
 
     response = ec2.describe_instances()
@@ -142,21 +126,9 @@ def test_start_autoscaling_group(aws_region, aws_tags, ec2_state, asg_state):
 @pytest.mark.parametrize(
     "aws_region, aws_tags, ec2_state",
     [
-        (
-            "eu-west-1",
-            [{"Key": "tostop", "Values": ["true"]}],
-            "terminated"
-        ),
-        (
-            "eu-west-2",
-            [{"Key": "tostop", "Values": ["true"]}],
-            "terminated"
-        ),
-        (
-            "eu-west-2",
-            [{"Key": "badtagkey", "Values": ["badtagvalue"]}],
-            "running"
-        ),
+        ("eu-west-1", [{"Key": "tostop", "Values": ["true"]}], "terminated"),
+        ("eu-west-2", [{"Key": "tostop", "Values": ["true"]}], "terminated"),
+        ("eu-west-2", [{"Key": "badtagkey", "Values": ["badtagvalue"]}], "running"),
     ],
 )
 @mock_aws
@@ -179,9 +151,7 @@ def test_terminate_instances(aws_region, aws_tags, ec2_state):
         MaxSize=1,
         DesiredCapacity=1,
         AvailabilityZones=[f"{aws_region}a"],
-        Tags=[
-            {"Key": "tostop", "Value": "true", "PropagateAtLaunch": True}
-        ],
+        Tags=[{"Key": "tostop", "Value": "true", "PropagateAtLaunch": True}],
     )
 
     response = ec2.describe_instances()

@@ -1,15 +1,13 @@
 """Tests for the instance scheduler class."""
 
 import boto3
-
+import pytest
 from moto import mock_aws
 
 from package.scheduler.cloudwatch_handler import CloudWatchAlarmScheduler
 from package.scheduler.instance_handler import InstanceScheduler
 
 from .utils import launch_asg, launch_ec2_instances
-
-import pytest
 
 
 @pytest.mark.parametrize(

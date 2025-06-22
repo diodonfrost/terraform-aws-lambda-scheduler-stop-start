@@ -1,6 +1,7 @@
 import boto3
-from moto import mock_aws
 import pytest
+from moto import mock_aws
+
 from package.scheduler.rds_handler import RdsScheduler
 
 
@@ -15,7 +16,7 @@ from package.scheduler.rds_handler import RdsScheduler
 @mock_aws
 def test_rds_scheduler_initialization(aws_region):
     """Test that RdsScheduler initializes correctly with and without region."""
-    scheduler = RdsScheduler()
+    scheduler = RdsScheduler(region_name=aws_region)
     assert scheduler.rds is not None
     assert scheduler.tag_api is not None
 

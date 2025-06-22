@@ -1,12 +1,12 @@
 """Tests for the class FilterByTags class."""
 
+import pytest
 from moto import mock_aws
 
 from package.scheduler.filter_resources_by_tags import FilterByTags
 
 from .utils import launch_ec2_instances
 
-import pytest
 
 @pytest.mark.parametrize(
     "aws_region, instance_tag, scheduler_tag, result_count",

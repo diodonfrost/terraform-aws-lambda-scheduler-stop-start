@@ -58,7 +58,7 @@ def launch_asg(region_name, tag_key, tag_value):
         ImageId="ami-02df9ea15c1778c9c",
         InstanceType="t2.micro",
     )
-    asg = client.create_auto_scaling_group(
+    client.create_auto_scaling_group(
         AutoScalingGroupName="asg-test",
         MaxSize=5,
         DesiredCapacity=3,
