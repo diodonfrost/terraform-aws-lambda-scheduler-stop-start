@@ -52,7 +52,7 @@ resource "aws_neptune_cluster_instance" "not_to_scheduled" {
 }
 
 
-module "neptune-stop-friday" {
+module "neptune_stop_friday" {
   source              = "../.."
   name                = "stop-neptune-${random_pet.suffix.id}"
   schedule_expression = "cron(0 23 ? * FRI *)"
@@ -65,7 +65,7 @@ module "neptune-stop-friday" {
   }
 }
 
-module "neptune-start-monday" {
+module "neptune_start_monday" {
   source              = "../.."
   name                = "start-neptune-${random_pet.suffix.id}"
   schedule_expression = "cron(0 07 ? * MON *)"
@@ -78,11 +78,11 @@ module "neptune-start-monday" {
   }
 }
 
-module "test-execution" {
+module "test_execution" {
   count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
-  lambda_stop_name                   = module.neptune-stop-friday.scheduler_lambda_name
+  lambda_stop_name                   = module.neptune_stop_friday.scheduler_lambda_name
   neptune_cluster_to_scheduled_name  = aws_neptune_cluster.to_schedule.cluster_identifier
   neptune_cluster_not_scheduled_name = aws_neptune_cluster.not_to_scheduled.cluster_identifier
 

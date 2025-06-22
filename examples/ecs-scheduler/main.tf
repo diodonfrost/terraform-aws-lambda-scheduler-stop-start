@@ -6,7 +6,7 @@ data "aws_availability_zones" "available" {}
 
 ### Terraform modules ###
 
-module "ecs-stop-friday" {
+module "ecs_stop_friday" {
   source                    = "../../"
   name                      = "stop-ecs-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 23 ? * FRI *)"
@@ -23,7 +23,7 @@ module "ecs-stop-friday" {
   }
 }
 
-module "ecs-start-monday" {
+module "ecs_start_monday" {
   source                    = "../../"
   name                      = "start-ecs-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 07 ? * MON *)"

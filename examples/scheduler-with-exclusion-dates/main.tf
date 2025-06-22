@@ -1,7 +1,5 @@
 resource "random_pet" "suffix" {}
 
-data "aws_region" "current" {}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
   filter {
@@ -78,7 +76,7 @@ resource "aws_instance" "not_scheduled" {
 }
 
 
-module "ec2-stop-with-exclusions" {
+module "ec2_stop_with_exclusions" {
   source                    = "../../"
   name                      = "stop-ec2-exclusions-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 22 ? * MON-FRI *)"
@@ -95,7 +93,7 @@ module "ec2-stop-with-exclusions" {
 }
 
 
-module "ec2-start-with-exclusions" {
+module "ec2_start_with_exclusions" {
   source                    = "../../"
   name                      = "start-ec2-exclusions-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 7 ? * MON-FRI *)"

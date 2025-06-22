@@ -1,17 +1,21 @@
 output "lambda_stop_name" {
-  value = module.transfer-stop-friday.scheduler_lambda_name
+  description = "The name of the lambda function to stop the transfer server"
+  value       = module.transfer_stop_friday.scheduler_lambda_name
 }
 
 output "lambda_stop_arn" {
-  value = module.transfer-stop-friday.scheduler_lambda_arn
+  description = "The ARN of the lambda function to stop the transfer server"
+  value       = module.transfer_stop_friday.scheduler_lambda_arn
 }
 
 output "lambda_start_name" {
-  value = module.transfer-start-monday.scheduler_lambda_name
+  description = "The name of the lambda function to start the transfer server"
+  value       = module.transfer_start_monday.scheduler_lambda_name
 }
 
 output "lambda_start_arn" {
-  value = module.transfer-start-monday.scheduler_lambda_arn
+  description = "The ARN of the lambda function to start the transfer server"
+  value       = module.transfer_start_monday.scheduler_lambda_arn
 }
 
 output "transfer_server_scheduled_id" {
@@ -22,4 +26,4 @@ output "transfer_server_scheduled_id" {
 output "transfer_server_not_scheduled_id" {
   description = "ID of the non-scheduled Transfer server"
   value       = aws_transfer_server.not_to_scheduled.id
-} 
+}

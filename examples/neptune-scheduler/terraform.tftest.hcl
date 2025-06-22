@@ -6,22 +6,22 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.neptune-stop-friday.scheduler_lambda_name == "stop-neptune-${random_pet.suffix.id}"
+    condition     = module.neptune_stop_friday.scheduler_lambda_name == "stop-neptune-${random_pet.suffix.id}"
     error_message = "Invalid Stop lambda name"
   }
 
   assert {
-    condition     = module.neptune-start-monday.scheduler_lambda_name == "start-neptune-${random_pet.suffix.id}"
+    condition     = module.neptune_start_monday.scheduler_lambda_name == "start-neptune-${random_pet.suffix.id}"
     error_message = "Invalid Start lambda name"
   }
 
   assert {
-    condition     = module.test-execution[0].neptune_cluster_to_scheduled_status == "stopped\n"
+    condition     = module.test_execution[0].neptune_cluster_to_scheduled_status == "stopped\n"
     error_message = "neptune cluster with tag 'tostop=true' should be stopped"
   }
 
   assert {
-    condition     = module.test-execution[0].neptune_cluster_not_scheduled_status == "available\n"
+    condition     = module.test_execution[0].neptune_cluster_not_scheduled_status == "available\n"
     error_message = "neptune cluster with tag 'tostop=false' should not be stopped"
   }
 }

@@ -1,12 +1,6 @@
 # Deploy two lambda for testing with awspec
 resource "random_pet" "suffix" {}
 
-variable "cleanup_mode" {
-  description = "Whether to run in cleanup mode"
-  type        = bool
-  default     = false
-}
-
 resource "aws_kms_key" "scheduler" {
   description             = "test kms option on scheduler module"
   deletion_window_in_days = 7
@@ -55,7 +49,7 @@ resource "aws_docdb_cluster_instance" "not_scheduled" {
 }
 
 
-module "documentdb-stop-friday" {
+module "documentdb_stop_friday" {
   source              = "../.."
   name                = "stop-documentdb-${random_pet.suffix.id}"
   kms_key_arn         = aws_kms_key.scheduler.arn
@@ -69,7 +63,7 @@ module "documentdb-stop-friday" {
   }
 }
 
-module "documentdb-start-monday" {
+module "documentdb_start_monday" {
   source              = "../.."
   name                = "start-documentdb-${random_pet.suffix.id}"
   schedule_expression = "cron(0 07 ? * MON *)"
@@ -82,11 +76,11 @@ module "documentdb-start-monday" {
   }
 }
 
-module "test-execution" {
+module "test_execution" {
   count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
-  lambda_stop_name                 = module.documentdb-stop-friday.scheduler_lambda_name
+  lambda_stop_name                 = module.documentdb_stop_friday.scheduler_lambda_name
   docdb_cluster_to_scheduled_name  = aws_docdb_cluster.scheduled.cluster_identifier
   docdb_cluster_not_scheduled_name = aws_docdb_cluster.not_scheduled.cluster_identifier
 

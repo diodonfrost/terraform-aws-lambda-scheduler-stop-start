@@ -49,7 +49,7 @@ resource "aws_redshift_cluster_snapshot" "not_scheduled" {
 }
 
 
-module "redshift-stop-friday" {
+module "redshift_stop_friday" {
   source              = "../.."
   name                = "stop-redshift-${random_pet.suffix.id}"
   kms_key_arn         = aws_kms_key.scheduler.arn
@@ -63,7 +63,7 @@ module "redshift-stop-friday" {
   }
 }
 
-module "redshift-start-monday" {
+module "redshift_start_monday" {
   source              = "../.."
   name                = "start-redshift-${random_pet.suffix.id}"
   schedule_expression = "cron(0 07 ? * MON *)"
@@ -76,11 +76,11 @@ module "redshift-start-monday" {
   }
 }
 
-module "test-execution" {
+module "test_execution" {
   count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
-  lambda_stop_name                    = module.redshift-stop-friday.scheduler_lambda_name
+  lambda_stop_name                    = module.redshift_stop_friday.scheduler_lambda_name
   redshift_cluster_to_scheduled_name  = aws_redshift_cluster.scheduled.cluster_identifier
   redshift_cluster_not_scheduled_name = aws_redshift_cluster.not_scheduled.cluster_identifier
 }

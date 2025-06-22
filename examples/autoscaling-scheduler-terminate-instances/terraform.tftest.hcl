@@ -6,12 +6,12 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.autoscaling-stop-friday.scheduler_lambda_name == "stop-autoscaling-${random_pet.suffix.id}"
+    condition     = module.autoscaling_stop_friday.scheduler_lambda_name == "stop-autoscaling-${random_pet.suffix.id}"
     error_message = "Invalid Stop lambda name"
   }
 
   assert {
-    condition     = module.autoscaling-start-monday.scheduler_lambda_name == "start-autoscaling-${random_pet.suffix.id}"
+    condition     = module.autoscaling_start_monday.scheduler_lambda_name == "start-autoscaling-${random_pet.suffix.id}"
     error_message = "Invalid Start lambda name"
   }
 }

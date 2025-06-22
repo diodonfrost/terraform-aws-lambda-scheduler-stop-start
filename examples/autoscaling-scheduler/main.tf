@@ -74,7 +74,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
 
 ### Terraform modules ###
 
-module "autoscaling-stop-friday" {
+module "autoscaling_stop_friday" {
   source                    = "../../"
   name                      = "stop-autoscaling-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 23 ? * FRI *)"
@@ -90,7 +90,7 @@ module "autoscaling-stop-friday" {
   }
 }
 
-module "autoscaling-start-monday" {
+module "autoscaling_start_monday" {
   source                    = "../../"
   name                      = "start-autoscaling-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 07 ? * MON *)"
@@ -106,11 +106,11 @@ module "autoscaling-start-monday" {
   }
 }
 
-module "test-execution" {
+module "test_execution" {
   count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
-  lambda_stop_name       = module.autoscaling-stop-friday.scheduler_lambda_name
+  lambda_stop_name       = module.autoscaling_stop_friday.scheduler_lambda_name
   asg_scheduled_name     = aws_autoscaling_group.scheduled[0].name
   asg_not_scheduled_name = aws_autoscaling_group.not_scheduled[0].name
 }

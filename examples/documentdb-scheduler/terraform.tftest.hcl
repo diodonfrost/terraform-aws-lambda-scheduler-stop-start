@@ -6,22 +6,22 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.documentdb-stop-friday.scheduler_lambda_name == "stop-documentdb-${random_pet.suffix.id}"
+    condition     = module.documentdb_stop_friday.scheduler_lambda_name == "stop-documentdb-${random_pet.suffix.id}"
     error_message = "Invalid Stop lambda name"
   }
 
   assert {
-    condition     = module.documentdb-start-monday.scheduler_lambda_name == "start-documentdb-${random_pet.suffix.id}"
+    condition     = module.documentdb_start_monday.scheduler_lambda_name == "start-documentdb-${random_pet.suffix.id}"
     error_message = "Invalid Start lambda name"
   }
 
   assert {
-    condition     = module.test-execution[0].docdb_cluster_to_scheduled_state == "stopping\n"
+    condition     = module.test_execution[0].docdb_cluster_to_scheduled_state == "stopping\n"
     error_message = "DocumentDB cluster with tag 'tostop=true' should be stopped"
   }
 
   assert {
-    condition     = module.test-execution[0].docdb_cluster_not_scheduled_state == "available\n"
+    condition     = module.test_execution[0].docdb_cluster_not_scheduled_state == "available\n"
     error_message = "DocumentDB cluster with tag 'tostop=false' should not be stopped"
   }
 }

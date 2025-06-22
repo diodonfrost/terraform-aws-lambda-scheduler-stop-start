@@ -6,7 +6,7 @@ resource "aws_kms_key" "scheduler" {
   deletion_window_in_days = 7
 }
 
-module "aws-stop-friday" {
+module "aws_stop_friday" {
   source               = "../.."
   name                 = "stop-aws-${random_pet.suffix.id}"
   kms_key_arn          = aws_kms_key.scheduler.arn
@@ -22,7 +22,7 @@ module "aws-stop-friday" {
   }
 }
 
-module "aws-start-monday" {
+module "aws_start_monday" {
   source               = "../.."
   name                 = "start-aws-${random_pet.suffix.id}"
   schedule_expression  = "cron(0 07 ? * MON *)"

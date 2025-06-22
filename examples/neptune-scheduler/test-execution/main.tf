@@ -64,4 +64,4 @@ data "local_file" "neptune_cluster_not_scheduled" {
   filename = "${path.module}/neptune_cluster_not_scheduled.state"
 
   depends_on = [null_resource.neptune_cluster_not_scheduled]
-} 
+}

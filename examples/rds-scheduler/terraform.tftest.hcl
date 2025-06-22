@@ -6,27 +6,27 @@ run "create_test_infrastructure" {
   }
 
   assert {
-    condition     = module.rds-stop-friday.scheduler_lambda_name == "stop-rds-${random_pet.suffix.id}"
+    condition     = module.rds_stop_friday.scheduler_lambda_name == "stop-rds-${random_pet.suffix.id}"
     error_message = "Invalid Stop lambda name"
   }
 
   assert {
-    condition     = module.rds-start-monday.scheduler_lambda_name == "start-rds-${random_pet.suffix.id}"
+    condition     = module.rds_start_monday.scheduler_lambda_name == "start-rds-${random_pet.suffix.id}"
     error_message = "Invalid Start lambda name"
   }
 
   assert {
-    condition     = module.test-execution[0].rds_aurora_cluster_to_scheduled == "stopped\n"
+    condition     = module.test_execution[0].rds_aurora_cluster_to_scheduled == "stopped\n"
     error_message = "Invalid RDS cluster instance state"
   }
 
   assert {
-    condition     = module.test-execution[0].rds_mariadb_instance_to_scheduled == "stopped\n"
+    condition     = module.test_execution[0].rds_mariadb_instance_to_scheduled == "stopped\n"
     error_message = "Invalid RDS instance state"
   }
 
   assert {
-    condition     = module.test-execution[0].rds_mysql_instance_to_not_scheduled == "available\n"
+    condition     = module.test_execution[0].rds_mysql_instance_to_not_scheduled == "available\n"
     error_message = "Invalid RDS instance state"
   }
 }

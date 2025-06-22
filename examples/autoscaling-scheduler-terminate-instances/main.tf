@@ -88,7 +88,7 @@ resource "aws_autoscaling_group" "not_scheduled" {
 
 ### Terraform modules ###
 
-module "autoscaling-stop-friday" {
+module "autoscaling_stop_friday" {
   source                          = "../../"
   name                            = "stop-autoscaling-${random_pet.suffix.id}"
   schedule_expression             = "cron(0 23 ? * FRI *)"
@@ -105,7 +105,7 @@ module "autoscaling-stop-friday" {
   }
 }
 
-module "autoscaling-start-monday" {
+module "autoscaling_start_monday" {
   source                    = "../../"
   name                      = "start-autoscaling-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 07 ? * MON *)"

@@ -41,7 +41,7 @@ resource "aws_instance" "not_scheduled" {
 
 ### Terraform modules ###
 
-module "ec2-stop-friday" {
+module "ec2_stop_friday" {
   source                    = "../../"
   name                      = "stop-ec2-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 23 ? * FRI *)"
@@ -57,7 +57,7 @@ module "ec2-stop-friday" {
   }
 }
 
-module "ec2-start-monday" {
+module "ec2_start_monday" {
   source                    = "../../"
   name                      = "start-ec2-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 07 ? * MON *)"
@@ -73,11 +73,11 @@ module "ec2-start-monday" {
   }
 }
 
-module "test-execution" {
+module "test_execution" {
   count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
-  lambda_stop_name               = module.ec2-stop-friday.scheduler_lambda_name
+  lambda_stop_name               = module.ec2_stop_friday.scheduler_lambda_name
   instance_1_to_scheduled_id     = aws_instance.scheduled[0].id
   instance_2_to_scheduled_id     = aws_instance.scheduled[1].id
   instance_3_to_scheduled_id     = aws_instance.scheduled[2].id

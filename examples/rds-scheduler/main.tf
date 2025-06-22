@@ -67,7 +67,7 @@ resource "aws_db_instance" "mysql_not_scheduled" {
 
 ### Terraform modules ###
 
-module "rds-stop-friday" {
+module "rds_stop_friday" {
   source                    = "../../"
   name                      = "stop-rds-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 23 ? * FRI *)"
@@ -83,7 +83,7 @@ module "rds-stop-friday" {
   }
 }
 
-module "rds-start-monday" {
+module "rds_start_monday" {
   source                    = "../../"
   name                      = "start-rds-${random_pet.suffix.id}"
   schedule_expression       = "cron(0 07 ? * MON *)"
@@ -99,11 +99,11 @@ module "rds-start-monday" {
   }
 }
 
-module "test-execution" {
+module "test_execution" {
   count  = var.test_mode ? 1 : 0
   source = "./test-execution"
 
-  lambda_stop_name                         = module.rds-stop-friday.scheduler_lambda_name
+  lambda_stop_name                         = module.rds_stop_friday.scheduler_lambda_name
   rds_aurora_cluster_to_scheduled_name     = aws_rds_cluster.aurora_scheduled.cluster_identifier
   rds_mariadb_instance_to_scheduled_name   = aws_db_instance.mariadb_scheduled.identifier
   rds_mysql_instance_to_not_scheduled_name = aws_db_instance.mysql_not_scheduled.identifier

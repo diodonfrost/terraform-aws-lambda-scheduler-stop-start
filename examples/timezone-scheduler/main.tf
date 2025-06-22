@@ -1,7 +1,7 @@
 # Deploy two lambda for testing with awspec
 resource "random_pet" "suffix" {}
 
-module "aws-stop-friday" {
+module "aws_stop_friday" {
   source                       = "../.."
   name                         = "stop-aws-${random_pet.suffix.id}"
   schedule_expression          = "cron(0 23 ? * FRI *)"
@@ -17,7 +17,7 @@ module "aws-stop-friday" {
   }
 }
 
-module "aws-start-monday" {
+module "aws_start_monday" {
   source                       = "../.."
   name                         = "start-aws-${random_pet.suffix.id}"
   schedule_expression          = "cron(0 07 ? * MON *)"
