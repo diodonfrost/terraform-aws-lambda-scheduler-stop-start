@@ -136,3 +136,9 @@ variable "tags" {
   type        = map(any)
   default     = null
 }
+
+variable "cloudwatch_log_retention" {
+  description = "Cloudwatch log retention in days"
+  type        = number
+  default     = 14
+}
