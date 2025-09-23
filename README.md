@@ -158,7 +158,7 @@ No modules.
 | <a name="input_scheduler_tag"></a> [scheduler\_tag](#input\_scheduler\_tag) | Set the tag to use for identify aws resources to stop or start | `map(string)` | <pre>{<br/>  "key": "tostop",<br/>  "value": "true"<br/>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Custom tags on aws resources | `map(any)` | `null` | no |
 | <a name="input_transfer_schedule"></a> [transfer\_schedule](#input\_transfer\_schedule) | Enable scheduling on AWS Transfer (SFTP) servers | `bool` | `false` | no |
-| <a name="input_cloudwatch_log_retention"></a> [cloudwatch\_retention_in_days](#input\_cloudwatch\_log\_retention) | Cloudwatch log retention in days | `number` | `14` | no |
+| <a name="input_cloudwatch_log_retention"></a> [cloudwatch\_log\_retention](#input\_cloudwatch\_log\_retention) | Cloudwatch log retention in days | `number` | `14` | no |
 
 ## Outputs
 
