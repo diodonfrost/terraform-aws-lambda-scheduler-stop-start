@@ -20,7 +20,7 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      AWS_REGIONS                     = var.aws_regions == null ? data.aws_region.current.name : join(", ", var.aws_regions)
+      AWS_REGIONS                     = var.aws_regions == null ? data.aws_region.current.id : join(", ", var.aws_regions)
       SCHEDULE_ACTION                 = var.schedule_action
       TAG_KEY                         = local.scheduler_tag["key"]
       TAG_VALUE                       = local.scheduler_tag["value"]

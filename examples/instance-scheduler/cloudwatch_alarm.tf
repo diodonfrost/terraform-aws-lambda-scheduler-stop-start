@@ -5,7 +5,7 @@ resource "aws_cloudwatch_metric_alarm" "scheduled" {
   evaluation_periods  = "2"
   period              = "60"
   alarm_description   = "This metric auto recovers EC2 instances"
-  alarm_actions       = ["arn:aws:automate:${data.aws_region.current.name}:ec2:reboot"]
+  alarm_actions       = ["arn:aws:automate:${data.aws_region.current.id}:ec2:reboot"]
   statistic           = "Minimum"
   comparison_operator = "GreaterThanThreshold"
   threshold           = "0.0"
@@ -27,7 +27,7 @@ resource "aws_cloudwatch_metric_alarm" "not_scheduled" {
   evaluation_periods  = "2"
   period              = "60"
   alarm_description   = "This metric auto recovers EC2 instances"
-  alarm_actions       = ["arn:aws:automate:${data.aws_region.current.name}:ec2:reboot"]
+  alarm_actions       = ["arn:aws:automate:${data.aws_region.current.id}:ec2:reboot"]
   statistic           = "Minimum"
   comparison_operator = "GreaterThanThreshold"
   threshold           = "0.0"
