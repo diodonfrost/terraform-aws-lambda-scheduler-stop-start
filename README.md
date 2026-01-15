@@ -83,7 +83,8 @@ module "start_ec2_instance" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_archive"></a> [archive](#requirement\_archive) | 2.3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8 |
+| <a name="requirement_archive"></a> [archive](#requirement\_archive) | 2.7.1 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.94.1 |
 
 ## Providers
@@ -91,7 +92,7 @@ module "start_ec2_instance" {
 | Name | Version |
 |------|---------|
 | <a name="provider_archive"></a> [archive](#provider\_archive) | 2.3.0 |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.94.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.0.0 |
 
 ## Modules
 
@@ -101,6 +102,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [archive_file.this](https://registry.terraform.io/providers/hashicorp/archive/2.7.1/docs/resources/file) | resource |
 | [aws_cloudwatch_log_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_iam_policy.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -118,7 +120,6 @@ No modules.
 | [aws_iam_role_policy_attachment.scheduler_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_scheduler_schedule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule) | resource |
-| [archive_file.this](https://registry.terraform.io/providers/hashicorp/archive/2.3.0/docs/data-sources/file) | data source |
 | [aws_iam_policy_document.autoscaling_group_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.cloudwatch_alarm_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecs_scheduler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -141,6 +142,7 @@ No modules.
 | <a name="input_autoscaling_terminate_instances"></a> [autoscaling\_terminate\_instances](#input\_autoscaling\_terminate\_instances) | Terminate instances when autoscaling group is scheduled to stop | `bool` | `false` | no |
 | <a name="input_aws_regions"></a> [aws\_regions](#input\_aws\_regions) | A list of one or more aws regions where the lambda will be apply, default use the current region | `list(string)` | `null` | no |
 | <a name="input_cloudwatch_alarm_schedule"></a> [cloudwatch\_alarm\_schedule](#input\_cloudwatch\_alarm\_schedule) | Enable scheduleding on cloudwatch alarm resources | `bool` | `false` | no |
+| <a name="input_cloudwatch_log_retention"></a> [cloudwatch\_log\_retention](#input\_cloudwatch\_log\_retention) | Cloudwatch log retention in days | `number` | `14` | no |
 | <a name="input_custom_iam_role_arn"></a> [custom\_iam\_role\_arn](#input\_custom\_iam\_role\_arn) | Custom IAM role arn for the scheduling lambda | `string` | `null` | no |
 | <a name="input_documentdb_schedule"></a> [documentdb\_schedule](#input\_documentdb\_schedule) | Enable scheduling on documentdb resources | `bool` | `false` | no |
 | <a name="input_ec2_schedule"></a> [ec2\_schedule](#input\_ec2\_schedule) | Enable scheduling on ec2 resources | `bool` | `false` | no |
@@ -158,7 +160,6 @@ No modules.
 | <a name="input_scheduler_tag"></a> [scheduler\_tag](#input\_scheduler\_tag) | Set the tag to use for identify aws resources to stop or start | `map(string)` | <pre>{<br/>  "key": "tostop",<br/>  "value": "true"<br/>}</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Custom tags on aws resources | `map(any)` | `null` | no |
 | <a name="input_transfer_schedule"></a> [transfer\_schedule](#input\_transfer\_schedule) | Enable scheduling on AWS Transfer (SFTP) servers | `bool` | `false` | no |
-| <a name="input_cloudwatch_log_retention"></a> [cloudwatch\_log\_retention](#input\_cloudwatch\_log\_retention) | Cloudwatch log retention in days | `number` | `14` | no |
 
 ## Outputs
 
