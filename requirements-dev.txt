@@ -45,5 +45,5 @@ six==1.17.0
 urllib3==2.6.3
 virtualenv==20.36.1
 Werkzeug==3.1.5
-wheel==0.45.1
+wheel==0.46.2
 xmltodict==1.0.2
