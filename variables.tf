@@ -131,6 +131,12 @@ variable "transfer_schedule" {
   default     = false
 }
 
+variable "apprunner_schedule" {
+  description = "Enable scheduling on AWS App Runner services"
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "Custom tags on aws resources"
   type        = map(any)

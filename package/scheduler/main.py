@@ -3,6 +3,7 @@
 import json
 import os
 
+from .apprunner_handler import AppRunnerScheduler
 from .autoscaling_handler import AutoscalingScheduler
 from .cloudwatch_handler import CloudWatchAlarmScheduler
 from .documentdb_handler import DocumentDBScheduler
@@ -43,6 +44,7 @@ def lambda_handler(event, context):
         return
 
     _strategy = {
+        AppRunnerScheduler: os.getenv("APPRUNNER_SCHEDULE"),
         AutoscalingScheduler: os.getenv("AUTOSCALING_SCHEDULE"),
         DocumentDBScheduler: os.getenv("DOCUMENTDB_SCHEDULE"),
         InstanceScheduler: os.getenv("EC2_SCHEDULE"),

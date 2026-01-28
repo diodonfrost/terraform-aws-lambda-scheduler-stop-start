@@ -24,6 +24,7 @@ resource "aws_lambda_function" "this" {
       SCHEDULE_ACTION                 = var.schedule_action
       TAG_KEY                         = local.scheduler_tag["key"]
       TAG_VALUE                       = local.scheduler_tag["value"]
+      APPRUNNER_SCHEDULE              = tostring(var.apprunner_schedule)
       DOCUMENTDB_SCHEDULE             = tostring(var.documentdb_schedule)
       EC2_SCHEDULE                    = tostring(var.ec2_schedule)
       ECS_SCHEDULE                    = tostring(var.ecs_schedule)

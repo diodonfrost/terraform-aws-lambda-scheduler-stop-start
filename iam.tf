@@ -288,3 +288,25 @@ data "aws_iam_policy_document" "transfer_scheduler" {
     ]
   }
 }
+
+resource "aws_iam_role_policy" "apprunner_scheduler" {
+  count  = var.custom_iam_role_arn == null && var.apprunner_schedule == true ? 1 : 0
+  name   = "${var.name}-apprunner-custom-policy-scheduler"
+  role   = aws_iam_role.this[0].id
+  policy = data.aws_iam_policy_document.apprunner_scheduler.json
+}
+
+data "aws_iam_policy_document" "apprunner_scheduler" {
+  statement {
+    actions = [
+      "apprunner:PauseService",
+      "apprunner:ResumeService",
+      "apprunner:ListServices",
+      "apprunner:DescribeService"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}

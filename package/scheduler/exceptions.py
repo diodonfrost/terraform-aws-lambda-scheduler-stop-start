@@ -264,3 +264,41 @@ def transfer_exception(resource_name: str, resource_id: str, exception):
             resource_id,
             exception,
         )
+
+
+def apprunner_exception(resource_name: str, resource_id: str, exception):
+    """Exception raised during execution of App Runner scheduler.
+
+    Log App Runner service exceptions on the specific aws resources.
+
+    :param str resource_name:
+        Aws resource name
+    :param str resource_id:
+        Aws resource id
+    :param str exception:
+        Human readable string describing the exception
+    """
+    info_codes = ["ResourceNotFoundException"]
+    warning_codes = ["InvalidRequestException", "InvalidStateException"]
+
+    if exception.response["Error"]["Code"] in info_codes:
+        logging.info(
+            "%s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
+        )
+    elif exception.response["Error"]["Code"] in warning_codes:
+        logging.warning(
+            "%s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
+        )
+    else:
+        logging.error(
+            "Unexpected error on %s %s: %s",
+            resource_name,
+            resource_id,
+            exception,
+        )
