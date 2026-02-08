@@ -4,7 +4,7 @@ This module provides functionality to start and stop EC2 instances based on tags
 """
 
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, Iterator, List, Optional
 
 import boto3
 from botocore.exceptions import ClientError
@@ -38,63 +38,38 @@ class InstanceScheduler:
         )
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def _process_instances(self, aws_tags: List[Dict], action: str) -> None:
-        """Process EC2 instances based on the specified action.
-
-        Args:
-            aws_tags: List of tag dictionaries to filter resources
-            action: Action to perform ('start' or 'stop')
-        """
-        for instance_arn in self.tag_api.get_resources("ec2:instance", aws_tags):
-            instance_id = instance_arn.split("/")[-1]
-            try:
-                # Skip instances that are part of an Auto Scaling Group
-                if self.asg.describe_auto_scaling_instances(InstanceIds=[instance_id])[
-                    "AutoScalingInstances"
-                ]:
-                    logger.info(
-                        f"Skipping {instance_id} as it belongs to an Auto Scaling Group"
-                    )
-                    continue
-
-                # Perform the requested action
-                if action == "start":
-                    self.ec2.start_instances(InstanceIds=[instance_id])
-                    logger.info(f"Started instance {instance_id}")
-                elif action == "stop":
-                    self.ec2.stop_instances(InstanceIds=[instance_id])
-                    logger.info(f"Stopped instance {instance_id}")
-
-            except ClientError as exc:
-                ec2_exception("instance", instance_id, exc)
-                logger.error(f"Failed to {action} instance {instance_id}: {str(exc)}")
+    def list_resources(self, aws_tags: List[Dict]) -> Iterator[str]:
+        """List EC2 instance ARNs matching the given tags."""
+        yield from self.tag_api.get_resources("ec2:instance", aws_tags)
 
     def stop(self, aws_tags: List[Dict]) -> None:
-        """Stop EC2 instances with defined tags.
-
-        Args:
-            aws_tags: List of tag dictionaries to filter resources.
-                For example:
-                [
-                    {
-                        'Key': 'Environment',
-                        'Values': ['Development']
-                    }
-                ]
-        """
-        self._process_instances(aws_tags, "stop")
+        """Stop EC2 instances with defined tags."""
+        for instance_arn in self.list_resources(aws_tags):
+            self._process_instance(instance_arn.split("/")[-1], "stop")
 
     def start(self, aws_tags: List[Dict]) -> None:
-        """Start EC2 instances with defined tags.
+        """Start EC2 instances with defined tags."""
+        for instance_arn in self.list_resources(aws_tags):
+            self._process_instance(instance_arn.split("/")[-1], "start")
 
-        Args:
-            aws_tags: List of tag dictionaries to filter resources.
-                For example:
-                [
-                    {
-                        'Key': 'Environment',
-                        'Values': ['Development']
-                    }
-                ]
-        """
-        self._process_instances(aws_tags, "start")
+    def _process_instance(self, instance_id: str, action: str) -> None:
+        """Process an EC2 instance with the specified action."""
+        try:
+            if self.asg.describe_auto_scaling_instances(InstanceIds=[instance_id])[
+                "AutoScalingInstances"
+            ]:
+                logger.info(
+                    f"Skipping {instance_id} as it belongs to an Auto Scaling Group"
+                )
+                return
+
+            if action == "start":
+                self.ec2.start_instances(InstanceIds=[instance_id])
+                logger.info(f"Started instance {instance_id}")
+            elif action == "stop":
+                self.ec2.stop_instances(InstanceIds=[instance_id])
+                logger.info(f"Stopped instance {instance_id}")
+
+        except ClientError as exc:
+            ec2_exception("instance", instance_id, exc)
+            logger.error(f"Failed to {action} instance {instance_id}: {str(exc)}")

@@ -1,6 +1,6 @@
 """RDS instances scheduler."""
 
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Optional
 
 import boto3
 from botocore.exceptions import ClientError
@@ -25,46 +25,34 @@ class RdsScheduler:
         )
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, aws_tags: List[Dict]) -> None:
-        """Stop RDS Aurora clusters and RDS DB instances with defined tags.
+    def list_resources(self, aws_tags: List[Dict]) -> dict:
+        """List RDS cluster and instance ARNs matching the given tags."""
+        return {
+            "clusters": list(self.tag_api.get_resources("rds:cluster", aws_tags)),
+            "instances": list(self.tag_api.get_resources("rds:db", aws_tags)),
+        }
 
-        Args:
-            aws_tags: AWS tags to filter resources.
-                Example: [{'Key': 'Environment', 'Values': ['Dev']}]
-        """
-        self._process_resources(aws_tags, action="stop")
+    def stop(self, aws_tags: List[Dict]) -> None:
+        """Stop RDS Aurora clusters and RDS DB instances with defined tags."""
+        resources = self.list_resources(aws_tags)
+        cluster_ids = [arn.split(":")[-1] for arn in resources["clusters"]]
+        db_ids = [arn.split(":")[-1] for arn in resources["instances"]]
+        for cluster_id in cluster_ids:
+            self._process_cluster(cluster_id, "stop")
+        for db_id in db_ids:
+            self._process_instance(db_id, "stop")
 
     def start(self, aws_tags: List[Dict]) -> None:
-        """Start RDS Aurora clusters and RDS DB instances with defined tags.
+        """Start RDS Aurora clusters and RDS DB instances with defined tags."""
+        resources = self.list_resources(aws_tags)
+        cluster_ids = [arn.split(":")[-1] for arn in resources["clusters"]]
+        db_ids = [arn.split(":")[-1] for arn in resources["instances"]]
+        for cluster_id in cluster_ids:
+            self._process_cluster(cluster_id, "start")
+        for db_id in db_ids:
+            self._process_instance(db_id, "start")
 
-        Args:
-            aws_tags: AWS tags to filter resources.
-                Example: [{'Key': 'Environment', 'Values': ['Dev']}]
-        """
-        self._process_resources(aws_tags, action="start")
-
-    def _process_resources(
-        self, aws_tags: List[Dict], action: Literal["start", "stop"]
-    ) -> None:
-        """Process RDS resources with the specified action.
-
-        Args:
-            aws_tags: AWS tags to filter resources.
-            action: Action to perform ("start" or "stop").
-        """
-        # Handle clusters
-        for cluster_arn in self.tag_api.get_resources("rds:cluster", aws_tags):
-            cluster_id = cluster_arn.split(":")[-1]
-            self._process_cluster(cluster_id, action)
-
-        # Handle instances
-        for db_arn in self.tag_api.get_resources("rds:db", aws_tags):
-            db_id = db_arn.split(":")[-1]
-            self._process_instance(db_id, action)
-
-    def _process_cluster(
-        self, cluster_id: str, action: Literal["start", "stop"]
-    ) -> None:
+    def _process_cluster(self, cluster_id: str, action: str) -> None:
         """Process an RDS cluster with the specified action.
 
         Args:
@@ -85,7 +73,7 @@ class RdsScheduler:
         except ClientError as exc:
             rds_exception("RDS cluster", cluster_id, exc)
 
-    def _process_instance(self, db_id: str, action: Literal["start", "stop"]) -> None:
+    def _process_instance(self, db_id: str, action: str) -> None:
         """Process an RDS instance with the specified action.
 
         Args:

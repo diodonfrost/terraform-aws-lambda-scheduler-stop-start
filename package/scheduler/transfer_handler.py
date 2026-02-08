@@ -1,6 +1,6 @@
 """AWS Transfer (SFTP) server scheduler."""
 
-from typing import Dict, List, Literal, Optional
+from typing import Dict, Iterator, List, Optional
 
 import boto3
 from botocore.exceptions import ClientError
@@ -25,41 +25,27 @@ class TransferScheduler:
         )
         self.tag_api = FilterByTags(region_name=region_name)
 
-    def stop(self, aws_tags: List[Dict]) -> None:
-        """Stop AWS Transfer servers with defined tags.
+    def list_resources(self, aws_tags: List[Dict]) -> Iterator[str]:
+        """List Transfer server ARNs matching the given tags."""
+        yield from self.tag_api.get_resources("transfer:server", aws_tags)
 
-        Args:
-            aws_tags: AWS tags to filter resources.
-                Example: [{'Key': 'Environment', 'Values': ['Dev']}]
-        """
-        self._process_servers(aws_tags, action="stop")
+    def stop(self, aws_tags: List[Dict]) -> None:
+        """Stop AWS Transfer servers with defined tags."""
+        for server_arn in self.list_resources(aws_tags):
+            self._process_server(server_arn.split("/")[-1], "stop")
 
     def start(self, aws_tags: List[Dict]) -> None:
-        """Start AWS Transfer servers with defined tags.
+        """Start AWS Transfer servers with defined tags."""
+        for server_arn in self.list_resources(aws_tags):
+            self._process_server(server_arn.split("/")[-1], "start")
 
-        Args:
-            aws_tags: AWS tags to filter resources.
-                Example: [{'Key': 'Environment', 'Values': ['Dev']}]
-        """
-        self._process_servers(aws_tags, action="start")
-
-    def _process_servers(
-        self, aws_tags: List[Dict], action: Literal["start", "stop"]
-    ) -> None:
-        """Process Transfer servers with the specified action.
-
-        Args:
-            aws_tags: AWS tags to filter resources.
-            action: Action to perform ("start" or "stop").
-        """
-        for server_arn in self.tag_api.get_resources("transfer:server", aws_tags):
-            server_id = server_arn.split("/")[-1]
-            try:
-                if action == "start":
-                    self.transfer.start_server(ServerId=server_id)
-                    print(f"Start Transfer server {server_id}")
-                else:
-                    self.transfer.stop_server(ServerId=server_id)
-                    print(f"Stop Transfer server {server_id}")
-            except ClientError as exc:
-                transfer_exception("Transfer server", server_id, exc)
+    def _process_server(self, server_id: str, action: str) -> None:
+        """Process a Transfer server with the specified action."""
+        try:
+            if action == "start":
+                self.transfer.start_server(ServerId=server_id)
+            else:
+                self.transfer.stop_server(ServerId=server_id)
+            print(f"{action.capitalize()} Transfer server {server_id}")
+        except ClientError as exc:
+            transfer_exception("Transfer server", server_id, exc)

@@ -47,119 +47,65 @@ class AutoscalingScheduler:
         tag_value = "".join(aws_tags[0]["Values"])
         return tag_key, tag_value
 
-    def stop(self, aws_tags: List[Dict], terminate_instances: bool = False) -> None:
-        """Suspend Auto Scaling groups and stop/terminate their instances.
-
-        Args:
-            aws_tags: AWS tags to filter resources by. Format:
-                [{'Key': 'tag_key', 'Values': ['tag_value']}]
-            terminate_instances: If True, terminate instances instead of stopping them
-        """
+    def list_resources(self, aws_tags: List[Dict]) -> dict:
+        """List Auto Scaling group names and instance IDs matching the given tags."""
         tag_key, tag_value = self._extract_tag_info(aws_tags)
-        asg_name_list = self.list_groups(tag_key, tag_value)
-        instance_id_list = list(self.list_instances(asg_name_list))
+        asg_names = self.list_groups(tag_key, tag_value)
+        instance_ids = list(self.list_instances(asg_names))
+        return {"groups": asg_names, "instances": instance_ids}
 
-        # Suspend Auto Scaling groups
-        self._suspend_asg_processes(asg_name_list)
+    def stop(self, aws_tags: List[Dict], terminate_instances: bool = False) -> None:
+        """Suspend Auto Scaling groups and stop/terminate their instances."""
+        resources = self.list_resources(aws_tags)
 
-        # Stop or terminate instances
-        self._manage_instances(instance_id_list, terminate=terminate_instances)
+        for asg_name in resources["groups"]:
+            self._process_group(asg_name, "suspend")
+        for instance_id in resources["instances"]:
+            action = "terminate" if terminate_instances else "stop"
+            self._process_instance(instance_id, action)
 
     def start(self, aws_tags: List[Dict]) -> None:
-        """Resume Auto Scaling groups and start their instances.
+        """Resume Auto Scaling groups and start their instances."""
+        resources = self.list_resources(aws_tags)
 
-        Args:
-            aws_tags: AWS tags to filter resources by. Format:
-                [{'Key': 'tag_key', 'Values': ['tag_value']}]
-        """
-        tag_key, tag_value = self._extract_tag_info(aws_tags)
-        asg_name_list = self.list_groups(tag_key, tag_value)
-        instance_id_list = list(self.list_instances(asg_name_list))
+        started_instances = []
+        for instance_id in resources["instances"]:
+            if self._process_instance(instance_id, "start"):
+                started_instances.append(instance_id)
 
-        # Start instances
-        started_instances = self._start_instances(instance_id_list)
-
-        # Wait for instances to be running
         if started_instances:
             self.waiter.instance_running(instance_ids=started_instances)
 
-        # Resume Auto Scaling groups
-        self._resume_asg_processes(asg_name_list)
+        for asg_name in resources["groups"]:
+            self._process_group(asg_name, "resume")
 
-    def _suspend_asg_processes(self, asg_names: List[str]) -> None:
-        """Suspend processes for the specified Auto Scaling groups.
-
-        Args:
-            asg_names: List of Auto Scaling group names
-        """
-        for asg_name in asg_names:
-            try:
-                self.asg.suspend_processes(AutoScalingGroupName=asg_name)
-                logger.info(f"Suspended Auto Scaling group: {asg_name}")
-            except ClientError as exc:
-                ec2_exception("Auto Scaling group", asg_name, exc)
-
-    def _resume_asg_processes(self, asg_names: List[str]) -> None:
-        """Resume processes for the specified Auto Scaling groups.
-
-        Args:
-            asg_names: List of Auto Scaling group names
-        """
-        for asg_name in asg_names:
-            try:
+    def _process_group(self, asg_name: str, action: str) -> None:
+        """Process an Auto Scaling group with the specified action."""
+        try:
+            if action == "resume":
                 self.asg.resume_processes(AutoScalingGroupName=asg_name)
-                logger.info(f"Resumed Auto Scaling group: {asg_name}")
-            except ClientError as exc:
-                ec2_exception("Auto Scaling group", asg_name, exc)
+            else:
+                self.asg.suspend_processes(AutoScalingGroupName=asg_name)
+            logger.info(f"{action.capitalize()} Auto Scaling group: {asg_name}")
+        except ClientError as exc:
+            ec2_exception("Auto Scaling group", asg_name, exc)
 
-    def _manage_instances(
-        self, instance_ids: List[str], terminate: bool = False
-    ) -> None:
-        """Stop or terminate EC2 instances.
-
-        Args:
-            instance_ids: List of EC2 instance IDs
-            terminate: If True, terminate instances; otherwise stop them
-        """
-        if not instance_ids:
-            logger.info("No instances to manage")
-            return
-
-        for instance_id in instance_ids:
-            try:
-                if terminate:
-                    self.ec2.terminate_instances(InstanceIds=[instance_id])
-                    logger.info(f"Terminated instance: {instance_id}")
-                else:
-                    self.ec2.stop_instances(InstanceIds=[instance_id])
-                    logger.info(f"Stopped instance: {instance_id}")
-            except ClientError as exc:
-                ec2_exception("instance", instance_id, exc)
-
-    def _start_instances(self, instance_ids: List[str]) -> List[str]:
-        """Start EC2 instances and return list of successfully started instance IDs.
-
-        Args:
-            instance_ids: List of EC2 instance IDs to start
-
-        Returns:
-            List of successfully started instance IDs
-        """
-        started_instances = []
-
-        if not instance_ids:
-            logger.info("No instances to start")
-            return started_instances
-
-        for instance_id in instance_ids:
-            try:
+    def _process_instance(self, instance_id: str, action: str) -> Optional[str]:
+        """Process an EC2 instance with the specified action."""
+        try:
+            if action == "start":
                 self.ec2.start_instances(InstanceIds=[instance_id])
                 logger.info(f"Started instance: {instance_id}")
-                started_instances.append(instance_id)
-            except ClientError as exc:
-                ec2_exception("instance", instance_id, exc)
-
-        return started_instances
+                return instance_id
+            elif action == "terminate":
+                self.ec2.terminate_instances(InstanceIds=[instance_id])
+                logger.info(f"Terminated instance: {instance_id}")
+            else:
+                self.ec2.stop_instances(InstanceIds=[instance_id])
+                logger.info(f"Stopped instance: {instance_id}")
+        except ClientError as exc:
+            ec2_exception("instance", instance_id, exc)
+        return None
 
     def list_groups(self, tag_key: str, tag_value: str) -> List[str]:
         """List Auto Scaling groups with the specified tag.

@@ -1,6 +1,6 @@
 """ecs service scheduler."""
 
-from typing import Dict, List
+from typing import Dict, Iterator, List
 
 import boto3
 from botocore.exceptions import ClientError
@@ -20,59 +20,32 @@ class EcsScheduler:
             self.ecs = boto3.client("ecs")
         self.tag_api = FilterByTags(region_name=region_name)
 
+    def list_resources(self, aws_tags: List[Dict]) -> Iterator[str]:
+        """List ECS service ARNs matching the given tags."""
+        yield from self.tag_api.get_resources("ecs:service", aws_tags)
+
     def stop(self, aws_tags: List[Dict]) -> None:
-        """Aws ecs instance stop function.
-
-        Stop ecs service with defined tags and disable its Cloudwatch
-        alarms.
-
-        :param list[map] aws_tags:
-            Aws tags to use for filter resources.
-            For example:
-            [
-                {
-                    'Key': 'string',
-                    'Values': [
-                        'string',
-                    ]
-                }
-            ]
-        """
-        for service_arn in self.tag_api.get_resources("ecs:service", aws_tags):
-            service_name = service_arn.split("/")[-1]
-            cluster_name = service_arn.split("/")[-2]
-            try:
-                self.ecs.update_service(
-                    cluster=cluster_name, service=service_name, desiredCount=0
-                )
-                print(f"Stop ECS Service {service_name} on Cluster {cluster_name}")
-            except ClientError as exc:
-                ecs_exception("ECS Service", service_name, exc)
+        """Stop ECS services with defined tags."""
+        for service_arn in self.list_resources(aws_tags):
+            self._process_service(service_arn, "stop")
 
     def start(self, aws_tags: List[Dict]) -> None:
-        """Aws ec2 instance start function.
+        """Start ECS services with defined tags."""
+        for service_arn in self.list_resources(aws_tags):
+            self._process_service(service_arn, "start")
 
-        Start ec2 instances with defined tags.
-
-        Aws tags to use for filter resources
-            Aws tags to use for filter resources.
-            For example:
-            [
-                {
-                    'Key': 'string',
-                    'Values': [
-                        'string',
-                    ]
-                }
-            ]
-        """
-        for service_arn in self.tag_api.get_resources("ecs:service", aws_tags):
-            service_name = service_arn.split("/")[-1]
-            cluster_name = service_arn.split("/")[-2]
-            try:
-                self.ecs.update_service(
-                    cluster=cluster_name, service=service_name, desiredCount=1
-                )
-                print(f"Start ECS Service {service_name} on Cluster {cluster_name}")
-            except ClientError as exc:
-                ecs_exception("ECS Service", service_name, exc)
+    def _process_service(self, service_arn: str, action: str) -> None:
+        """Process an ECS service with the specified action."""
+        cluster_name = service_arn.split("/")[-2]
+        service_name = service_arn.split("/")[-1]
+        try:
+            self.ecs.update_service(
+                cluster=cluster_name,
+                service=service_name,
+                desiredCount=0 if action == "stop" else 1,
+            )
+            print(
+                f"{action.capitalize()} ECS Service {service_name} on Cluster {cluster_name}"
+            )
+        except ClientError as exc:
+            ecs_exception("ECS Service", service_name, exc)
