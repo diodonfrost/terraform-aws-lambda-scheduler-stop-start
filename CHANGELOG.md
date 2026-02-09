@@ -5,6 +5,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [4.5.0] - 2026-02-09
+### Features
+
+* **scheduler:** add dry-run mode support ([085ad86](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/085ad86))
+
+## [4.4.0] - 2026-01-28
+### Features
+
+* **apprunner:** add AWS App Runner service scheduling support with pause/resume capabilities ([207d427](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/207d427))
+
+## [4.3.0] - 2026-01-26
+### Features
+
+* **terraform:** add cloudwatch_log_retention variable to configure Lambda log retention period ([3aee895](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/3aee895))
+
+### Bug Fixes
+
+* **lambda:** use archive_file resource instead of data source to fix CI/CD pipeline compatibility where plan and apply run in separate jobs ([3a85151](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/3a85151))
+* **terraform:** replace deprecated aws_region.current.name with aws_region.current.id ([3f6237a](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/3f6237a))
+
+### Maintenance
+
+* **terraform:** standardise on cloudwatch_log_retention variable naming ([3887b93](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/3887b93))
+
+## [4.2.0] - 2025-07-01
+### Features
+
+* **terraform:** add date exclusion functionality to skip scheduling on specific dates using MM-DD format ([3e49357](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/3e49357))
+* **terraform:** add OpenTofu compatibility with versions.tofu file ([c532df7](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/commit/c532df7))
+
 ## [4.1.0] - 2025-06-10
 ### Features
 
@@ -349,7 +380,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rds instances support with scheduler
 - rds clusters support with scheduler
 
-[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.5.0...HEAD
+[Unreleased]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/4.5.0...HEAD
+[4.5.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/4.4.0...4.5.0
+[4.4.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/4.3.0...4.4.0
+[4.3.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/4.2.0...4.3.0
+[4.2.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/4.1.0...4.2.0
+[4.1.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/4.0.0...4.1.0
+[4.0.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.5.0...4.0.0
 [3.5.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.4.1...3.5.0
 [3.4.1]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.4.0...3.4.1
 [3.4.0]: https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start/compare/3.3.0...3.4.0
