@@ -1,7 +1,5 @@
 resource "random_pet" "suffix" {}
 
-data "aws_region" "current" {}
-
 module "apprunner_stop_friday" {
   source              = "../../"
   name                = "stop-apprunner-${random_pet.suffix.id}"

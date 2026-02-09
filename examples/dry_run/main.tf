@@ -1,6 +1,8 @@
 # Terraform ec2 instance with lambda scheduler
 resource "random_pet" "suffix" {}
 
+data "aws_region" "current" {}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
   filter {
