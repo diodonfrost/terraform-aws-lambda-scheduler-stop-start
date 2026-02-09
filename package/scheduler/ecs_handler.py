@@ -5,6 +5,7 @@ from typing import Dict, Iterator, List
 import boto3
 from botocore.exceptions import ClientError
 
+from .decorators import skip_on_dry_run
 from .exceptions import ecs_exception
 from .filter_resources_by_tags import FilterByTags
 
@@ -34,6 +35,7 @@ class EcsScheduler:
         for service_arn in self.list_resources(aws_tags):
             self._process_service(service_arn, "start")
 
+    @skip_on_dry_run
     def _process_service(self, service_arn: str, action: str) -> None:
         """Process an ECS service with the specified action."""
         cluster_name = service_arn.split("/")[-2]

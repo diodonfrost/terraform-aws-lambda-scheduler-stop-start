@@ -6,6 +6,7 @@ from typing import Dict, Iterator, List, Optional
 import boto3
 from botocore.exceptions import ClientError
 
+from .decorators import skip_on_dry_run
 from .exceptions import ec2_exception
 from .waiters import AwsWaiters
 
@@ -79,6 +80,7 @@ class AutoscalingScheduler:
         for asg_name in resources["groups"]:
             self._process_group(asg_name, "resume")
 
+    @skip_on_dry_run
     def _process_group(self, asg_name: str, action: str) -> None:
         """Process an Auto Scaling group with the specified action."""
         try:
@@ -90,6 +92,7 @@ class AutoscalingScheduler:
         except ClientError as exc:
             ec2_exception("Auto Scaling group", asg_name, exc)
 
+    @skip_on_dry_run
     def _process_instance(self, instance_id: str, action: str) -> Optional[str]:
         """Process an EC2 instance with the specified action."""
         try:

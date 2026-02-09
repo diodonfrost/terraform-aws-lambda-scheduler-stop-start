@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 import boto3
 from botocore.exceptions import ClientError
 
+from .decorators import skip_on_dry_run
 from .exceptions import rds_exception
 from .filter_resources_by_tags import FilterByTags
 
@@ -52,6 +53,7 @@ class RdsScheduler:
         for db_id in db_ids:
             self._process_instance(db_id, "start")
 
+    @skip_on_dry_run
     def _process_cluster(self, cluster_id: str, action: str) -> None:
         """Process an RDS cluster with the specified action.
 
@@ -73,6 +75,7 @@ class RdsScheduler:
         except ClientError as exc:
             rds_exception("RDS cluster", cluster_id, exc)
 
+    @skip_on_dry_run
     def _process_instance(self, db_id: str, action: str) -> None:
         """Process an RDS instance with the specified action.
 

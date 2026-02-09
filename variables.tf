@@ -137,6 +137,12 @@ variable "apprunner_schedule" {
   default     = false
 }
 
+variable "dry_run" {
+  description = "Enable dry-run mode. When true, the Lambda will log actions without actually stopping or starting resources."
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "Custom tags on aws resources"
   type        = map(any)

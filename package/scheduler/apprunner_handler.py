@@ -5,6 +5,7 @@ from typing import Dict, Iterator, List
 import boto3
 from botocore.exceptions import ClientError
 
+from .decorators import skip_on_dry_run
 from .exceptions import apprunner_exception
 from .filter_resources_by_tags import FilterByTags
 
@@ -34,6 +35,7 @@ class AppRunnerScheduler:
         for service_arn in self.list_resources(aws_tags):
             self._process_apprunner_service(service_arn, "start")
 
+    @skip_on_dry_run
     def _process_apprunner_service(self, service_arn: str, action: str) -> None:
         """Process an App Runner service with the specified action."""
         service_name = service_arn.split("/")[-2]

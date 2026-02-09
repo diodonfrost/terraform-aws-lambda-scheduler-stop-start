@@ -91,8 +91,8 @@ module "start_ec2_instance" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.3.0 |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.0.0 |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.7.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.31.0 |
 
 ## Modules
 
@@ -148,6 +148,7 @@ No modules.
 | <a name="input_cloudwatch_log_retention"></a> [cloudwatch\_log\_retention](#input\_cloudwatch\_log\_retention) | Cloudwatch log retention in days | `number` | `14` | no |
 | <a name="input_custom_iam_role_arn"></a> [custom\_iam\_role\_arn](#input\_custom\_iam\_role\_arn) | Custom IAM role arn for the scheduling lambda | `string` | `null` | no |
 | <a name="input_documentdb_schedule"></a> [documentdb\_schedule](#input\_documentdb\_schedule) | Enable scheduling on documentdb resources | `bool` | `false` | no |
+| <a name="input_dry_run"></a> [dry\_run](#input\_dry\_run) | Enable dry-run mode. When true, the Lambda will log actions without actually stopping or starting resources. | `bool` | `false` | no |
 | <a name="input_ec2_schedule"></a> [ec2\_schedule](#input\_ec2\_schedule) | Enable scheduling on ec2 resources | `bool` | `false` | no |
 | <a name="input_ecs_schedule"></a> [ecs\_schedule](#input\_ecs\_schedule) | Enable scheduling on ecs services | `bool` | `false` | no |
 | <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | The ARN for the KMS encryption key. If this configuration is not provided when environment variables are in use, AWS Lambda uses a default service key. | `string` | `null` | no |

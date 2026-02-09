@@ -35,6 +35,7 @@ resource "aws_lambda_function" "this" {
       CLOUDWATCH_ALARM_SCHEDULE       = tostring(var.cloudwatch_alarm_schedule)
       TRANSFER_SCHEDULE               = tostring(var.transfer_schedule)
       SCHEDULER_EXCLUDED_DATES        = jsonencode(var.scheduler_excluded_dates)
+      DRY_RUN                         = tostring(var.dry_run)
     }
   }
 

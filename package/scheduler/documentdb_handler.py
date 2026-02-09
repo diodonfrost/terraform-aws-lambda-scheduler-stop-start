@@ -5,6 +5,7 @@ from typing import Dict, Iterator, List
 import boto3
 from botocore.exceptions import ClientError
 
+from .decorators import skip_on_dry_run
 from .exceptions import documentdb_exception
 from .filter_resources_by_tags import FilterByTags
 
@@ -34,6 +35,7 @@ class DocumentDBScheduler:
         for cluster_arn in self.list_resources(aws_tags):
             self._process_cluster(cluster_arn.split(":")[-1], "start")
 
+    @skip_on_dry_run
     def _process_cluster(self, cluster_id: str, action: str) -> None:
         """Process a DocumentDB cluster with the specified action."""
         try:

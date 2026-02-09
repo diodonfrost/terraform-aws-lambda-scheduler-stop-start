@@ -5,6 +5,7 @@ from typing import Dict, Iterator, List
 import boto3
 from botocore.exceptions import ClientError
 
+from .decorators import skip_on_dry_run
 from .exceptions import cloudwatch_exception
 from .filter_resources_by_tags import FilterByTags
 
@@ -34,6 +35,7 @@ class CloudWatchAlarmScheduler:
         for alarm_arn in self.list_resources(aws_tags):
             self._process_alarm(alarm_arn.split(":")[-1], "start")
 
+    @skip_on_dry_run
     def _process_alarm(self, alarm_name: str, action: str) -> None:
         """Process a CloudWatch alarm with the specified action."""
         try:

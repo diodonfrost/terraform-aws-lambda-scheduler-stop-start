@@ -9,6 +9,7 @@ from typing import Dict, Iterator, List, Optional
 import boto3
 from botocore.exceptions import ClientError
 
+from .decorators import skip_on_dry_run
 from .exceptions import ec2_exception
 from .filter_resources_by_tags import FilterByTags
 
@@ -52,6 +53,7 @@ class InstanceScheduler:
         for instance_arn in self.list_resources(aws_tags):
             self._process_instance(instance_arn.split("/")[-1], "start")
 
+    @skip_on_dry_run
     def _process_instance(self, instance_id: str, action: str) -> None:
         """Process an EC2 instance with the specified action."""
         try:
