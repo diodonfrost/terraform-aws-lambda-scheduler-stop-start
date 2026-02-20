@@ -59,7 +59,11 @@ def lambda_handler(event, context):
         if strtobool(to_schedule):
             for aws_region in aws_regions:
                 strategy = service(aws_region)
-                if service == AutoscalingScheduler and autoscaling_terminate_instances:
+                if (
+                    service == AutoscalingScheduler
+                    and autoscaling_terminate_instances
+                    and schedule_action == "stop"
+                ):
                     getattr(strategy, schedule_action)(
                         aws_tags=format_tags, terminate_instances=True
                     )
